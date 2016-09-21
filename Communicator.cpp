@@ -9,8 +9,6 @@
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "settings.h"
-
-
 #include "Communicator.h"
 
 using namespace gorilla::log;
@@ -762,7 +760,7 @@ Server::connection::status_t Communicator::UpdateLevel(const Server::request& re
     else{
         
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::UpdateLevel> UNAUTHORIZED");
+        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::UpdateLevel> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err;     

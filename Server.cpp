@@ -137,17 +137,14 @@ void ShutMeDown(const boost::system::error_code& error, int signal,
  *
  * @param queue
  */
-void ProcessRequest(WorkQueue& queue, const Settings &settings, gorilla::account::AccountManager& accountManager)
+void ProcessRequest(WorkQueue& queue, Communicator& communicator)
 {
     while (g_running) {
         
         RequestData::pointer request_ptr(queue.get());
-            
-        Communicator iotCommunicator(settings,accountManager);
-        
         if (request_ptr) {
              
-            iotCommunicator.ProcessRequest(
+            communicator.ProcessRequest(
                 request_ptr->request_, request_ptr->connection_ptr_);
         } 
     }
@@ -196,12 +193,13 @@ int main(int argc, char* argv[])
          // create request queue & communicator thread
          WorkQueue queue;
          gorilla::account::AccountManager accountManager;
+         Communicator communicator(settings, accountManager);
          {
                 int n_threads = 5;
                 while (0 < n_threads--) {
 
                      thread_group_ptr->create_thread(boost::bind(ProcessRequest,
-                       boost::ref(queue),boost::ref(settings),boost::ref(accountManager)));      
+                       boost::ref(queue), boost::ref(communicator)));      
                 }
          }
 

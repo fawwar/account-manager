@@ -42,7 +42,7 @@ namespace gorilla
 		return false;				
 	}
 	
-	inline void SetJson(const json& json_src, json& out_json_dst)
+	inline void SetJson(const nlohmann::json& json_src, nlohmann::json& out_json_dst)
 	{
 		for(auto it = json_src.begin(); it != json_src.end(); ++it){
         
