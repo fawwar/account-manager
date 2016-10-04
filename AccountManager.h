@@ -14,7 +14,6 @@ namespace gorilla {
 
         class User;
         class Level;
-        class AccountDB;
         class AccountManager
         {
         public:
@@ -56,7 +55,6 @@ namespace gorilla {
 
             ErrorReply m_error_reply;
             
-            std::shared_ptr<AccountDB>& m_sp_account_db;
             mutable std::mutex m_mux_users;
             std::map<std::string, std::shared_ptr<User>> m_map_users;
             mutable std::mutex m_mux_levels;

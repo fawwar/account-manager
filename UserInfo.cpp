@@ -17,9 +17,8 @@ namespace
 namespace gorilla {
     namespace account{
 
-        User::User(std::shared_ptr<AccountDB> sp_account_db, const std::string& str_user_info)
-            : m_sp_account_db(sp_account_db)
-            , m_json_response_user_info(DEFAULT_RESPONSE_USER)
+        User::User(const std::string& str_user_info)
+            : m_json_response_user_info(DEFAULT_RESPONSE_USER)
         {
             SetUserInfo(str_user_info);
         }
@@ -60,7 +59,7 @@ namespace gorilla {
 
         bool User::AddUser(int& out_n_sql_error)
         {
-            return m_sp_account_db->Insert(AccountDB::USERS, m_json_response_user_info, out_n_sql_error);
+            return DB_INSTANCE.Insert(AccountDB::USERS, m_json_response_user_info, out_n_sql_error);
         }
 
         std::string User::UpdateUser(const std::string &str_user_info)
@@ -68,7 +67,7 @@ namespace gorilla {
              
 
             SetUserInfo(str_user_info);
-            m_sp_account_db->Update(AccountDB::USERS, UPDATE_KEY_FIELD,
+            DB_INSTANCE.Update(AccountDB::USERS, UPDATE_KEY_FIELD,
                 m_str_account, m_json_response_user_info);
 
             LOGGER_S(info) << "UpdateUser = " << m_str_account << " > " <<  str_user_info << ", " << m_str_level; 
@@ -78,7 +77,7 @@ namespace gorilla {
 
         bool User::DeleteUser()
         {
-            return m_sp_account_db->Delete(AccountDB::USERS, UPDATE_KEY_FIELD, m_str_account);    
+            return DB_INSTANCE.Delete(AccountDB::USERS, UPDATE_KEY_FIELD, m_str_account);    
         }
 
         bool User::IsInfoExsist(const json& j_user_info, const std::string& str_key,

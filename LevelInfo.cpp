@@ -17,9 +17,8 @@ namespace
 namespace gorilla {
     namespace account{
 
-        Level::Level(std::shared_ptr<AccountDB> sp_account_db, const std::string& str_level_info)
-            : m_sp_account_db(sp_account_db)
-            , m_json_level_info(DISABLE_LEVEL)
+        Level::Level(const std::string& str_level_info)
+            : m_json_level_info(DISABLE_LEVEL)
         { 
             SetLevelInfo(str_level_info);    
         }
@@ -45,7 +44,7 @@ namespace gorilla {
 
         bool Level::AddLevel(int& out_n_sql_error)
         {
-            return m_sp_account_db->Insert(AccountDB::LEVELS, m_json_level_info, out_n_sql_error);
+            return DB_INSTANCE.Insert(AccountDB::LEVELS, m_json_level_info, out_n_sql_error);
         }
 
         std::string Level::Features(const std::list<std::string>& lst_fields) const
@@ -95,7 +94,7 @@ namespace gorilla {
         {
             json j_level_info = json::parse(str_level_info); 
             SetJson(j_level_info, m_json_level_info);   
-            m_sp_account_db->Update(AccountDB::LEVELS, UPDATE_KEY_FIELD,
+            DB_INSTANCE.Update(AccountDB::LEVELS, UPDATE_KEY_FIELD,
                 m_str_levelName, m_json_level_info);
 
             SetLevelInfo(m_json_level_info.dump());
@@ -105,7 +104,7 @@ namespace gorilla {
 
         bool Level::DeleteLevel()
         {
-            return m_sp_account_db->Delete(AccountDB::LEVELS, UPDATE_KEY_FIELD, m_str_levelName);    
+            return DB_INSTANCE.Delete(AccountDB::LEVELS, UPDATE_KEY_FIELD, m_str_levelName);    
         }
 
         void Level::SetLevelInfo(const std::string& str_level_info)

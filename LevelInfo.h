@@ -11,12 +11,11 @@ using json = nlohmann::json;
 namespace gorilla {
     namespace account{
 
-        class AccountDB;;
         class Level
         {
         public:
             
-            Level(std::shared_ptr<AccountDB> sp_account_db, const std::string& str_level_info);
+            Level(const std::string& str_level_info);
 
             ~Level();
 
@@ -36,7 +35,6 @@ namespace gorilla {
             
         private:
 
-            std::shared_ptr<AccountDB> m_sp_account_db;
             json m_json_level_info;
 
             std::string m_str_levelName;

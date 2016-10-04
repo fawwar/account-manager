@@ -10,12 +10,11 @@ using json = nlohmann::json;
 namespace gorilla {
     namespace account{
 
-        class AccountDB;;
         class User
         {
         public:
             
-            User(std::shared_ptr<AccountDB> sp_account_db, const std::string& str_user_info);
+            User(const std::string& str_user_info);
 
             ~User();
 
@@ -39,7 +38,6 @@ namespace gorilla {
                 
         private:
 
-            std::shared_ptr<AccountDB> m_sp_account_db;
             json m_json_response_user_info;
                 
             std::string m_str_account;

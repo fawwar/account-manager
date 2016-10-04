@@ -20,7 +20,6 @@ namespace gorilla {
     namespace account{
 
         AccountManager::AccountManager()
-            : m_sp_account_db(AccountDB::Instance())
         {
             CreateUsersInfo();
             CreateLevelsInfo();
@@ -137,7 +136,7 @@ namespace gorilla {
             }
 
             /* create user map */
-            auto user = std::make_shared<User>(m_sp_account_db, str_user_info);
+            auto user = std::make_shared<User>(str_user_info);
             {            
                 std::lock_guard<std::mutex> autoLock(m_mux_users);
                 std::string account = user->Account();
@@ -357,7 +356,7 @@ namespace gorilla {
 
             LOGGER_S(info) << "AddLevel" << str_level_info;
 
-            auto level = std::make_shared<Level>(m_sp_account_db, str_level_info);
+            auto level = std::make_shared<Level>(str_level_info);
             {            
                 std::lock_guard<std::mutex> autoLock(m_mux_levels);
                 std::string levelName = level->LevelName();
@@ -495,10 +494,10 @@ namespace gorilla {
         void AccountManager::CreateUsersInfo()
         {
             std::list<std::string> lst_json_user_info;
-            m_sp_account_db->GetAllItems(AccountDB::USERS, lst_json_user_info);
+            DB_INSTANCE.GetAllItems(AccountDB::USERS, lst_json_user_info);
 
             for(auto& it : lst_json_user_info){
-                auto user = std::make_shared<User>(m_sp_account_db, it);
+                auto user = std::make_shared<User>(it);
                 std::string account = user->Account();
                 m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(account, user)); 
             }  
@@ -507,11 +506,11 @@ namespace gorilla {
         void AccountManager::CreateLevelsInfo()
         {
             std::list<std::string> lst_json_level_info;
-            m_sp_account_db->GetAllItems(AccountDB::LEVELS, lst_json_level_info);
+            DB_INSTANCE.GetAllItems(AccountDB::LEVELS, lst_json_level_info);
 
             for(auto& it : lst_json_level_info){
 
-                auto level = std::make_shared<Level>(m_sp_account_db, it);
+                auto level = std::make_shared<Level>(it);
                 std::string level_name = level->LevelName(); 
                 m_map_levels.insert(std::pair<std::string, std::shared_ptr<Level> >(level_name, level)); 
             } 

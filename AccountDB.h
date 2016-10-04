@@ -7,6 +7,7 @@
 #include <list>
 
 #include "./import/json-develop/json.hpp"
+#define DB_INSTANCE AccountDB::Instance()
 
 // Forward declaration
 struct sqlite3;
@@ -26,10 +27,8 @@ namespace gorilla {
                 LEVELS
             };
        
-            static std::shared_ptr<AccountDB>& Instance();
+            static AccountDB& Instance();
             
-            ~AccountDB();
-
             bool GetAllItems(TableName e_table_name, std::list<std::string>& out_lst_json_string);
 
             bool Insert(TableName e_table_name, const json& json_obj, int& out_n_sql_error);
@@ -51,6 +50,8 @@ namespace gorilla {
             std::map<std::string, SQLiteDB*> m_mapDBTable;
 
             AccountDB();
+
+            ~AccountDB();
 
             AccountDB(const AccountDB& rhs);
 

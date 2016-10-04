@@ -46,17 +46,9 @@ namespace gorilla {
                 CloseDB(m_pSQLDB);
         }
 
-        std::shared_ptr<AccountDB>& AccountDB::Instance()
+        AccountDB& AccountDB::Instance()
         {
-            static std::shared_ptr<AccountDB> instance(nullptr);
-         
-            if (!instance){
-                
-                std::lock_guard<std::mutex> lock(g_mutexInstance);
-                if (!instance) 
-                    instance.reset(new AccountDB());
-            }
-            
+            static AccountDB instance;
             return instance;
         }
 
