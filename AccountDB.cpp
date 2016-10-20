@@ -211,7 +211,7 @@ namespace gorilla {
 
             if(str_table_name == "users"){
                 
-               std::string hash_pass = hash::TextEncodeHash("gorilla");
+               std::string hash_pass = hash::TextEncodeHash("admin");
                
                pSQLCommand += sprintf(pSQLCommand, "(account char(32) not null primary key,");
                pSQLCommand += sprintf(pSQLCommand, "encryptedPassword char(128) null,");
