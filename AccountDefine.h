@@ -25,17 +25,11 @@ namespace gorilla {
             CONSTRAINT = 19
         };
 
-        enum AccessLevel
-        {
-            ADMINISTRATOR,
-            USER    
-        };
-
         const json::object_t DEFAULT_USER
         {
             {"account", ""}, 
             {"password", ""}, 
-            {"levelName", ""},
+            {"accessRightName", ""},
             {"description", ""}
         };
 
@@ -43,11 +37,11 @@ namespace gorilla {
         {
             {"account", ""}, 
             {"encryptedPassword", ""}, 
-            {"levelName", ""},
+            {"accessRightName", ""},
             {"description", ""}
         };
 
-        const json::object_t DISABLE_IVAR_FEATURES
+        const json::object_t DISABLE_IVAR_PERMISSIONS
         {
             {"getinfo", false}, 
             {"setinfo", false}, 
@@ -61,7 +55,7 @@ namespace gorilla {
             {"setSystem", false}
         };
 
-        const json::object_t DISABLE_IOT_FEATURES
+        const json::object_t DISABLE_IOT_PERMISSIONS
         {
             {"get", false}, 
             {"set", false}, 
@@ -69,21 +63,21 @@ namespace gorilla {
             {"setSubscription", false}
         };
 
-        const json::object_t DISABLE_FEATURES
+        const json::object_t DISABLE_PERMISSIONS
         {
-            {"ivar", DISABLE_IVAR_FEATURES}, 
-            {"iot", DISABLE_IOT_FEATURES}
+            {"ivar", DISABLE_IVAR_PERMISSIONS}, 
+            {"iot", DISABLE_IOT_PERMISSIONS}
         };
 
-        const json::object_t DISABLE_LEVEL
+        const json::object_t DISABLE_ACCESSRIGHT
         {
-            {"levelName", ""}, 
-            {"features", DISABLE_FEATURES},
+            {"accessRightName", ""}, 
+            {"permissions", DISABLE_PERMISSIONS},
             {"description", ""}
         };
         
 
-        const json::object_t DEFAULT_IVAR_FEATURES
+        const json::object_t DEFAULT_IVAR_PERMISSIONS
         {
             {"getinfo", true}, 
             {"setinfo", true}, 
@@ -97,7 +91,7 @@ namespace gorilla {
             {"setSystem", true}
         };
 
-        const json::object_t DEFAULT_IOT_FEATURES
+        const json::object_t DEFAULT_IOT_PERMISSIONS
         {
             {"get", true}, 
             {"set", true}, 
@@ -105,16 +99,16 @@ namespace gorilla {
             {"setSubscription", true}
         };
 
-        const json::object_t DEFAULT_FEATURES
+        const json::object_t DEFAULT_PERMISSIONS
         {
-            {"ivar", DEFAULT_IVAR_FEATURES}, 
-            {"iot", DEFAULT_IOT_FEATURES}
+            {"ivar", DEFAULT_IVAR_PERMISSIONS}, 
+            {"iot", DEFAULT_IOT_PERMISSIONS}
         };
 
-        const json::object_t DEFAULT_LEVEL
+        const json::object_t DEFAULT_ACCESSRIGHT
         {
-            {"levelName", ""}, 
-            {"features", DEFAULT_FEATURES},
+            {"accessRightName", ""}, 
+            {"permissions", DEFAULT_PERMISSIONS},
             {"description", ""}
         };
 

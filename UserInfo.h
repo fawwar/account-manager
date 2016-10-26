@@ -24,7 +24,7 @@ namespace gorilla {
 
             std::string EncryptedPassword() const;
 
-            std::string Level() const;
+            std::string AccessRight() const;
 
             json Json() const;
         
@@ -43,7 +43,7 @@ namespace gorilla {
             std::string m_str_account;
             std::string m_str_password;
             std::string m_str_encrypted_password;
-            std::string m_str_level;
+            std::string m_str_access_right;
             std::string m_str_description;
 
             bool IsInfoExsist(const json& j_user_info, const std::string& str_key,

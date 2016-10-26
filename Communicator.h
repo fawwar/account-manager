@@ -101,22 +101,22 @@ private:
     Server::connection::status_t DeleteUser(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
-    Server::connection::status_t GetUserFeatures(const Server::request& request, 
+    Server::connection::status_t GetUserPermissions(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
-    Server::connection::status_t GetLevels(const Server::request& request, 
+    Server::connection::status_t GetAccessRights(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
-    Server::connection::status_t AddLevel(const Server::request& request, 
+    Server::connection::status_t AddAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
-    Server::connection::status_t GetLevel(const Server::request& request, 
+    Server::connection::status_t GetAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
-    Server::connection::status_t UpdateLevel(const Server::request& request, 
+    Server::connection::status_t UpdateAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
-    Server::connection::status_t DeleteLevel(const Server::request& request, 
+    Server::connection::status_t DeleteAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
     

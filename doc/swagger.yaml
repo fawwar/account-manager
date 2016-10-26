@@ -1,0 +1,565 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "1.0.0"
+  title: <Gorilla VeMo Box - Account API>
+
+host: 172.18.0.139:8020
+
+tags:
+- name: user
+  description: Include Account, Password, AccessRights Information 
+- name: accessRight
+  description: Include AccessRights, Permissions Information 
+  
+################################################################################
+#                                  Security                                    #
+################################################################################
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication.
+security:
+      - basicAuth: []
+################################################################################
+#                                Parameters                                    #
+################################################################################
+
+parameters:
+  token:
+    name: Content-Type
+    in: header
+    description: |
+      Prevent null header problem for **"Access-Control-Request-Headers"** in the OPTION request
+      
+      **This field cannot be null.**
+    required: true
+    type: string
+    enum: [none]
+  userName:
+    name: userName
+    in: path
+    description: user name
+    required: true
+    type: string
+    format: uuid
+  accessRightName:
+    name: accessRightName
+    in: path
+    description: accessrights name
+    required: true
+    type: string
+    format: uuid
+  fields:
+    name: fields
+    in: query
+    description: required fields of permission
+    required: false
+    type: array
+    items:
+      type: string
+    collectionFormat: csv
+
+
+
+################################################################################
+#                                  Paths                                       #
+################################################################################   
+paths:
+  /users:
+    get:
+      tags:
+        - user
+      description: Use Administrator AccessRight To Get All User Information
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/responseUser'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+    post:
+      tags:
+        - user
+      description: Use Administrator AccessRight To Add User Information
+      operationId: addUser
+      parameters:
+        - name: user
+          in: body
+          description: add user object
+          required: true
+          schema:
+            $ref: '#/definitions/user'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/responseUser'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/error'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '/definitions/error'
+            
+  /users/{userName}:  
+    get:
+      tags:
+        - user
+      description:  Get User Information
+      operationId: getUser
+      parameters:
+        - $ref: '#/parameters/userName'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/responseUser'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: user not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+            
+    put:
+      tags:
+        - user
+      description: Administrator AccessRight Can Change Account、AccessRight、Password, But Cann,t Change "admin" Account. The Other AccessRights Only Change Password.
+      operationId: updateUser
+      parameters:
+        - $ref: '#/parameters/userName'
+        - name: user
+          in: body
+          description: update user object
+          required: true
+          schema:
+            $ref: '#/definitions/updateUser'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/responseUser'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/error'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: user not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+    delete:
+      tags:
+        - user
+      description: Use Administrator AccessRight To Delete User Information
+      operationId: deleteUser
+      produces: 
+        - application/json
+      consumes: 
+        - application/json
+      parameters:
+        - $ref: '#/parameters/userName'
+        - $ref: '#/parameters/token'
+      responses:
+        '204':
+          description: user deleted
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: user not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+  
+  /users/{userName}/permissions:  
+    get:
+      tags:
+        - user
+      description: Get User Support Permissions
+      operationId: getUserFeature
+      parameters:
+        - $ref: '#/parameters/userName'
+        - $ref: '#/parameters/fields'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/updateAccessRights' 
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/error'    
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: user not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+       
+  /accessRights:
+   get:
+      tags:
+        - accessRight
+      description: Use Administrator AccessRight To Get All AccessRight Information
+      operationId: getAccessRights
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/accessRights'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+   post:
+      tags:
+        - accessRight
+      description: Use Administrator AccessRight To Add AccessRight Information
+      operationId: addAccessRight
+      parameters:
+        - name: accessRight
+          in: body
+          description: add user object
+          required: true
+          schema:
+            $ref: '#/definitions/accessRights'
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/accessRights'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/error'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '/definitions/error'
+             
+  /accessRights/{accessRightName}:  
+   get:
+      tags:
+        - accessRight
+      description: Use Administrator AccessRight To Get AccessRight Information 
+      operationId: getAccessRight
+      parameters:
+        - $ref: '#/parameters/accessRightName'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/accessRights'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: AccessRight not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+   put:
+      tags:
+        - accessRight
+      description: Use Administrator AccessRight To Change AccessRight of Permissions  
+      operationId: updateAccessRight
+      parameters:
+        - $ref: '#/parameters/accessRightName'
+        - name: accessRight
+          in: body
+          description: update accessRight of permissions 
+          required: true
+          schema:
+            $ref: '#/definitions/updateAccessRights'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/accessRights'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/error'
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: accessrights not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+   delete:
+      tags:
+        - accessRight
+      description: Use Administrator AccessRight To Delete AccessRight Information
+      produces: 
+        - application/json
+      consumes: 
+        - application/json
+      parameters:
+        - $ref: '#/parameters/accessRightName'
+        - $ref: '#/parameters/token'
+      responses:
+        '204':
+          description: user deleted
+        '401':
+          description: unauthorized 
+          schema:
+            $ref: '#/definitions/error'
+        '403':
+          description: forbidden
+          schema:
+            $ref: '#/definitions/error'
+        '404':
+          description: accessright not found
+          schema:
+            $ref: '#/definitions/error'
+        '500':
+          description: internal server error
+          schema:
+            $ref: '#/definitions/error'
+      
+################################################################################
+#                                  Definitions                                 #
+################################################################################                   
+definitions:
+  user:
+    type: object
+    required:
+      - account
+      - password
+      - accessRightName
+    properties:
+      account:
+        type: string
+      password:
+        type: string
+      accessRightName:
+        type: string
+      description:
+        type: string
+        
+  responseUser:
+   type: object
+   properties:
+      account:
+        type: string
+      encryptedPassword:
+        type: string
+      accessRightName:
+        type: string
+      description:
+        type: string 
+  
+  updateUser:
+    type: object
+    properties:
+      account:
+        type: string
+      password:
+        type: string  
+      accessRightName:
+        type: string
+          
+        
+  accessRights:
+    type: object
+    required:
+      - accessRightName
+    properties:
+      accessRightName:
+        type: string
+      permissions:
+        type: object
+        properties:
+           ivar:
+             $ref: '#/definitions/ivarPermissions'
+           iot:
+             $ref: '#/definitions/iotPermissions'
+      description :
+        type: string 
+  
+  updateAccessRights:
+    type: object
+    properties:
+      accessRightName:
+        type: string
+      permissions:
+        $ref: '#/definitions/permissions'
+      description :
+        type: string   
+        
+  permissions:
+    type: object
+    properties:
+      ivar:
+        $ref: '#/definitions/ivarPermissions'
+      iot:
+        $ref: '#/definitions/iotPermissions'        
+        
+  ivarPermissions:
+    type: object
+    properties:
+     getinfo:
+      type: boolean
+     setinfo:
+      type: boolean
+     task:
+      type: boolean
+     live:
+      type: array
+      items:
+          type: integer
+          description: live stream channel number 
+     playback:
+      type: array
+      items:
+          type: integer
+          description: playback stream channel number
+     archive:
+      type: array
+      items:
+          type: integer
+          description: archive stream channel number
+     getRecord:
+      type: boolean
+     setRecord:
+      type: boolean 
+     getSystem:
+      type: boolean 
+     setSystem:
+      type: boolean   
+  
+  iotPermissions:
+    type: object 
+    properties:
+     get:
+      type: boolean
+      description: include device, object, discovery of get function 
+     set:
+      type: boolean
+      description: include device, object, discovery of post, put, delete function
+     getSubscription:
+      type: boolean
+     setSubscription:
+      type: boolean
+  
+  error:
+    type: object
+    properties:
+      userMessage:
+        type: string
+      internalMessage:
+        type: string
+      
+      
+      
+      
+      

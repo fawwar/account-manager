@@ -13,7 +13,7 @@ namespace gorilla {
     namespace account{
 
         class User;
-        class Level;
+        class AccessRight;
         class AccountManager
         {
         public:
@@ -22,7 +22,7 @@ namespace gorilla {
 
             ~AccountManager();
 
-            bool GetUserLevel(const std::string str_account, std::string& out_str_level);
+            bool GetUserAccessRight(const std::string str_account, std::string& out_str_access_right);
 
             bool VerifyAccount(const std::string& str_account, const std::string& str_password);
 
@@ -37,19 +37,19 @@ namespace gorilla {
 
             Error DeleteUser(const std::string &str_account, std::string &out_str_reply);
 
-            Error GetUserFeatures(const std::string &str_account, const std::list<std::string>& lst_fields,
+            Error GetUserPermissions(const std::string &str_account, const std::list<std::string>& lst_fields,
                 std::string &out_str_reply);
 
-            Error GetLevels(std::string &out_str_reply);
+            Error GetAccessRights(std::string &out_str_reply);
 
-            Error AddLevel(const std::string &str_level_info, std::string &out_str_reply);
+            Error AddAccessRight(const std::string &str_access_right_info, std::string &out_str_reply);
 
-            Error GetLevel(const std::string &str_level_name, std::string &out_str_reply);
+            Error GetAccessRight(const std::string &str_access_right_name, std::string &out_str_reply);
 
-            Error UpdateLevel(const std::string &str_level_name, const std::string &str_level_info,
+            Error UpdateAccessRight(const std::string &str_access_right_name, const std::string &str_access_right_info,
                 std::string &out_str_reply);
 
-            Error DeleteLevel(const std::string &str_level_name, std::string &out_str_reply);
+            Error DeleteAccessRight(const std::string &str_access_right_name, std::string &out_str_reply);
             
         private:
 
@@ -57,8 +57,8 @@ namespace gorilla {
             
             mutable std::mutex m_mux_users;
             std::map<std::string, std::shared_ptr<User>> m_map_users;
-            mutable std::mutex m_mux_levels;
-            std::map<std::string, std::shared_ptr<Level>> m_map_levels;
+            mutable std::mutex m_mux_access_rights;
+            std::map<std::string, std::shared_ptr<AccessRight>> m_map_access_rights;
 
             
 
@@ -70,13 +70,13 @@ namespace gorilla {
 
             bool IsPasswordVaild(const std::string &str_user_info, std::string &out_str_reply);
 
-            bool IsLevelNameVaild(const std::string &str_user_info, std::string &out_str_reply);
+            bool IsAccessRightNameVaild(const std::string &str_user_info, std::string &out_str_reply);
 
             bool IsUserInfoVaild(const std::string &str_user_info, std::string &out_str_reply);
 
-            bool IsLevelNameExist(const std::string &str_user_info);
+            bool IsAccessRightNameExist(const std::string &str_user_info);
 
-            bool IsLevelNameBeUsing(const std::string &str_level_name);
+            bool IsAccessRightNameBeUsing(const std::string &str_access_right_name);
 
         };
     }

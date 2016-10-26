@@ -13,7 +13,7 @@
 
 static const std::string DB_PATH = "/opt/ivar/var/";
 static const std::string DB_NAME = "account.db";
-static const std::vector<std::string> TABLE_NAME = {"users", "levels"};
+static const std::vector<std::string> TABLE_NAME = {"users", "accessRights"};
 static const int SQL_CMD_LEN = 1024;
 
 std::mutex gorilla::account::AccountDB::g_mutexInstance;
@@ -146,7 +146,6 @@ namespace gorilla {
                 str_update_key_field.c_str(), str_update_key_value.c_str());
            
             
-            
             char* pErrMsg = NULL;
             {
                 std::lock_guard<std::mutex> autoLock(m_muxSQLDB);        
@@ -215,22 +214,22 @@ namespace gorilla {
                
                pSQLCommand += sprintf(pSQLCommand, "(account char(32) not null primary key,");
                pSQLCommand += sprintf(pSQLCommand, "encryptedPassword char(128) null,");
-               pSQLCommand += sprintf(pSQLCommand, "levelName char(16) null,");
+               pSQLCommand += sprintf(pSQLCommand, "accessRightName char(16) null,");
                pSQLCommand += sprintf(pSQLCommand, "description text '""');");
                pSQLCommand += sprintf(pSQLCommand, "insert or ignore into users ");
-               pSQLCommand += sprintf(pSQLCommand, "(account,encryptedPassword,levelName,description) ");
+               pSQLCommand += sprintf(pSQLCommand, "(account,encryptedPassword,accessRightName,description) ");
                pSQLCommand += sprintf(pSQLCommand, "values('\"admin\"','\"%s\"','\"admin\"','\"\"');", hash_pass.c_str());
             }
-            else if(str_table_name == "levels"){
+            else if(str_table_name == "accessRights"){
 
-               json j_features(DEFAULT_FEATURES); 
-               std::string features = j_features.dump();
+               json j_features(DEFAULT_PERMISSIONS); 
+               std::string permissions = j_features.dump();
                 
-               pSQLCommand += sprintf(pSQLCommand, "(levelName char(32) not null primary key,");
-               pSQLCommand += sprintf(pSQLCommand, "features char(32) null,");
+               pSQLCommand += sprintf(pSQLCommand, "(accessRightName char(32) not null primary key,");
+               pSQLCommand += sprintf(pSQLCommand, "permissions char(32) null,");
                pSQLCommand += sprintf(pSQLCommand, "description text '""');");
-               pSQLCommand += sprintf(pSQLCommand, "insert or ignore into levels(levelName,features,description) ");
-               pSQLCommand += sprintf(pSQLCommand, "values('\"admin\"','%s','\"\"');", features.c_str());
+               pSQLCommand += sprintf(pSQLCommand, "insert or ignore into accessRights(accessRightName,permissions,description) ");
+               pSQLCommand += sprintf(pSQLCommand, "values('\"admin\"','%s','\"\"');", permissions.c_str());
             }
 
             char* pErrMsg = NULL;

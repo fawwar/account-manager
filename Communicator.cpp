@@ -147,33 +147,33 @@ void Communicator::RequestHandlers()
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             },
             {
-                "GET/users/name/features",
-                std::bind(&Communicator::GetUserFeatures, this,
+                "GET/users/name/permissions",
+                std::bind(&Communicator::GetUserPermissions, this,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             },
             {
-                "GET/levels",
-                std::bind(&Communicator::GetLevels, this,
+                "GET/accessRights",
+                std::bind(&Communicator::GetAccessRights, this,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             },
             {
-                "POST/levels",
-                std::bind(&Communicator::AddLevel, this,
+                "POST/accessRights",
+                std::bind(&Communicator::AddAccessRight, this,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             },
             {
-                "GET/levels/name",
-                std::bind(&Communicator::GetLevel, this,
+                "GET/accessRights/name",
+                std::bind(&Communicator::GetAccessRight, this,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             },
             {
-                "PUT/levels/name",
-                std::bind(&Communicator::UpdateLevel, this,
+                "PUT/accessRights/name",
+                std::bind(&Communicator::UpdateAccessRight, this,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             },
             {
-                "DELETE/levels/name",
-                std::bind(&Communicator::DeleteLevel, this,
+                "DELETE/accessRights/name",
+                std::bind(&Communicator::DeleteAccessRight, this,
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)    
             } 
       };
@@ -225,7 +225,7 @@ bool Communicator::CheckURIPath(const std::string &str_check_tag,
         std::string first_half = out_str_uri_path.substr (0, pos + str_check_tag.length());
         //out_str_uri_path.append("name");
 
-        /* ex: name123/features */
+        /* ex: name123/permissions */
         std::string second_half = out_str_uri_path.substr (first_half.length(), out_str_uri_path.length());
 
         out_str_uri_path.clear();
@@ -254,7 +254,7 @@ std::string Communicator::SetURIPath(const std::string &str_request_method,
     
     
     CheckURIPath("/users/", new_uri_path);
-    CheckURIPath("/levels/", new_uri_path);
+    CheckURIPath("/accessRights/", new_uri_path);
 
     LOGGER_S(debug) << "SetURIPath = " << new_uri_path;
    
@@ -419,9 +419,9 @@ Server::connection::status_t Communicator::GetUsers(const Server::request& reque
     LOGGER_S(debug) << "GetUsers = " << m_str_account << "," << m_str_password;
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
 
-    LOGGER_S(debug) << "GetUsers Level = " << level; 
+    LOGGER_S(debug) << "GetUsers AccessRight = " << level; 
     
     if(level == "admin"){
         
@@ -436,7 +436,7 @@ Server::connection::status_t Communicator::GetUsers(const Server::request& reque
     }
     else{
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::GetUsers> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::GetUsers> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err;
@@ -453,7 +453,7 @@ Server::connection::status_t Communicator::AddUser(const Server::request& reques
     LOGGER_S(debug) << "AddUsers = " << m_str_account << "," << m_str_password;  
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
     
     if(level == "admin"){
         
@@ -469,7 +469,7 @@ Server::connection::status_t Communicator::AddUser(const Server::request& reques
     else{
         
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::AddUser> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::AddUser> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err;
@@ -489,7 +489,7 @@ Server::connection::status_t Communicator::GetUser(const Server::request& reques
     if(res){
 
         std::string level;
-        m_accountManager.GetUserLevel(m_str_account, level);
+        m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
         
         if(m_str_account == user_name || level == "admin")
@@ -499,7 +499,7 @@ Server::connection::status_t Communicator::GetUser(const Server::request& reques
             err = gorilla::account::FORBIDDEN;
 
             std::ostringstream oss;
-            oss << "Need To " << user_name <<" Or Adminstrator Level Permissions";
+            oss << "Need To " << user_name <<" Or Adminstrator AccessRight Permissions";
             reply_str = m_error_reply.GetError(oss.str(), "<Communicator::GetUser> FORBIDDEN");
         }
     }
@@ -525,7 +525,7 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
     if(res){
 
         std::string level;
-        m_accountManager.GetUserLevel(m_str_account, level);
+        m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
        
         if(m_str_account == user_name || level == "admin"){
@@ -536,7 +536,7 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
             err = gorilla::account::FORBIDDEN;
 
             std::ostringstream oss;
-            oss << "Need To " << user_name <<" Or Adminstrator Level Permissions";
+            oss << "Need To " << user_name <<" Or Adminstrator AccessRight Permissions";
             reply_str = m_error_reply.GetError(oss.str(), "<Communicator::UpdateUser> FORBIDDEN");
         }
     }
@@ -561,7 +561,7 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
     if(res){
 
         std::string level;
-        m_accountManager.GetUserLevel(m_str_account, level);
+        m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
 
         if(level == "admin"){
@@ -580,7 +580,7 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
             err = gorilla::account::FORBIDDEN;
 
             std::ostringstream oss;
-            oss << "Need To " << user_name <<" Or Adminstrator Level Permissions";
+            oss << "Need To " << user_name <<" Or Adminstrator AccessRight Permissions";
             reply_str = m_error_reply.GetError(oss.str(), "<Communicator::DeleteUser> FORBIDDEN");
         }  
     }
@@ -592,7 +592,7 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
     return (Server::connection::status_t)err;    
 }
 
-Server::connection::status_t Communicator::GetUserFeatures(const Server::request& request, 
+Server::connection::status_t Communicator::GetUserPermissions(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
     gorilla::account::Error err;
@@ -600,38 +600,38 @@ Server::connection::status_t Communicator::GetUserFeatures(const Server::request
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetUserFeatures = " << m_str_account << "," << m_str_password;  
+    LOGGER_S(debug) << "GetUserPermissions = " << m_str_account << "," << m_str_password;  
 
     bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
     if(res){
 
         std::string level;
-        m_accountManager.GetUserLevel(m_str_account, level);
+        m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
 
         std::list<std::string> fields;
         ParseURIFields(uri_instance.query(), fields);
 
         if(m_str_account == user_name || level == "admin")
-            err = m_accountManager.GetUserFeatures(user_name, fields, reply_str);
+            err = m_accountManager.GetUserPermissions(user_name, fields, reply_str);
         else{
 
             err = gorilla::account::FORBIDDEN;
 
             std::ostringstream oss;
-            oss << "Need To " << user_name <<" Or Adminstrator Level Permissions";
-            reply_str = m_error_reply.GetError(oss.str(), "<Communicator::GetUserFeatures> FORBIDDEN");
+            oss << "Need To " << user_name <<" Or Adminstrator AccessRight Permissions";
+            reply_str = m_error_reply.GetError(oss.str(), "<Communicator::GetUserPermissions> FORBIDDEN");
         }
     }
     else{
        err = gorilla::account::UNAUTHORIZED; 
-       reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetUserFeatures> UNAUTHORIZED");
+       reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetUserPermissions> UNAUTHORIZED");
     }
 
     return (Server::connection::status_t)err;    
 }
 
-Server::connection::status_t Communicator::GetLevels(const Server::request& request, 
+Server::connection::status_t Communicator::GetAccessRights(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
     gorilla::account::Error err;
@@ -639,30 +639,30 @@ Server::connection::status_t Communicator::GetLevels(const Server::request& requ
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetLevels = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "GetAccessRights = " << m_str_account << "," << m_str_password;
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
     if(level == "admin"){
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
-            err = m_accountManager.GetLevels(reply_str);
+            err = m_accountManager.GetAccessRights(reply_str);
         }
         else{
            err = gorilla::account::UNAUTHORIZED;
-           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetLevels> UNAUTHORIZED");
+           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetAccessRights> UNAUTHORIZED");
         }
     }
     else{
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::GetLevels> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::GetAccessRights> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err;    
 }
 
-Server::connection::status_t Communicator::AddLevel(const Server::request& request, 
+Server::connection::status_t Communicator::AddAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
     gorilla::account::Error err;
@@ -670,33 +670,33 @@ Server::connection::status_t Communicator::AddLevel(const Server::request& reque
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "AddLevel = " << m_str_account << "," << m_str_password; 
+    LOGGER_S(debug) << "AddAccessRight = " << m_str_account << "," << m_str_password; 
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
     
     if(level == "admin"){
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
-            err = m_accountManager.AddLevel(request_str, reply_str);
+            err = m_accountManager.AddAccessRight(request_str, reply_str);
         }
         else{
            err = gorilla::account::UNAUTHORIZED; 
-           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::AddLevel> UNAUTHORIZED");
+           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::AddAccessRight> UNAUTHORIZED");
         }
     }
     else{
         
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::AddLevel> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::AddAccessRight> FORBIDDEN");
     }
 
     
     return (Server::connection::status_t)err; 
 }
 
-Server::connection::status_t Communicator::GetLevel(const Server::request& request, 
+Server::connection::status_t Communicator::GetAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
     gorilla::account::Error err;
@@ -704,34 +704,34 @@ Server::connection::status_t Communicator::GetLevel(const Server::request& reque
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetLevel = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "GetAccessRight = " << m_str_account << "," << m_str_password;
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
     
     if(level == "admin"){
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
-            std::string level_name = GetName("/levels/", uri_instance.path());
-            err = m_accountManager.GetLevel(level_name, reply_str);
+            std::string level_name = GetName("/accessRights/", uri_instance.path());
+            err = m_accountManager.GetAccessRight(level_name, reply_str);
         }
         else{
            err = gorilla::account::UNAUTHORIZED; 
-           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetLevel> UNAUTHORIZED");
+           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetAccessRight> UNAUTHORIZED");
         }
     }
     else{
         
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission",  "<Communicator::GetLevel> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission",  "<Communicator::GetAccessRight> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err; 
 }
 
-Server::connection::status_t Communicator::UpdateLevel(const Server::request& request, 
+Server::connection::status_t Communicator::UpdateAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
     gorilla::account::Error err;
@@ -739,34 +739,34 @@ Server::connection::status_t Communicator::UpdateLevel(const Server::request& re
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "UpdateLevel = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
     
     if(level == "admin"){
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
-            std::string level_name = GetName("/levels/", uri_instance.path());
-            err = m_accountManager.UpdateLevel(level_name, request_str, reply_str);
+            std::string level_name = GetName("/accessRights/", uri_instance.path());
+            err = m_accountManager.UpdateAccessRight(level_name, request_str, reply_str);
         }
         else{
            err = gorilla::account::UNAUTHORIZED; 
-           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::UpdateLevel> UNAUTHORIZED");
+           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::UpdateAccessRight> UNAUTHORIZED");
         }
     }
     else{
         
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::UpdateLevel> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::UpdateAccessRight> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err;     
 }
 
-Server::connection::status_t Communicator::DeleteLevel(const Server::request& request, 
+Server::connection::status_t Communicator::DeleteAccessRight(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
     gorilla::account::Error err;
@@ -774,28 +774,28 @@ Server::connection::status_t Communicator::DeleteLevel(const Server::request& re
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "UpdateLevel = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
 
     std::string level;
-    m_accountManager.GetUserLevel(m_str_account, level);
+    m_accountManager.GetUserAccessRight(m_str_account, level);
     
     if(level == "admin"){
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
-            std::string level_name = GetName("/levels/", uri_instance.path());
-            err = m_accountManager.DeleteLevel(level_name, reply_str);
+            std::string level_name = GetName("/accessRights/", uri_instance.path());
+            err = m_accountManager.DeleteAccessRight(level_name, reply_str);
         }
         else{
            err = gorilla::account::UNAUTHORIZED; 
-           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::DeleteLevel> UNAUTHORIZED");
+           reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::DeleteAccessRight> UNAUTHORIZED");
         }
     }
     else{
         
         err = gorilla::account::FORBIDDEN;
-        reply_str = m_error_reply.GetError("Need To Administrator Level Permission", "<Communicator::DeleteLevel> FORBIDDEN");
+        reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::DeleteAccessRight> FORBIDDEN");
     }
 
     return (Server::connection::status_t)err;

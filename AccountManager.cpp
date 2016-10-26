@@ -6,7 +6,7 @@
 #include "AccountManager.h"
 #include "AccountDB.h"
 #include "UserInfo.h"
-#include "LevelInfo.h"
+#include "AccessRightInfo.h"
 
 #include "hash.h"
 #include "./import/json-develop/json_tools.hpp"
@@ -29,12 +29,12 @@ namespace gorilla {
         {
         }
 
-        bool AccountManager::GetUserLevel(const std::string str_account, std::string& out_str_level)
+        bool AccountManager::GetUserAccessRight(const std::string str_account, std::string& out_str_access_right)
         {
             auto it = m_map_users.find(str_account);
             if (it != m_map_users.end()){
 
-                out_str_level = it->second->Level();
+                out_str_access_right = it->second->AccessRight();
                 return true;
             }
 
@@ -121,9 +121,9 @@ namespace gorilla {
             Error errorCode(INTERNAL_SERVER_ERROR); 
 
             /* check level name exist in level map */
-            if(!IsLevelNameExist(str_user_info)){
+            if(!IsAccessRightNameExist(str_user_info)){
 
-                out_str_reply = m_error_reply.GetError("LevelName Is Not Exist","<AccountManager::AddUser> FORBIDDEN");
+                out_str_reply = m_error_reply.GetError("AccessRightName Is Not Exist","<AccountManager::AddUser> FORBIDDEN");
                 return FORBIDDEN;
             }
                 
@@ -187,9 +187,9 @@ namespace gorilla {
             Error errorCode(INTERNAL_SERVER_ERROR); 
 
             /* check level name exist in level map */
-            if(!IsLevelNameExist(str_user_info)){
+            if(!IsAccessRightNameExist(str_user_info)){
 
-                out_str_reply = m_error_reply.GetError("LevelName Is Not Exist","<AccountManager::UpdateUser> FORBIDDEN");
+                out_str_reply = m_error_reply.GetError("AccessRightName Is Not Exist","<AccountManager::UpdateUser> FORBIDDEN");
                 return FORBIDDEN;
             }
 
@@ -203,9 +203,9 @@ namespace gorilla {
                      /* admin account only change password */   
                      if(str_account == "admin"){
 
-                        if(IsKeyExsist(info, "account") || IsKeyExsist(info, "levelName")){
+                        if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
 
-                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or LevelName", 
+                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
                                 "<AccountManager::UpdateUser> FORBIDDEN");
                             
                             return FORBIDDEN;
@@ -229,9 +229,9 @@ namespace gorilla {
                  else{
    
                     /* user account only change password */
-                    if(IsKeyExsist(info, "account") || IsKeyExsist(info, "levelName")){
+                    if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
 
-                        out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or LevelName",
+                        out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
                             "<AccountManager::UpdateUser> FORBIDDEN");
                         
                         return FORBIDDEN;
@@ -282,7 +282,7 @@ namespace gorilla {
             return errorCode;
         }
 
-        Error AccountManager::GetUserFeatures(const std::string &str_account, const std::list<std::string>& lst_fields,
+        Error AccountManager::GetUserPermissions(const std::string &str_account, const std::list<std::string>& lst_fields,
                 std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR);
@@ -291,28 +291,28 @@ namespace gorilla {
             auto it_user = m_map_users.find(str_account.c_str());
             if (it_user != m_map_users.end()){
 
-                std::string level_name = it_user->second->Level();
+                std::string level_name = it_user->second->AccessRight();
                 uniquelock.unlock();
 
                 /* find level name featues */
-                std::lock_guard<std::mutex> autoLock(m_mux_levels);
-                auto it_level = m_map_levels.find(level_name.c_str());
-                if (it_level != m_map_levels.end()){
+                std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+                auto it_level = m_map_access_rights.find(level_name.c_str());
+                if (it_level != m_map_access_rights.end()){
 
-                    out_str_reply = it_level->second->Features(lst_fields);
+                    out_str_reply = it_level->second->Permissions(lst_fields);
                     errorCode = SUCCESS_RESPONSE;           
                 } 
             }
             else{
 
                 errorCode = NAME_NOT_FOUND; 
-                out_str_reply = m_error_reply.GetError("User Name Not Found","<AccountManager::GetUserFeatures> NAME_NOT_FOUND");
+                out_str_reply = m_error_reply.GetError("User Name Not Found","<AccountManager::GetUserPermissions> NAME_NOT_FOUND");
             }
 
             return errorCode;
         }
 
-        Error AccountManager::GetLevels(std::string &out_str_reply)
+        Error AccountManager::GetAccessRights(std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR);
 
@@ -320,8 +320,8 @@ namespace gorilla {
             json::array_t j_level_array;
             json j_levels;
             
-            std::lock_guard<std::mutex> autoLock(m_mux_levels);
-            for(auto& it : m_map_levels){
+            std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+            for(auto& it : m_map_access_rights){
 
                 json j_level = it.second->Json();
                 j_level_array.push_back(j_level);
@@ -338,44 +338,44 @@ namespace gorilla {
             else{
     
                 errorCode = NAME_NOT_FOUND; 
-                out_str_reply = m_error_reply.GetError("Haven't Any Level","<AccountManager::GetLevels> NAME_NOT_FOUND");
+                out_str_reply = m_error_reply.GetError("Haven't Any AccessRight","<AccountManager::GetAccessRights> NAME_NOT_FOUND");
             }
 
             return errorCode;
         }
 
-        Error AccountManager::AddLevel(const std::string &str_level_info, std::string &out_str_reply)
+        Error AccountManager::AddAccessRight(const std::string &str_access_right_info, std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR); 
 
-            if(!IsLevelNameVaild(str_level_info, out_str_reply)){
+            if(!IsAccessRightNameVaild(str_access_right_info, out_str_reply)){
 
-                out_str_reply = m_error_reply.GetError(out_str_reply, "<AccountManager::AddLevel> FORBIDDEN");
+                out_str_reply = m_error_reply.GetError(out_str_reply, "<AccountManager::AddAccessRight> FORBIDDEN");
                 return FORBIDDEN;
             }
 
-            LOGGER_S(info) << "AddLevel" << str_level_info;
+            LOGGER_S(info) << "AddAccessRight" << str_access_right_info;
 
-            auto level = std::make_shared<Level>(str_level_info);
+            auto level = std::make_shared<AccessRight>(str_access_right_info);
             {            
-                std::lock_guard<std::mutex> autoLock(m_mux_levels);
-                std::string levelName = level->LevelName();
+                std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+                std::string accessRightName = level->AccessRightName();
 
                 int sql_error;
-                if(!level->AddLevel(sql_error)){
+                if(!level->AddAccessRight(sql_error)){
                      
                     if((SQLError)sql_error == CONSTRAINT){
-                        out_str_reply = m_error_reply.GetError("DataBase Have This LevelName", "<AccountManager::AddLevel> FORBIDDEN");
+                        out_str_reply = m_error_reply.GetError("DataBase Have This AccessRightName", "<AccountManager::AddAccessRight> FORBIDDEN");
                         errorCode = FORBIDDEN;
                     }
                     else
-                        out_str_reply = m_error_reply.GetError("Insert To Database Error","<AccountManager::AddLevel> INTERNAL_SERVER_ERROR");
+                        out_str_reply = m_error_reply.GetError("Insert To Database Error","<AccountManager::AddAccessRight> INTERNAL_SERVER_ERROR");
                     
                     
                     return errorCode;      
                 }
 
-                m_map_levels.insert(std::pair<std::string, std::shared_ptr<Level> >(levelName, level));
+                m_map_access_rights.insert(std::pair<std::string, std::shared_ptr<AccessRight> >(accessRightName, level));
                 out_str_reply = level->JsonString();
                 errorCode = SUCCESS_RESPONSE;           
             }
@@ -383,13 +383,13 @@ namespace gorilla {
             return errorCode;
         }
 
-        Error AccountManager::GetLevel(const std::string &str_level_name, std::string &out_str_reply)
+        Error AccountManager::GetAccessRight(const std::string &str_access_right_name, std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR); 
-            std::lock_guard<std::mutex> autoLock(m_mux_levels);
+            std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
 
-            auto it = m_map_levels.find(str_level_name.c_str());
-            if (it != m_map_levels.end()){
+            auto it = m_map_access_rights.find(str_access_right_name.c_str());
+            if (it != m_map_access_rights.end()){
 
                 errorCode = SUCCESS_RESPONSE;
                 out_str_reply = it->second->JsonString();
@@ -397,95 +397,95 @@ namespace gorilla {
             else{
                 
                 errorCode = NAME_NOT_FOUND; 
-                out_str_reply = m_error_reply.GetError("Level Name Not Found", "<AccountManager::GetLevel> NAME_NOT_FOUND");
+                out_str_reply = m_error_reply.GetError("AccessRight Name Not Found", "<AccountManager::GetAccessRight> NAME_NOT_FOUND");
             }
                  
             return errorCode;
         }
 
-        Error AccountManager::UpdateLevel(const std::string &str_level_name, const std::string &str_level_info,
+        Error AccountManager::UpdateAccessRight(const std::string &str_access_right_name, const std::string &str_access_right_info,
                 std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR); 
-            std::unique_lock<std::mutex> uniquelock(m_mux_levels);
+            std::unique_lock<std::mutex> uniquelock(m_mux_access_rights);
 
-            auto it = m_map_levels.find(str_level_name.c_str());
-            if (it != m_map_levels.end()){
+            auto it = m_map_access_rights.find(str_access_right_name.c_str());
+            if (it != m_map_access_rights.end()){
 
-                json info = json::parse(str_level_info); 
+                json info = json::parse(str_access_right_info); 
                 std::string level;
 
                 /* check have level name to change */
-                if(IsKeyExsist(info, "levelName", level)){
+                if(IsKeyExsist(info, "accessRightName", level)){
 
                    /* check level name have be using */ 
                    uniquelock.unlock();
-                   if(!IsLevelNameBeUsing(str_level_name)){
+                   if(!IsAccessRightNameBeUsing(str_access_right_name)){
 
                        uniquelock.lock();
 
                        /* if account change reset map */   
-                       if(level != str_level_name){   
+                       if(level != str_access_right_name){   
 
                            /* check userinfo vaild */   
-                          if(!IsLevelNameVaild(str_level_info, out_str_reply)){
+                          if(!IsAccessRightNameVaild(str_access_right_info, out_str_reply)){
 
                                uniquelock.unlock();
                                return FORBIDDEN;
                           }
                           
-                          out_str_reply = it->second->UpdateLevel(str_level_info); 
-                          m_map_levels.insert(std::pair<std::string, std::shared_ptr<Level> >(it->second->LevelName(), it->second));
-                          m_map_levels.erase(it);
+                          out_str_reply = it->second->UpdateAccessRight(str_access_right_info); 
+                          m_map_access_rights.insert(std::pair<std::string, std::shared_ptr<AccessRight> >(it->second->AccessRightName(), it->second));
+                          m_map_access_rights.erase(it);
                        }  
                    }
                    else{
 
                        errorCode = FORBIDDEN; 
-                       out_str_reply = m_error_reply.GetError("Level Name Be Using", "<AccountManager::UpdateLevel> FORBIDDEN");
+                       out_str_reply = m_error_reply.GetError("AccessRight Name Be Using", "<AccountManager::UpdateAccessRight> FORBIDDEN");
                        return errorCode;    
                    }
                 }
                 else
-                    out_str_reply = it->second->UpdateLevel(str_level_info);
+                    out_str_reply = it->second->UpdateAccessRight(str_access_right_info);
 
                 errorCode = SUCCESS_RESPONSE;
             }
             else{
                 
                 errorCode = NAME_NOT_FOUND; 
-                out_str_reply = m_error_reply.GetError("Level Name Not Found", "<AccountManager::UpdateLevel> NAME_NOT_FOUND");
+                out_str_reply = m_error_reply.GetError("AccessRight Name Not Found", "<AccountManager::UpdateAccessRight> NAME_NOT_FOUND");
             }
                  
             return errorCode;    
         }
 
-        Error AccountManager::DeleteLevel(const std::string &str_level_name, std::string &out_str_reply)
+        Error AccountManager::DeleteAccessRight(const std::string &str_access_right_name, std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR); 
-            std::unique_lock<std::mutex> uniquelock(m_mux_levels);
+            std::unique_lock<std::mutex> uniquelock(m_mux_access_rights);
 
-            auto it = m_map_levels.find(str_level_name.c_str());
-            if (it != m_map_levels.end()){
+            auto it = m_map_access_rights.find(str_access_right_name.c_str());
+            if (it != m_map_access_rights.end()){
 
                 uniquelock.unlock();
-                if(!IsLevelNameBeUsing(str_level_name)){
+                if(!IsAccessRightNameBeUsing(str_access_right_name)){
 
                     uniquelock.lock();
-                    it->second->DeleteLevel();
-                    m_map_levels.erase(it);
+                    it->second->DeleteAccessRight();
+                    m_map_access_rights.erase(it);
                     errorCode = PET_DELETE;
                 }
                 else{
        
                     errorCode = FORBIDDEN;
-                    out_str_reply = m_error_reply.GetError("Level Name Be Using", "<AccountManager::UpdateLevel> FORBIDDEN");
+                    out_str_reply = m_error_reply.GetError("AccessRight Name Be Using", "<AccountManager::UpdateAccessRight> FORBIDDEN");
                 }
             }
             else{
   
                 errorCode = NAME_NOT_FOUND; 
-                out_str_reply = m_error_reply.GetError("Level Name Not Found", "<AccountManager::UpdateLevel> NAME_NOT_FOUND");
+                out_str_reply = m_error_reply.GetError("AccessRight Name Not Found", "<AccountManager::UpdateAccessRight> NAME_NOT_FOUND");
             }
                  
             return errorCode;  
@@ -510,9 +510,9 @@ namespace gorilla {
 
             for(auto& it : lst_json_level_info){
 
-                auto level = std::make_shared<Level>(it);
-                std::string level_name = level->LevelName(); 
-                m_map_levels.insert(std::pair<std::string, std::shared_ptr<Level> >(level_name, level)); 
+                auto level = std::make_shared<AccessRight>(it);
+                std::string level_name = level->AccessRightName(); 
+                m_map_access_rights.insert(std::pair<std::string, std::shared_ptr<AccessRight> >(level_name, level)); 
             } 
         }
 
@@ -558,20 +558,20 @@ namespace gorilla {
             return vaild;
         }
 
-        bool AccountManager::IsLevelNameVaild(const std::string &str_user_info, std::string &out_str_reply)
+        bool AccountManager::IsAccessRightNameVaild(const std::string &str_user_info, std::string &out_str_reply)
         {
             bool vaild(true);
 
             std::string level;
             json user_info = json::parse(str_user_info);
-            IsKeyExsist(user_info, "levelName", level);
+            IsKeyExsist(user_info, "accessRightName", level);
 
             LOGGER_S(info) << level;
            
             if (!boost::regex_match (level, boost::regex("^[\x21-\x7F]*$"))){
                 
-                LOGGER_S(debug) << "User LevelName Invaild";
-                out_str_reply += "LevelName Invaild. ";
+                LOGGER_S(debug) << "User AccessRightName Invaild";
+                out_str_reply += "AccessRightName Invaild. ";
                 vaild = false;
             }
             
@@ -586,36 +586,36 @@ namespace gorilla {
                 vaild = false;
             if(!IsPasswordVaild(str_user_info, out_str_reply))
                 vaild = false;
-            if(!IsLevelNameVaild(str_user_info, out_str_reply))
+            if(!IsAccessRightNameVaild(str_user_info, out_str_reply))
                 vaild = false;
             
             return vaild;
             
         }
 
-        bool AccountManager::IsLevelNameExist(const std::string &str_user_info)
+        bool AccountManager::IsAccessRightNameExist(const std::string &str_user_info)
         {
-            std::string levelName;
+            std::string accessRightName;
             json user_info = json::parse(str_user_info);
 
-            /* web reply no levelName, so use exsit levelName to do */
-            if(!IsKeyExsist(user_info, "levelName", levelName)) 
+            /* web reply no accessRightName, so use exsit accessRightName to do */
+            if(!IsKeyExsist(user_info, "accessRightName", accessRightName)) 
                 return true;
             
-            std::lock_guard<std::mutex> autoLock(m_mux_levels);
-            auto it = m_map_levels.find(levelName.c_str());
-            if (it != m_map_levels.end())
+            std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+            auto it = m_map_access_rights.find(accessRightName.c_str());
+            if (it != m_map_access_rights.end())
                 return true;
             
             return false;
         }
 
-        bool AccountManager::IsLevelNameBeUsing(const std::string &str_level_name)
+        bool AccountManager::IsAccessRightNameBeUsing(const std::string &str_access_right_name)
         {
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             for(auto& it : m_map_users){
 
-                if(str_level_name == it.second->Level())
+                if(str_access_right_name == it.second->AccessRight())
                     return true;
             }
 

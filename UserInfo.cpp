@@ -42,9 +42,9 @@ namespace gorilla {
             return m_str_encrypted_password;    
         }
 
-        std::string User::Level() const
+        std::string User::AccessRight() const
         {
-            return m_str_level;
+            return m_str_access_right;
         }
         
         json User::Json() const
@@ -64,13 +64,13 @@ namespace gorilla {
 
         std::string User::UpdateUser(const std::string &str_user_info)
         {
-             
-
+            std::string str_account = m_str_account;
+            
             SetUserInfo(str_user_info);
             DB_INSTANCE.Update(AccountDB::USERS, UPDATE_KEY_FIELD,
-                m_str_account, m_json_response_user_info);
+                str_account, m_json_response_user_info);
 
-            LOGGER_S(info) << "UpdateUser = " << m_str_account << " > " <<  str_user_info << ", " << m_str_level; 
+            LOGGER_S(info) << "UpdateUser = " << str_account << " > " <<  str_user_info << ", " << m_str_access_right; 
 
             return JsonString();
         }
@@ -99,7 +99,7 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
 
             IsKeyExsist(user_info, "account", m_str_account);
-            IsKeyExsist(user_info, "levelName", m_str_level);
+            IsKeyExsist(user_info, "accessRightName", m_str_access_right);
             IsKeyExsist(user_info, "encryptedPassword", m_str_encrypted_password);
             IsKeyExsist(user_info, "description", m_str_description);
 
@@ -114,7 +114,7 @@ namespace gorilla {
         {
             m_json_response_user_info["account"] = m_str_account;
             m_json_response_user_info["encryptedPassword"] = m_str_encrypted_password;
-            m_json_response_user_info["levelName"] = m_str_level; 
+            m_json_response_user_info["accessRightName"] = m_str_access_right; 
             m_json_response_user_info["description"] = m_str_description;
 
             //LOGGER_S(info) << "m_json_response_user_info= " << m_json_response_user_info;
