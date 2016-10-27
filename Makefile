@@ -1,4 +1,4 @@
-TARGET    = account-server
+TARGET    = account-manager
 
 SRCDIR    = $(PWD)
 LIBDIR    = $(PWD)/import
