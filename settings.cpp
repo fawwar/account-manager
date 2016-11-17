@@ -11,7 +11,7 @@
 
 Settings::Settings(const std::string& path)
     : server_ip_("0.0.0.0")
-    , server_port_(8000)
+    , server_port_(8030)
     , server_username_("gorilla")
     , server_password_("gorilladev")
     , certificate_chain_file_path_("server.pem")
