@@ -2,8 +2,8 @@ TARGET    = account-manager
 
 SRCDIR    = $(PWD)
 LIBDIR    = $(PWD)/import
-OUTDIR    = $(PWD)/out
-OBJDIR    = $(PWD)/out/obj
+OUTDIR    = $(PWD)/output
+OBJDIR    = $(PWD)/.obj
 
 
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
@@ -80,6 +80,5 @@ prebuild:
 	-mkdir -p $(OUTDIR)
 	-mkdir -p $(OBJDIR)
 	-cp -a configs/* $(OUTDIR)
-	
 
 -include $(OBJS:.o=.d)
