@@ -4,6 +4,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/uuid/sha1.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "hash_codec.hpp"
 #include "gorilla/log/logger.h"
@@ -361,7 +362,7 @@ void Communicator::GetAuthorization(const Server::request& request,
     
     for (const auto& header : request.headers) {
 
-            if(header.name == "Authorization"){
+            if(boost::iequals(header.name, "Authorization")){
 
                 const std::string FIELD = "Basic ";
                 std::string authority = header.value;
