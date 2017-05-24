@@ -527,7 +527,7 @@ namespace gorilla {
 
             LOGGER_S(info) << account;
            
-            if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]*$"))){
+            if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]+$"))){
                 
                 LOGGER_S(debug) << "User Account Invaild";
                 out_str_reply += "Account Invaild. ";
@@ -548,7 +548,7 @@ namespace gorilla {
 
             LOGGER_S(info) << password;
            
-            if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]*$"))){
+            if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
                 
                 LOGGER_S(debug) << "User Password Invaild";
                 out_str_reply += "Password Invaild. ";
