@@ -1,9 +1,5 @@
 #include <sstream>
 #include <chrono>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/uuid/sha1.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include "hash_codec.hpp"
@@ -15,8 +11,8 @@
 using namespace gorilla::log;
 namespace
 {
-	const int CONNECTION_READ_TIMEOUT_MS = 10000;
-    const int CONNECTION_WRITE_TIMEOUT_MS = 10000;
+  const int CONNECTION_READ_TIMEOUT_MS = 10000;
+  const int CONNECTION_WRITE_TIMEOUT_MS = 10000;
 }
 
 

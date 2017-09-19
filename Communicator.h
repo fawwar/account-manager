@@ -18,10 +18,10 @@
 // self
 #include "AccountManager.h"
 
+#include "LegacyHttp.h"
 
 class Settings;
 struct RequestHandler;
-typedef boost::network::http::async_server<RequestHandler> Server;
 
 class Communicator
 {

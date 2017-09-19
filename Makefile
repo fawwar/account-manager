@@ -12,11 +12,18 @@ SRCS     += $(wildcard $(LIBDIR)/gorilla/utility/*.cpp)
 CFLAGS   += -I$(LIBDIR)/gorilla/utility
 SRCS     += $(wildcard $(LIBDIR)/hash/*.c)
 CFLAGS   += -I$(LIBDIR)/hash
+SRCS     += $(wildcard $(LIBDIR)/jsoncpp/jsoncpp.cpp)
+CFLAGS   += -I$(LIBDIR)/jsoncpp
 
 LDFLAGS  += -licudata -licui18n -licutu -licuuc
 
-CXXFLAGS += -I$(LIBDIR)/ 
+CXXFLAGS += -I$(LIBDIR)
 LDFLAGS  += -lcurl -lsqlite3
+
+CXXFLAGS += -I$(LIBDIR)/websocketpp/include
+CXXFLAGS += -I$(LIBDIR)/gorilla/http/include
+LDFLAGS  += -L$(LIBDIR)/gorilla/http/lib
+LDFLAGS  += -lgorilla_http
 
 # Static link cpp-network-libs
 CPPFLAGS += -DASIO_HEADER_ONLY -DBOOST_NETWORK_DEBUG
@@ -36,6 +43,8 @@ LDFLAGS  += -lcrypto -lssl
 
 CXXFLAGS += -std=c++11
 LDFLAGS  += -lpthread
+
+LDFLAGS  += -lcurl 
 
 LIBPATH   = .
 

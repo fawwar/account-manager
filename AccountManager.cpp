@@ -192,41 +192,36 @@ namespace gorilla {
                 out_str_reply = m_error_reply.GetError("AccessRightName Is Not Exist","<AccountManager::UpdateUser> FORBIDDEN");
                 return FORBIDDEN;
             }
-
             json info = json::parse(str_user_info); 
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             auto it = m_map_users.find(str_account.c_str());
             if (it != m_map_users.end()){
 
-                 if(str_login_level == "admin"){
-
+                 if(str_login_level == "admin" && str_account != "admin"){                     
                      /* admin account only change password */   
+                     /*
                      if(str_account == "admin"){
-
                         if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
-
                             out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
                                 "<AccountManager::UpdateUser> FORBIDDEN");
                             
                             return FORBIDDEN;
                         }
                      }
-                    
-                     /* check userinfo vaild */   
+                     */
+                     /* check userinfo vaild */
                      if(!IsUserInfoVaild(str_user_info, out_str_reply))
                         return FORBIDDEN;
-
                      /* update userinfo */
                      errorCode = SUCCESS_RESPONSE;   
                      out_str_reply = it->second->UpdateUser(str_user_info);
-
                      /* if account change reset map */   
                      if(it->second->Account() != str_account){   
                         m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(it->second->Account(), it->second));
                         m_map_users.erase(it);
                      }
                  }
-                 else{
+                 else{ //admin only can modify password
    
                     /* user account only change password */
                     if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
@@ -526,7 +521,7 @@ namespace gorilla {
             IsKeyExsist(user_info, "account", account);
 
             LOGGER_S(info) << account;
-           
+            
             if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]+$"))){
                 
                 LOGGER_S(debug) << "User Account Invaild";

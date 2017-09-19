@@ -102,6 +102,8 @@ namespace gorilla {
             IsKeyExsist(user_info, "accessRightName", m_str_access_right);
             IsKeyExsist(user_info, "encryptedPassword", m_str_encrypted_password);
             IsKeyExsist(user_info, "description", m_str_description);
+            //IsKeyExsist(user_info, "display_name", m_str_display_name);
+            //IsKeyExsist(user_info, "photo_link", m_str_photo_link);
 
             if(IsKeyExsist(user_info, "password", m_str_password)){
                 m_str_encrypted_password = hash::TextEncodeHash(m_str_password); 
