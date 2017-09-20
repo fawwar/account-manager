@@ -1,21 +1,10 @@
 #include <stdio.h>
 #include <atomic>
-#include <chrono>
-#include <functional>
 #include <iostream>
-#include <list>
 #include <memory>
-#include <mutex>
-
-// Required by cpp-netlib v1.1.2
-#include <boost/asio.hpp>
-#include <boost/asio/ssl.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-
 #include "LegacyHttp.h"
-
 //common
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
@@ -60,7 +49,7 @@ int main(int argc, char* argv[])
         pKeeper->add_console_logger();
         config.configure_with(boost::filesystem::path(kDefaultSettingPath));
         
-        LOGGER_S(info)<< "Account Server Start ... ";
+        LOGGER_S(info)<< "Account Server Started ... ";
     
         /* intial */
         boost::thread_group thread_group;
@@ -102,6 +91,6 @@ int main(int argc, char* argv[])
         LOGGER() << "Abnormal termination - exception:" << e.what();
         return -1;
     }
-    LOGGER()<< "IOT Server Finish ... \n";
+    LOGGER()<< "Account Server Finished ... \n";
     return 0;
 }

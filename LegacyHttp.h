@@ -1,5 +1,7 @@
 #pragma once
 #include <http/Lib.h>
+#include <atomic>
+#include <list>
 #include <mutex>
 #include <condition_variable>
 

@@ -45,8 +45,8 @@ namespace gorilla {
             std::string m_str_encrypted_password;
             std::string m_str_access_right;
             std::string m_str_description;
-            std::string m_str_display_name;
-            std::string m_str_photo_link;
+            //std::string m_str_name;
+            //std::string m_str_photo_link;
 
             bool IsInfoExsist(const json& j_user_info, const std::string& str_key,
                 std::string& out_srt_info);

@@ -12,6 +12,7 @@
 
 
 static const std::string DB_PATH = "/opt/ivar/var/";
+//static const std::string DB_PATH = "/tmp/";
 static const std::string DB_NAME = "account.db";
 static const std::vector<std::string> TABLE_NAME = {"users", "accessRights"};
 static const int SQL_CMD_LEN = 1024;
@@ -183,7 +184,7 @@ namespace gorilla {
 
         bool AccountDB::OpenDB()
         { 
-            if (sqlite3_open_v2(m_strDBFilePath.c_str(), &m_pSQLDB, SQLITE_OPEN_READWRITE, NULL) != SQLITE_OK){
+            if (sqlite3_open_v2(m_strDBFilePath.c_str(), &m_pSQLDB, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL) != SQLITE_OK){
                 
                 LOGGER_S(error) << "Open Database Error: " << m_strDBFilePath.c_str() << ":" << sqlite3_errmsg(m_pSQLDB); 
                 return false;
@@ -215,6 +216,8 @@ namespace gorilla {
                pSQLCommand += sprintf(pSQLCommand, "(account char(32) not null primary key,");
                pSQLCommand += sprintf(pSQLCommand, "encryptedPassword char(128) null,");
                pSQLCommand += sprintf(pSQLCommand, "accessRightName char(16) null,");
+               //pSQLCommand += sprintf(pSQLCommand, "name char(128) default '\"\"',");
+               //pSQLCommand += sprintf(pSQLCommand, "photoLink char(128) default '\"\"',");
                pSQLCommand += sprintf(pSQLCommand, "description text '""');");
                pSQLCommand += sprintf(pSQLCommand, "insert or ignore into users ");
                pSQLCommand += sprintf(pSQLCommand, "(account,encryptedPassword,accessRightName,description) ");

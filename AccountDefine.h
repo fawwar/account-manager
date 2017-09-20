@@ -24,7 +24,7 @@ namespace gorilla {
         {
             CONSTRAINT = 19
         };
-
+        /*
         const json::object_t DEFAULT_USER
         {
             {"account", ""}, 
@@ -32,13 +32,14 @@ namespace gorilla {
             {"accessRightName", ""},
             {"description", ""}
         };
-
+        */
         const json::object_t DEFAULT_RESPONSE_USER
         {
             {"account", ""}, 
             {"encryptedPassword", ""}, 
             {"accessRightName", ""},
             {"description", ""}
+            //{"name", ""}
         };
 
         const json::object_t DISABLE_IVAR_PERMISSIONS
