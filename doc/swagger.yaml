@@ -162,7 +162,7 @@ paths:
     put:
       tags:
         - user
-      description: Administrator AccessRight Can Change Account、AccessRight、Password, But Cann,t Change "admin" Account. The Other AccessRights Only Change Password.
+      description: Administrator AccessRight Can Change Account、AccessRight、Password, But Cannot Change "admin" Account, AccessRight(Password change is possible. That means only description, password, name is allowed in JSON body). The Other AccessRights Only Change Password.
       operationId: updateUser
       parameters:
         - $ref: '#/parameters/userName'
@@ -445,6 +445,8 @@ definitions:
         type: string
       description:
         type: string
+      name:
+        type: string
         
   responseUser:
    type: object
@@ -456,6 +458,8 @@ definitions:
       accessRightName:
         type: string
       description:
+        type: string
+      name:
         type: string 
   
   updateUser:
@@ -466,6 +470,10 @@ definitions:
       password:
         type: string  
       accessRightName:
+        type: string
+      name:
+        type: string
+      description:
         type: string
           
         

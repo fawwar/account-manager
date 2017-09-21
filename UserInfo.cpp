@@ -102,7 +102,7 @@ namespace gorilla {
             IsKeyExsist(user_info, "accessRightName", m_str_access_right);
             IsKeyExsist(user_info, "encryptedPassword", m_str_encrypted_password);
             IsKeyExsist(user_info, "description", m_str_description);
-            //IsKeyExsist(user_info, "name", m_str_name);
+            IsKeyExsist(user_info, "name", m_str_name);
             //IsKeyExsist(user_info, "photo_link", m_str_photo_link);
 
             if(IsKeyExsist(user_info, "password", m_str_password)){
@@ -118,7 +118,7 @@ namespace gorilla {
             m_json_response_user_info["encryptedPassword"] = m_str_encrypted_password;
             m_json_response_user_info["accessRightName"] = m_str_access_right; 
             m_json_response_user_info["description"] = m_str_description;
-            //m_json_response_user_info["name"] = m_str_name;
+            m_json_response_user_info["name"] = m_str_name;
 
             //LOGGER_S(info) << "m_json_response_user_info= " << m_json_response_user_info;
         }

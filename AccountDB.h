@@ -57,9 +57,11 @@ namespace gorilla {
 
             bool OpenDB();
             
-            void CloseDB(SQLiteDB* pSQLiteDB);
-
-            void CreateTable(SQLiteDB* p_SQLDB, const std::string& str_table_name);
+            void CloseDB();
+            
+            void AdjustTable(const std::string& str_table_name);
+            
+            void CreateTable(const std::string& str_table_name);
 
             void SetSQLInsertTableCmd(const json& json_obj, CommandType e_cmd_type,
                 char*& out_cmd);

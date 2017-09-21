@@ -12,7 +12,6 @@
 
 
 static const std::string DB_PATH = "/opt/ivar/var/";
-//static const std::string DB_PATH = "/tmp/";
 static const std::string DB_NAME = "account.db";
 static const std::vector<std::string> TABLE_NAME = {"users", "accessRights"};
 static const int SQL_CMD_LEN = 1024;
@@ -43,8 +42,7 @@ namespace gorilla {
             
         AccountDB::~AccountDB()
         {
-            if(!m_pSQLDB)
-                CloseDB(m_pSQLDB);
+            CloseDB();
         }
 
         AccountDB& AccountDB::Instance()
@@ -191,18 +189,61 @@ namespace gorilla {
             }
 
             for(const auto &v_table : TABLE_NAME)
-                CreateTable(m_pSQLDB, v_table);
+            {
+                CreateTable(v_table);
+                AdjustTable(v_table);
+            }
 
             LOGGER_S(info) << "Database Open Successfully \n";
             return true;
         }
             
-        void AccountDB::CloseDB(SQLiteDB* pSQLiteDB)
+        void AccountDB::CloseDB()
         {
-            sqlite3_close(m_pSQLDB);
+            if(m_pSQLDB)
+            {
+              sqlite3_close(m_pSQLDB);
+              m_pSQLDB = NULL;
+            }
         }
-
-        void AccountDB::CreateTable(SQLiteDB* p_SQLDB, const std::string& str_table_name)
+        void AccountDB::AdjustTable(const std::string& str_table_name)
+        {
+            if(str_table_name == "users")            
+            {
+               //check the column exists
+               char* pErrMsg = NULL;
+               std::map<std::string, bool> cols;
+               LOGGER_S(info) << "PRAGMA table_info(users)";
+               if(SQLITE_OK!= sqlite3_exec(m_pSQLDB, "PRAGMA table_info(users)",
+                 [](void *veryUsed, int argc, char **argv, char **azColName){
+                   std::map<std::string, bool>& cols(*(std::map<std::string, bool>*)veryUsed);
+                   cols[argv[1]]= true;
+                   return 0;
+                 }, &cols, &pErrMsg))
+                {
+                  LOGGER_S(fatal) << pErrMsg;
+                  sqlite3_free(pErrMsg);
+                  pErrMsg = NULL;
+                }
+               if(cols.find("name") == cols.end())
+               {
+                 LOGGER_S(info) << "TABLE users doesn't contain name column, ALTER TABLE";
+                 //alter table
+                 std::string cmd = "ALTER TABLE users ADD COLUMN name char(128) default '\"\"'";
+                 if(SQLITE_OK != sqlite3_exec(m_pSQLDB, cmd.c_str(), 0, 0, &pErrMsg))
+                 {
+                   LOGGER_S(fatal) << pErrMsg;
+                   sqlite3_free(pErrMsg);
+                   pErrMsg = NULL;
+                 }
+               }
+               else
+               {
+                 LOGGER_S(info) << "TABLE users contains name column, skip ALTER TABLE";
+               }
+            }
+        }
+        void AccountDB::CreateTable(const std::string& str_table_name)
         {
             char szSQLCommand[SQL_CMD_LEN];
             char *pSQLCommand = &szSQLCommand[0];
@@ -216,7 +257,7 @@ namespace gorilla {
                pSQLCommand += sprintf(pSQLCommand, "(account char(32) not null primary key,");
                pSQLCommand += sprintf(pSQLCommand, "encryptedPassword char(128) null,");
                pSQLCommand += sprintf(pSQLCommand, "accessRightName char(16) null,");
-               //pSQLCommand += sprintf(pSQLCommand, "name char(128) default '\"\"',");
+               pSQLCommand += sprintf(pSQLCommand, "name char(128) default '\"\"',");
                //pSQLCommand += sprintf(pSQLCommand, "photoLink char(128) default '\"\"',");
                pSQLCommand += sprintf(pSQLCommand, "description text '""');");
                pSQLCommand += sprintf(pSQLCommand, "insert or ignore into users ");
