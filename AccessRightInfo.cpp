@@ -114,7 +114,7 @@ namespace gorilla {
 
             m_str_access_right_name = m_json_access_right_info["accessRightName"];
             m_str_permissions = m_json_access_right_info["permissions"].dump();
-            if(!IsKeyExsist(str_access_right_info, "description", m_str_description)){
+            if(!IsKeyExsist(m_json_access_right_info, "description", m_str_description)){
                m_json_access_right_info["description"] = " "; 
             }
           
