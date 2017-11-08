@@ -560,8 +560,12 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
         std::string level;
         m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
-
-        if(level == "admin"){
+        
+        if(user_name == "admin"){
+            err = gorilla::account::FORBIDDEN;
+            reply_str = m_error_reply.GetError("Can't Delete admin", "<Communicator::DeleteUser> FORBIDDEN");
+        }
+        else if(level == "admin"){
 
             /* can't delete self */
             if(m_str_account == user_name){
