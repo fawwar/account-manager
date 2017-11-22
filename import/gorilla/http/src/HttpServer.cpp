@@ -177,6 +177,7 @@ void HttpServer::start()
         catch(std::exception& e)
         {
             std::cout << e.what() << std::endl;
+            eptr = std::current_exception(); //capture
         }
         std::cout << "end http server" << std::endl;
         this->stop();
@@ -197,6 +198,11 @@ void HttpServer::join()
 {
     serverThread->join();
     serverThread.reset();
+    if(eptr)
+    {
+      //forward the exception
+      std::rethrow_exception(eptr);
+    }
 }
 
 std::string HttpServer::getBuild()

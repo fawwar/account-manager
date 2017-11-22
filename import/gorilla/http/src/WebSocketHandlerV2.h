@@ -33,8 +33,9 @@ class WebSocketHandlerV2: public WebSocketHandler
 {
 public:
     WebSocketHandlerV2();
-    void sendMessageV2(const HttpConnectionPtr& conn, const MessageV2& message);
-    void sendMessageV2(const HttpConnectionPtr& conn, const std::string& header, const std::string& body);
+    //sendMessageV2 return queued bytes
+    static int sendMessageV2(const HttpConnectionPtr& conn, const MessageV2& message);
+    static int sendMessageV2(const HttpConnectionPtr& conn, const std::string& header, const std::string& body);    
 };
 
 } //http

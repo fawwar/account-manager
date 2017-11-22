@@ -1,4 +1,5 @@
 #pragma once
+#include <stdexcept>
 #include <boost/shared_ptr.hpp>
 #include "Lib.h"
 #include "ptr.h"
@@ -27,6 +28,8 @@ class HttpServer
     std::string private_key_file;
     std::string tmp_dh_file;
     std::string key_password;
+    
+    std::exception_ptr eptr;
 public:
 
     //this is for cppnetlib handler, DO NOT use

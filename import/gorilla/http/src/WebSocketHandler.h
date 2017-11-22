@@ -27,6 +27,11 @@ protected:
     //NOTICE: sendText, sendBinary return websocket queued bytes
     static int sendText(const HttpConnectionPtr& conn, const std::string& message);
     static int sendBinary(const HttpConnectionPtr& conn, const std::string& message);
+    //maxBytes, wait until buffer < maxBytes,
+    //if timeout < 0, return the buff bytes immediately
+    //if timeout = 0, no timeout until *abortWait is set true or buffer < maxBytes
+    //return val, =0 due to <= maxBytes, -1: due to abort flag, -2: due to timeout
+    static int wait(const HttpConnectionPtr& conn, int maxBytes, int timeoutMS, bool *abortWait = NULL);
 
     static void close(const HttpConnectionPtr& conn, const std::string& reason = "server close connection"); //send close command
 public:

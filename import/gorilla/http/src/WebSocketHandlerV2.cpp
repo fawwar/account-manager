@@ -37,21 +37,21 @@ WebSocketHandlerV2::WebSocketHandlerV2()
 {
 }
 
-void WebSocketHandlerV2::sendMessageV2(const HttpConnectionPtr& conn, const MessageV2& message)
+int WebSocketHandlerV2::sendMessageV2(const HttpConnectionPtr& conn, const MessageV2& message)
 {
     uint16_t seqNum = conn->nextSeqNum();
     std::string data = message.toString();
     data[1] = (seqNum >> 8) & 0xFF;
     data[2] = seqNum & 0xFF;
-    sendBinary(conn, data);   
+    return sendBinary(conn, data);   
 }
-void WebSocketHandlerV2::sendMessageV2(const HttpConnectionPtr& conn, const std::string& header, const std::string& body)
+int WebSocketHandlerV2::sendMessageV2(const HttpConnectionPtr& conn, const std::string& header, const std::string& body)
 {
     MessageV2 message;
     message.type = 1;
     message.header = header;
     message.body = body;
-    sendMessageV2(conn, message);
+    return sendMessageV2(conn, message);
 }
 
 } //http

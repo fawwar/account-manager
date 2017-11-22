@@ -5,6 +5,7 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 #include <websocketpp/error.hpp>
+#include <chrono>
 
 namespace gorilla 
 {
@@ -107,7 +108,26 @@ int WebSocketHandler::sendBinary(const HttpConnectionPtr& conn, const std::strin
     });
     return conn->wsPending;
 }
-
+int WebSocketHandler::wait(const HttpConnectionPtr& conn, int maxBytes, int timeoutMS, bool *abortWait)
+{
+    if(timeoutMS < 0)
+    {
+      return conn->wsPending;
+    }
+    auto t1 = std::chrono::system_clock::now();
+    while(conn->wsPending > maxBytes)
+    {
+      if(abortWait && *abortWait) return -1;
+      if(timeoutMS > 0)
+      {
+        auto t2 = std::chrono::system_clock::now();
+        std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        if(ms.count() > timeoutMS) return -2;
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    return 0;
+}
 void WebSocketHandler::close(const HttpConnectionPtr& conn, const std::string& reason)
 {
     conn->io_service_ptr->post([conn, reason](){
