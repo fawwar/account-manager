@@ -89,5 +89,6 @@ prebuild:
 	-mkdir -p $(OUTDIR)
 	-mkdir -p $(OBJDIR)
 	-cp -a configs/* $(OUTDIR)
+	-cp VERSION.txt $(OUTDIR)
 
 -include $(OBJS:.o=.d)
