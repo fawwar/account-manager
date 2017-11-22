@@ -59,8 +59,8 @@ private:
     void ReadChunk(Server::connection_ptr& connection_ptr, size_t left2read,
         std::string& body_str);
 
-    void ReadSingleBody(Server::connection::input_range& input,
-        boost::system::error_code& ec, std::size_t& bytes_transferred,
+    void ReadSingleBody(Server::connection::input_range input,
+        boost::system::error_code ec, std::size_t bytes_transferred,
         Server::connection_ptr& connection_ptr,
         size_t left2read, std::string& body_str);
 

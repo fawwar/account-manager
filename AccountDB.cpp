@@ -14,7 +14,7 @@
 static const std::string DB_PATH = "/opt/ivar/var/";
 static const std::string DB_NAME = "account.db";
 static const std::vector<std::string> TABLE_NAME = {"users", "accessRights"};
-static const int SQL_CMD_LEN = 1024;
+static const int SQL_CMD_LEN = 102400; //20171113 enlarge because we store base64 in access right
 
 std::mutex gorilla::account::AccountDB::g_mutexInstance;
 

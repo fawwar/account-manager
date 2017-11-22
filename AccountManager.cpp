@@ -197,7 +197,8 @@ namespace gorilla {
             auto it = m_map_users.find(str_account.c_str());
             if (it != m_map_users.end()){
 
-                 if(str_login_level == "admin" && str_account != "admin"){                     
+                 //if(str_login_level == "admin" && str_account != "admin"){
+                 if(true){
                      /* admin account only change password */   
                      /*
                      if(str_account == "admin"){

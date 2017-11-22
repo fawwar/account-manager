@@ -1,18 +1,91 @@
 #include <sstream>
 #include <chrono>
 #include <boost/algorithm/string.hpp>
+#include <http/HttpUtil.h>
 
 #include "hash_codec.hpp"
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "settings.h"
 #include "Communicator.h"
+#include "Util.h"
 
 using namespace gorilla::log;
+using gorilla::http::HttpUtil;
 namespace
 {
   const int CONNECTION_READ_TIMEOUT_MS = 10000;
   const int CONNECTION_WRITE_TIMEOUT_MS = 10000;
+}
+
+/*
+  encode whole permissions object to base64 and save to permissions._
+*/
+static Json::Value encodePermission(const Json::Value& v)
+{
+  Json::Value newV(Json::objectValue);
+  try
+  {
+    if(v.isMember("accessRightName"))
+    {
+      newV["accessRightName"] = v["accessRightName"];
+    }
+    if(v.isMember("description"))
+    {
+      newV["description"] = v["description"];
+    }
+    newV["permissions"] = Json::objectValue;
+    newV["permissions"]["_"] = HttpUtil::base64Encode(v["permissions"].toStyledString());
+  }
+  catch(...)
+  {
+  }
+  return newV;
+}
+
+/*
+  if permissions._ exists, decode base64
+  else return the old permission format
+*/
+static Json::Value decodePermission(const Json::Value& item)
+{
+  Json::Value newItem(Json::objectValue);
+  try
+  {    
+    newItem["accessRightName"] = item["accessRightName"];
+    newItem["description"] = item["description"];
+    newItem["permissions"] = Json::objectValue;
+    if(item.isMember("permissions"))
+    {
+      Json::Value kv = item["permissions"];
+      if(kv.isMember("_"))
+      {
+        newItem["permissions"] = Util::toJsonValue(HttpUtil::base64Decode(kv["_"].asString()));
+      }
+      else
+      {
+        newItem["permissions"] = kv;
+      }
+    }
+  }
+  catch(...)
+  {    
+  }
+  return newItem;
+}
+
+static std::string transformRequest(const std::string& s)
+{
+  //encode base64
+  Json::Value v = Util::toJsonValue(s);
+  return encodePermission(v).toStyledString();
+}
+
+static std::string transformResponse(const std::string& s)
+{
+  Json::Value v = Util::toJsonValue(s);
+  if(!v.isMember("permissions")) return s;
+  return decodePermission(v).toStyledString();
 }
 
 
@@ -74,7 +147,7 @@ void Communicator::ProcessRequest(const Server::request& request,
         }
    
         /* web post content */	
-        LOGGER_S(debug)<< "Web Post Content> " <<"\n"<< body_str;
+        //LOGGER_S(debug)<< "Web Post Content> " <<"\n"<< body_str;
     }
 
 
@@ -184,8 +257,8 @@ void Communicator::ReadChunk(Server::connection_ptr& connection_ptr,
         _1, _2, _3, connection_ptr, left2read, boost::ref(body_str)));
 }
 
-void Communicator::ReadSingleBody(Server::connection::input_range& input,
-    boost::system::error_code& ec, std::size_t& bytes_transferred,
+void Communicator::ReadSingleBody(Server::connection::input_range input,
+    boost::system::error_code ec, std::size_t bytes_transferred,
     Server::connection_ptr& connection_ptr, size_t left2read,
     std::string& body_str)
 {
@@ -392,7 +465,7 @@ void Communicator::SendReply(Server::connection_ptr& connection_ptr, std::string
     if (reply_str.size() == 0)
         reply_str = std::string("\n");
 
-    LOGGER_S(debug) << "Server Reply Content> " << reply_str << "\n";   
+    //LOGGER_S(debug) << "Server Reply Content> " << reply_str << "\n";   
 
     std::unique_lock<std::mutex> lck(reply_mtx_);
     is_reply_ready_ = false;
@@ -402,7 +475,7 @@ void Communicator::SendReply(Server::connection_ptr& connection_ptr, std::string
         boost::bind(&Communicator::GetIsAsyncWriteReady, this));
 
     
-    LOGGER_S(debug) << "Server Reply End> ";
+    //LOGGER_S(debug) << "Server Reply End> ";
 }
 
 Server::connection::status_t Communicator::GetUsers(const Server::request& request, 
@@ -420,7 +493,8 @@ Server::connection::status_t Communicator::GetUsers(const Server::request& reque
 
     LOGGER_S(debug) << "GetUsers AccessRight = " << level; 
     
-    if(level == "admin"){
+//  if(level == "admin"){
+    if(true){ //ALL PASS
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
@@ -452,7 +526,8 @@ Server::connection::status_t Communicator::AddUser(const Server::request& reques
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
+//  if(level == "admin"){
+    if(true){//ALL PASS
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
@@ -489,8 +564,10 @@ Server::connection::status_t Communicator::GetUser(const Server::request& reques
         m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
         
-        if(m_str_account == user_name || level == "admin")
+        //if(m_str_account == user_name || level == "admin")
+        if(true){//ALL PASS
             err = m_accountManager.GetUser(user_name, reply_str);
+        }
         else{
 
             err = gorilla::account::FORBIDDEN;
@@ -525,7 +602,8 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
         m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
        
-        if(m_str_account == user_name || level == "admin"){
+        //if(m_str_account == user_name || level == "admin"){
+        if(true){//ALL PASS
             err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str);
         }
         else{
@@ -565,7 +643,8 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
             err = gorilla::account::FORBIDDEN;
             reply_str = m_error_reply.GetError("Can't Delete admin", "<Communicator::DeleteUser> FORBIDDEN");
         }
-        else if(level == "admin"){
+        //else if(level == "admin"){
+        else if(true){
 
             /* can't delete self */
             if(m_str_account == user_name){
@@ -613,8 +692,10 @@ Server::connection::status_t Communicator::GetUserPermissions(const Server::requ
         std::list<std::string> fields;
         ParseURIFields(uri_instance.query(), fields);
 
-        if(m_str_account == user_name || level == "admin")
+        //if(m_str_account == user_name || level == "admin")
+        if(true){//ACCOUNT PAGE REQUIRES
             err = m_accountManager.GetUserPermissions(user_name, fields, reply_str);
+        }
         else{
 
             err = gorilla::account::FORBIDDEN;
@@ -628,9 +709,14 @@ Server::connection::status_t Communicator::GetUserPermissions(const Server::requ
        err = gorilla::account::UNAUTHORIZED; 
        reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetUserPermissions> UNAUTHORIZED");
     }
+    
+    if(err == gorilla::account::SUCCESS_RESPONSE){
+       reply_str = transformResponse(reply_str);
+    }
 
     return (Server::connection::status_t)err;    
 }
+
 
 Server::connection::status_t Communicator::GetAccessRights(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
@@ -644,7 +730,8 @@ Server::connection::status_t Communicator::GetAccessRights(const Server::request
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
-    if(level == "admin"){
+    //if(level == "admin"){
+    if(true){//ACCOUNT PAGE REQUIRES
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
@@ -659,7 +746,17 @@ Server::connection::status_t Communicator::GetAccessRights(const Server::request
         err = gorilla::account::FORBIDDEN;
         reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::GetAccessRights> FORBIDDEN");
     }
-
+    if(err == gorilla::account::SUCCESS_RESPONSE)
+    {
+      //extract base64
+      Json::Value v = Util::toJsonValue(reply_str);
+      Json::Value result(Json::arrayValue);
+      for(auto item: v)
+      {
+        result.append(decodePermission(item));
+      }
+      reply_str = result.toStyledString();
+    }
     return (Server::connection::status_t)err;    
 }
 
@@ -676,11 +773,17 @@ Server::connection::status_t Communicator::AddAccessRight(const Server::request&
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
-        
+    //if(level == "admin"){
+    if(true){//ACCOUNT PAGE REQUIRES
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
+            //encode base64
+            request_str = transformRequest(request_str);
             err = m_accountManager.AddAccessRight(request_str, reply_str);
+            if(err == gorilla::account::SUCCESS_RESPONSE)
+            {
+              reply_str = transformResponse(reply_str);
+            }
         }
         else{
            err = gorilla::account::UNAUTHORIZED; 
@@ -710,8 +813,8 @@ Server::connection::status_t Communicator::GetAccessRight(const Server::request&
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
-        
+    //if(level == "admin"){
+    if(true){//ACCOUNT PAGE REQUIRES    
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
@@ -727,6 +830,11 @@ Server::connection::status_t Communicator::GetAccessRight(const Server::request&
         
         err = gorilla::account::FORBIDDEN;
         reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission",  "<Communicator::GetAccessRight> FORBIDDEN");
+    }
+
+    if(err == gorilla::account::SUCCESS_RESPONSE)
+    {
+      reply_str = transformResponse(reply_str);
     }
 
     return (Server::connection::status_t)err; 
@@ -745,13 +853,19 @@ Server::connection::status_t Communicator::UpdateAccessRight(const Server::reque
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
-        
+    //if(level == "admin"){
+    if(true){//ACCOUNT PAGE REQUIRES    
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
             std::string level_name = GetName("/accessRights/", uri_instance.path());
+            //encode base64
+            request_str = transformRequest(request_str);
             err = m_accountManager.UpdateAccessRight(level_name, request_str, reply_str);
+            if(err == gorilla::account::SUCCESS_RESPONSE)
+            {
+              reply_str = transformResponse(reply_str);
+            }
         }
         else{
            err = gorilla::account::UNAUTHORIZED; 
@@ -780,8 +894,8 @@ Server::connection::status_t Communicator::DeleteAccessRight(const Server::reque
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
-        
+    //if(level == "admin"){
+    if(true){//ACCOUNT PAGE REQUIRES
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
