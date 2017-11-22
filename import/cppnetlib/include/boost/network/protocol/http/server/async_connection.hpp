@@ -254,8 +254,11 @@ struct async_connection
   template <class Range>
   void write(Range const& range) {
     lock_guard lock(headers_mutex);
-    if (error_encountered)
-      boost::throw_exception(boost::system::system_error(*error_encountered));
+    if (error_encountered){
+      std::cout << "cppnetlib write: error!!!" << std::endl;
+      return;
+      //boost::throw_exception(boost::system::system_error(*error_encountered));      
+    }
 
     boost::function<void(boost::system::error_code)> f = boost::bind(
         &async_connection<Tag, Handler>::default_error,
@@ -334,7 +337,7 @@ struct async_connection
   }
 
   void default_error(boost::system::error_code const& ec) {
-    error_encountered = in_place<boost::system::system_error>(ec);
+    if (ec) error_encountered = in_place<boost::system::system_error>(ec);
   }
 
   typedef boost::array<char, BOOST_NETWORK_HTTP_SERVER_CONNECTION_BUFFER_SIZE>
@@ -627,8 +630,11 @@ struct async_connection
   void write_vec_impl(ConstBufferSeq const& seq, Callback const& callback,
                       shared_array_list temporaries, shared_buffers buffers) {
     lock_guard lock(headers_mutex);
-    if (error_encountered)
-      boost::throw_exception(boost::system::system_error(*error_encountered));
+    if (error_encountered){
+      std::cout << "cppnetlib write_vec_impl: error!" << std::endl;
+      return;      
+      //boost::throw_exception(boost::system::system_error(*error_encountered));      
+    }
 
     boost::function<void(boost::system::error_code)> callback_function =
         callback;

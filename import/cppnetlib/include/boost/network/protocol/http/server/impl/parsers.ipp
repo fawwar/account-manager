@@ -61,7 +61,7 @@ BOOST_NETWORK_INLINE void parse_headers(
   typedef as<boost::spirit::traits::u32_string> as_u32_string;
   parse(begin, end,
         *(+((alnum | punct) - ':') >> lit(": ") >>
-          as_u32_string()[+((unicode::alnum | space | punct) - '\r' - '\n')] >>
+          as_u32_string()[+((alnum | space | punct) - '\r' - '\n')] >>
           lit("\r\n")) >>
             lit("\r\n"),
         container);
