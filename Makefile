@@ -27,8 +27,8 @@ LDFLAGS  += -lgorilla_http
 
 # Static link cpp-network-libs
 CPPFLAGS += -DASIO_HEADER_ONLY -DBOOST_NETWORK_DEBUG
-CXXFLAGS += -I$(LIBDIR)/cppnetlib/include 
-LDFLAGS  += -L$(LIBDIR)/cppnetlib 
+CXXFLAGS += -I$(LIBDIR)/cppnetlib/include
+LDFLAGS  += -L$(LIBDIR)/cppnetlib
 LDFLAGS  += -lcppnetlib-uri -lcppnetlib-server-parsers -lcppnetlib-client-connections
 
 CXXFLAGS += -DBOOST_SPIRIT_USE_PHOENIX_V3
@@ -44,7 +44,7 @@ LDFLAGS  += -lcrypto -lssl
 CXXFLAGS += -std=c++11
 LDFLAGS  += -lpthread
 
-LDFLAGS  += -lcurl 
+LDFLAGS  += -lcurl
 
 LIBPATH   = .
 
@@ -83,7 +83,7 @@ clean:
 	-rm -rf $(OUTDIR)/$(TARGET) $(OBJDIR)/$(OBJS)
 
 distclean:
-	-rm -rf $(OUTDIR)
+	-rm -rf $(OUTDIR) $(OBJS)
 
 prebuild:
 	-mkdir -p $(OUTDIR)
