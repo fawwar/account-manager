@@ -212,12 +212,14 @@ struct async_connection
   template <class Range>
   void set_headers(Range headers) {
     lock_guard lock(headers_mutex);
-    if (headers_in_progress || headers_already_sent)
+    if (headers_in_progress || headers_already_sent){
       boost::throw_exception(
           std::logic_error("Headers have already been sent."));
-
-    if (error_encountered)
-      boost::throw_exception(boost::system::system_error(*error_encountered));
+    }
+    if (error_encountered) {
+      //boost::throw_exception(boost::system::system_error(*error_encountered));
+      boost::throw_exception(std::runtime_error("set_headers error"));
+    }
 
     typedef constants<Tag> consts;
     {
@@ -242,27 +244,34 @@ struct async_connection
 
   void set_status(status_t new_status) {
     lock_guard lock(headers_mutex);
-    if (headers_already_sent)
+    if (headers_already_sent){
       boost::throw_exception(std::logic_error(
           "Headers have already been sent, cannot reset status."));
-    if (error_encountered)
-      boost::throw_exception(boost::system::system_error(*error_encountered));
+    }
+    if (error_encountered){
+      boost::throw_exception(std::runtime_error("set_status error"));
+      //boost::throw_exception(boost::system::system_error(*error_encountered));
+    }
 
     status = new_status;
   }
 
   template <class Range>
   void write(Range const& range) {
-    lock_guard lock(headers_mutex);
-    if (error_encountered){
-      std::cout << "cppnetlib write: error!!!" << std::endl;
-      return;
-      //boost::throw_exception(boost::system::system_error(*error_encountered));      
-    }
+    lock_guard lock(headers_mutex);    
 
     boost::function<void(boost::system::error_code)> f = boost::bind(
         &async_connection<Tag, Handler>::default_error,
         async_connection<Tag, Handler>::shared_from_this(), boost::arg<1>());
+        
+    if (error_encountered){
+      std::cout << "cppnetlib write: error!!!" << std::endl;
+      thread_pool().post([this, f](){
+          f(error_encountered->code());
+      });
+      return;
+      //boost::throw_exception(boost::system::system_error(*error_encountered));      
+    }
 
     write_impl(boost::make_iterator_range(range), f);
   }
@@ -272,8 +281,14 @@ struct async_connection
       is_base_of<asio::const_buffer, typename Range::value_type>, void>::type
   write(Range const& range, Callback const& callback) {
     lock_guard lock(headers_mutex);
-    if (error_encountered)
-      boost::throw_exception(boost::system::system_error(*error_encountered));
+    if (error_encountered){
+      std::cout << "cppnetlib write2: error!!!" << std::endl;
+      thread_pool().post([this, callback](){
+          callback(error_encountered->code());
+      });
+      return;
+      //boost::throw_exception(boost::system::system_error(*error_encountered));
+    }
     write_impl(boost::make_iterator_range(range), callback);
   }
 
@@ -296,8 +311,14 @@ struct async_connection
       read_callback_function;
 
   void read(read_callback_function callback) {
-    if (error_encountered)
-      boost::throw_exception(boost::system::system_error(*error_encountered));
+    if (error_encountered){
+      std::cout << "cppnetlib read error:" << error_encountered->code() << std::endl;
+      thread_pool().post(
+          boost::bind(callback, input_range(), error_encountered->code(),
+                   0, async_connection<Tag, Handler>::shared_from_this()));
+      return;
+      //boost::throw_exception(boost::system::system_error(*error_encountered));
+    }
     if (new_start != read_buffer_.begin()) {
       input_range input =
           boost::make_iterator_range(new_start, read_buffer_.end());
@@ -632,6 +653,9 @@ struct async_connection
     lock_guard lock(headers_mutex);
     if (error_encountered){
       std::cout << "cppnetlib write_vec_impl: error!" << std::endl;
+      thread_pool().post([this, callback](){
+          callback(error_encountered->code());
+      });
       return;      
       //boost::throw_exception(boost::system::system_error(*error_encountered));      
     }

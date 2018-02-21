@@ -147,7 +147,7 @@ void HttpResponse::sendFile(const std::string& fileName)
     HttpConnectionPtr connection = this->connection.lock();
     boost::filesystem::path fullPath(fileName);
     //here IO api is sync(filesize, stat, open)
-    uint fsize = boost::filesystem::file_size(fullPath);
+    auto fsize = boost::filesystem::file_size(fullPath);
     
     headers.setHeader("Content-Length", fsize);
     headers.setHeader("Content-type", HttpUtil::getContentType(fileName));

@@ -13,6 +13,7 @@
 #include <boost/network/protocol/http/server/storage_base.hpp>
 #include <boost/network/protocol/http/server/socket_options_base.hpp>
 #include <boost/network/utils/thread_pool.hpp>
+#include <iostream>
 
 namespace boost {
 namespace network {
@@ -116,8 +117,11 @@ struct async_server_base : server_storage_base, socket_options_base {
 #else
     socket_options_base::socket_options(new_connection->socket());
 #endif
-
-    new_connection->start();
+    try { //Enrico FIX connection ends before start()
+      new_connection->start();
+    } catch(std::exception& e) {
+      std::cout << "cppnetlib: " << e.what() << std::endl;      
+    }
     new_connection.reset(new connection(service_, handler, *thread_pool, ctx_));
     acceptor.async_accept(
 #ifdef BOOST_NETWORK_ENABLE_HTTPS

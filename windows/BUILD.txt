@@ -1,0 +1,2 @@
+1. 注意lib的版本與dll (openssl, icu, boost, cppnetlib, httpframework)
+2. ssl的dll需對應lib, 否則dll dependency walker檢查時會無法確認問題

@@ -1,6 +1,7 @@
 #pragma once
 #include <exception>
 #include "ptr.h"
+#include <functional>
 
 namespace gorilla 
 {

@@ -1,6 +1,5 @@
 #include "AccessRightInfo.h"
 #include "AccountDB.h"
-#include "hash_codec.hpp"
 
 #include "./import/json-develop/json_tools.hpp"
 #include "gorilla/log/logger.h"

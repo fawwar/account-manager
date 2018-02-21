@@ -1,6 +1,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/ssl.hpp>
 #include <iostream>
+#include <csignal>
+//#include <boost/stacktrace.hpp>
 #include "HttpConnection.h"
 #include "HttpRequest.h"
 #include "HttpResponse.h"
@@ -123,19 +125,23 @@ HttpServer* HttpServer::setHttps(bool enableHttps)
 HttpServer* HttpServer::set_cert_chain_file(const std::string& s)
 {
     this->cert_chain_file = s;
+	return this;
 }
 
 HttpServer* HttpServer::set_private_key_file(const std::string& s)
 {
     this->private_key_file = s;
+	return this;
 }
 HttpServer* HttpServer::set_tmp_dh_file(const std::string& s)
 {
     this->tmp_dh_file = s;
+	return this;
 }
 HttpServer* HttpServer::set_key_password(const std::string& s)
 {
     this->key_password = s;
+	return this;
 }
 
 void HttpServer::start()
@@ -177,6 +183,8 @@ void HttpServer::start()
         catch(std::exception& e)
         {
             std::cout << e.what() << std::endl;
+            //std::cout << boost::stacktrace::stacktrace() << std::endl;
+            //std::raise(SIGABRT); //for debug only
             eptr = std::current_exception(); //capture
         }
         std::cout << "end http server" << std::endl;

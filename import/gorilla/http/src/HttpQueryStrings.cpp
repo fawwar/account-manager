@@ -25,6 +25,11 @@ bool HttpQueryStrings::contains(const std::string& name) const
     return it != params.end();
 }
 
+std::string HttpQueryStrings::get() const
+{
+    return queryString;
+}
+
 std::string HttpQueryStrings::get(const std::string& name) const
 {
     auto& v = getAll(name);

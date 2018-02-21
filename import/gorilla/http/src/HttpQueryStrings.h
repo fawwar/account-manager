@@ -32,6 +32,8 @@ public:
     
     bool contains(const std::string& name) const;
     
+    std::string get() const;
+    
     std::string get(const std::string& name) const;//get the first item or empty string
     const std::vector<std::string>& getAll(const std::string& name) const;
     const std::map<std::string, std::vector<std::string> >& getAll() const;//get all

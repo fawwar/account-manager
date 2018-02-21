@@ -21,6 +21,7 @@ HttpConnection::HttpConnection(HttpServer& httpServer):
     wsIsWriting = false;
     wsPending = 0;
     totalReadBytes = 0;
+    //std::cout << "HttpConnection::HttpConnection():" << this << std::endl;
 }
 
 HttpConnectionPtr HttpConnection::create(HttpServer& httpServer, const Lib::HttpConnection& c, const Lib::HttpRequest& req)
@@ -35,7 +36,7 @@ HttpConnectionPtr HttpConnection::create(HttpServer& httpServer, const Lib::Http
 
 HttpConnection::~HttpConnection()
 {
-    //std::cout << "HttpConnection::~HttpConnection()" << std::endl;
+    //std::cout << "HttpConnection::~HttpConnection():" << this << std::endl;
     --totalConnections;
 }
 
@@ -178,7 +179,14 @@ void HttpConnection::read(std::function<void(const std::string& data, boost::sys
     {
       connection->read([this, callback](Lib::HttpServer::connection::input_range input, boost::system::error_code ec, std::size_t bytes_transferred, Lib::HttpConnection connection){
         totalReadBytes += bytes_transferred;
-        readBuffer = std::string(boost::begin(input), bytes_transferred);
+        if(bytes_transferred > 0)
+        {
+          readBuffer = std::string(boost::begin(input), bytes_transferred);
+        }
+        else
+        {
+          readBuffer.clear();
+        }
         callback(readBuffer , ec);
       });
     }

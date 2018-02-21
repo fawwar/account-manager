@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
+#include <Winsock2.h>
+#else
 #include <sys/time.h>
+#endif // _WIN32
 #include <time.h>
 
 #include "hash.h"

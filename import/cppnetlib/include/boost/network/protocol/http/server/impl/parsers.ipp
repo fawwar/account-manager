@@ -3,6 +3,8 @@
 
 #define BOOST_SPIRIT_UNICODE
 #include <boost/spirit/include/qi.hpp>
+//#include <boost/spirit/include/qi_parse.hpp>
+//#include <boost/spirit/include/support_standard_wide.hpp>
 
 // Copyright 2013 Google, Inc.
 // Copyright 2010 Dean Michael Berris.
@@ -44,26 +46,24 @@ struct assign_to_container_from_value<std::string, u32_string, void> {
 namespace boost {
 namespace network {
 namespace http {
-
+//ENRICO: FIX VC2017 2017.12.29
 BOOST_NETWORK_INLINE void parse_version(
     std::string const& partial_parsed,
     fusion::tuple<uint8_t, uint8_t>& version_pair) {
-  using namespace boost::spirit::qi;
-  parse(partial_parsed.begin(), partial_parsed.end(),
-        (lit("HTTP/") >> ushort_ >> '.' >> ushort_), version_pair);
+  boost::spirit::qi::parse(partial_parsed.begin(), partial_parsed.end(),
+        (boost::spirit::qi::lit("HTTP/") >> boost::spirit::qi::ushort_ >> '.' >> boost::spirit::qi::ushort_), version_pair);
 }
 
 BOOST_NETWORK_INLINE void parse_headers(
     std::string const& input, std::vector<request_header_narrow>& container) {
-  using namespace boost::spirit::qi;
   u8_to_u32_iterator<std::string::const_iterator> begin = input.begin(),
                                                   end = input.end();
-  typedef as<boost::spirit::traits::u32_string> as_u32_string;
-  parse(begin, end,
-        *(+((alnum | punct) - ':') >> lit(": ") >>
-          as_u32_string()[+((alnum | space | punct) - '\r' - '\n')] >>
-          lit("\r\n")) >>
-            lit("\r\n"),
+  typedef boost::spirit::qi::as<boost::spirit::traits::u32_string> as_u32_string;
+  boost::spirit::qi::parse(begin, end,
+        *(+((boost::spirit::qi::alnum | boost::spirit::qi::punct) - ':') >> boost::spirit::qi::lit(": ") >>
+          as_u32_string()[+((boost::spirit::qi::alnum | boost::spirit::qi::space | boost::spirit::qi::punct) - '\r' - '\n')] >>
+          boost::spirit::qi::lit("\r\n")) >>
+            boost::spirit::qi::lit("\r\n"),
         container);
 }
 

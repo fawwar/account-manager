@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="來源檔案">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="標頭檔">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="資源檔">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="來源檔案\utility">
+      <UniqueIdentifier>{254125a9-ae90-4666-97ba-069739c0e9cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="來源檔案\logger">
+      <UniqueIdentifier>{b2420d8e-b9a3-45d0-a854-85973c8f965a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="來源檔案\hash">
+      <UniqueIdentifier>{1eba7f92-b98e-41a3-8367-a64363562db0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AccessRightInfo.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AccountDB.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AccountDefine.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AccountManager.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AdapterHandler.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Communicator.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Error.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LegacyHttp.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\settings.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UserInfo.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Util.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\AccessRightInfo.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AccountDB.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AccountManager.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AdapterHandler.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Communicator.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Error.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\settings.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UserInfo.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Util.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\jsoncpp\jsoncpp.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3.c">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\utility\base64.cpp">
+      <Filter>來源檔案\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\utility\debug.cpp">
+      <Filter>來源檔案\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\utility\ini_file.cpp">
+      <Filter>來源檔案\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\utility\string_format.cpp">
+      <Filter>來源檔案\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\utility\string_helper.cpp">
+      <Filter>來源檔案\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\log\logger.cpp">
+      <Filter>來源檔案\logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\gorilla\log\logger_config.cpp">
+      <Filter>來源檔案\logger</Filter>
+    </ClCompile>
+    <ClCompile Include="syslogc.c">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\hash\hash.c">
+      <Filter>來源檔案\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\hash\lcrng.c">
+      <Filter>來源檔案\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\hash\md5.c">
+      <Filter>來源檔案\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\import\hash\sha1.c">
+      <Filter>來源檔案\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="gettimeofday.c">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="wincompat.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

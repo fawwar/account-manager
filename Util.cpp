@@ -1,6 +1,11 @@
 #include "Util.h"
 #include <limits.h> //PATH_MAX
+#ifdef _WIN32
+#include <Shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+#else
 #include <unistd.h> //for readlink
+#endif
 #include <mutex>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
@@ -10,19 +15,30 @@
 
 static boost::uuids::random_generator genuuid;
 
+#ifdef _WIN32
+//only support ANSI 
 std::string Util::getExeDir()
 {
-  char result[ PATH_MAX ];
-  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
-  if(count > 0)
-  {
-    std::string exePath(result, count);
-    boost::filesystem::path p(exePath);
-    boost::filesystem::path dir = p.parent_path();
-    return dir.generic_string();
-  }
-  return "";
+    char buffer[MAX_PATH];
+    GetModuleFileName(NULL, buffer, MAX_PATH);
+    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+    return std::string(buffer).substr(0, pos);
 }
+#else
+std::string Util::getExeDir()
+{
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    if (count > 0)
+    {
+        std::string exePath(result, count);
+        boost::filesystem::path p(exePath);
+        boost::filesystem::path dir = p.parent_path();
+        return dir.generic_string();
+    }
+    return "";
+}
+#endif
 
 std::string Util::uuid()
 {

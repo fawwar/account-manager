@@ -53,7 +53,7 @@ int FileReader::_read()
     {
         if(position2 > 0 && currentPos + 1024 > position2)
         {
-            return position2 - currentPos;
+            return (int)(position2 - currentPos);
         }
         return 1024;
     }

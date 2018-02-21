@@ -8,8 +8,8 @@ extern "C" {
 }
 #endif
 
-#include "logger.h"
-#include "logger_config.h"
+#include <gorilla/log/logger.h>
+#include <gorilla/log/logger_config.h>
 
 
 using namespace gorilla::log;
