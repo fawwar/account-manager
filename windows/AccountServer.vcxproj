@@ -118,6 +118,7 @@
     <ClCompile Include="..\import\hash\md5.c" />
     <ClCompile Include="..\import\hash\sha1.c" />
     <ClCompile Include="..\import\jsoncpp\jsoncpp.cpp" />
+    <ClCompile Include="..\link.cpp" />
     <ClCompile Include="..\Server.cpp" />
     <ClCompile Include="..\settings.cpp" />
     <ClCompile Include="..\UserInfo.cpp" />
@@ -125,7 +126,6 @@
     <ClCompile Include="gettimeofday.c" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="syslogc.c" />
-    <ClCompile Include="wincompat.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
