@@ -5,7 +5,7 @@ LIBDIR    = $(PWD)/import
 OUTDIR    = $(PWD)/output
 OBJDIR    = $(PWD)/.obj
 
-
+CXXFLAGS += -DBOOST_NETWORK_NO_LIB
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
 CFLAGS   += -I$(LIBDIR)/gorilla/log
 SRCS     += $(wildcard $(LIBDIR)/gorilla/utility/*.cpp)
@@ -28,11 +28,8 @@ LDFLAGS  += -lgorilla_http
 # Static link cpp-network-libs
 CPPFLAGS += -DASIO_HEADER_ONLY -DBOOST_NETWORK_DEBUG
 CXXFLAGS += -I$(LIBDIR)/cppnetlib/include
-LDFLAGS  += -L$(LIBDIR)/cppnetlib
-LDFLAGS  += -lcppnetlib-uri -lcppnetlib-server-parsers -lcppnetlib-client-connections
 
 CXXFLAGS += -DBOOST_SPIRIT_USE_PHOENIX_V3
-CXXFLAGS += -DBOOST_ALL_DYN_LINK
 LDFLAGS  += -lboost_atomic -lboost_chrono -lboost_coroutine -lboost_context
 LDFLAGS  += -lboost_date_time -lboost_exception -lboost_filesystem
 LDFLAGS  += -lboost_iostreams -lboost_log -lboost_log_setup -lboost_locale
