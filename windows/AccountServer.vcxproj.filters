@@ -80,9 +80,6 @@
     <ClCompile Include="..\Error.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-    <ClCompile Include="..\Server.cpp">
-      <Filter>來源檔案</Filter>
-    </ClCompile>
     <ClCompile Include="..\settings.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
@@ -138,6 +135,9 @@
       <Filter>來源檔案</Filter>
     </ClCompile>
     <ClCompile Include="..\link.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>

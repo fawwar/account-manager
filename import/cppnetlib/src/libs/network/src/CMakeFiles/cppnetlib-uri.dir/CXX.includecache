@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/enricohuang/cpp-netlib/libs/network/src/uri/schemes.cpp
+boost/network/uri/schemes.hpp
+-
+boost/unordered_set.hpp
+-
+
+/home/enricohuang/cpp-netlib/libs/network/src/uri/uri.cpp
+boost/network/uri/uri.ipp
+-
+
+boost/network/uri/detail/uri_parts.hpp
+boost/range/iterator_range.hpp
+-
+boost/optional.hpp
+-
+
+boost/network/uri/schemes.hpp
+string
+-
+
+boost/network/uri/uri.ipp
+boost/network/uri/detail/uri_parts.hpp
+-
+boost/config/warning_disable.hpp
+-
+boost/spirit/home/qi.hpp
+-
+boost/fusion/adapted/struct/adapt_struct.hpp
+-
+

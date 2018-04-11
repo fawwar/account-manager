@@ -1,0 +1,2 @@
+/usr/bin/ar cr libcppnetlib-uri.a  CMakeFiles/cppnetlib-uri.dir/uri/uri.cpp.o CMakeFiles/cppnetlib-uri.dir/uri/schemes.cpp.o
+/usr/bin/ranlib libcppnetlib-uri.a
