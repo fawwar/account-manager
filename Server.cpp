@@ -10,6 +10,7 @@
 #include "gorilla/log/logger_config.h"
 #include "settings.h"
 #include "Communicator.h"
+#include "Util.h"
 #include <http/HttpServer.h>
 #include <http/HttpRouter.h>
 #include "AdapterHandler.h"
@@ -40,8 +41,14 @@ void ProcessRequest(WorkQueue& queue, Communicator& communicator)
 int main(int argc, char* argv[])
 {
     try{
-        const Settings settings(kDefaultSettingPath);
 
+        std::string exePath = Util::getExeDir();
+#ifdef WIN32
+        SetCurrentDirectory(exePath.c_str());
+#else
+        chdir(exePath.c_str());
+#endif
+        const Settings settings(kDefaultSettingPath);
         /* initialize logger */       
         logger_config config;              
         logger_keeper *pKeeper = get_keeper();
@@ -76,14 +83,41 @@ int main(int argc, char* argv[])
         httpServer.setAddress(settings.server_ip_);
         httpServer.setBaseHandler(baseRouter);
         httpServer.start();        
+#ifdef WIN32
+        boost::asio::signal_set signals(*httpServer.getIoServicePtr(), SIGINT, SIGTERM);
+        //signals.async_wait([&httpServer, &thread_group, &queue](const boost::system::error_code& error, int signal_number) {
+        signals.async_wait([](const boost::system::error_code& error, int signal_number) {
+            LOGGER() << "Stopping...";
+            g_running = false;
+        });
+        while (g_running)
+        {
+            std::string input;
+            //std::cin.clear();//ctrl c
+            std::getline(std::cin, input);
+            if (std::cin.fail() || std::cin.eof() || input == "QUIT")
+            {
+                g_running = false;
+            }
+        }
+        //init stop begin
+        //g_running = false;
+        queue.stop(); //will notify threadgroup
+        thread_group.join_all();
+        httpServer.stop();
+        //init stop end
+#else
         boost::asio::signal_set signals(*httpServer.getIoServicePtr(), SIGINT, SIGTERM);
         signals.async_wait([&httpServer, &thread_group, &queue](const boost::system::error_code& error, int signal_number){
-          LOGGER() << "Stopping...";
-          g_running = false;
-          queue.stop(); //will notify threadgroup
-          thread_group.join_all();
-          httpServer.stop();
+            LOGGER() << "Stopping...";
+            //init stop begin
+            g_running = false;
+            queue.stop(); //will notify threadgroup
+            thread_group.join_all();
+            httpServer.stop();
+            //init stop end
         });
+#endif  
         httpServer.join();
         LOGGER() << "Terminated normally";
     }

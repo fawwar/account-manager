@@ -11,7 +11,7 @@
 #include "gorilla/log/logger_config.h"
 
 #ifdef WIN32
-static const std::string DB_PATH = "C:/opt/ivar/var/";
+static const std::string DB_PATH = "./";// "C:/opt/ivar/var/";
 #else
 static const std::string DB_PATH = "/opt/ivar/var/";
 #endif
