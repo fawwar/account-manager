@@ -82,10 +82,18 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)third_party\openssl\lib;$(SolutionDir)..\import\gorilla\http\lib;C:\opt\boost_1_65_1\lib64-msvc-14.0</AdditionalLibraryDirectories>
       <AdditionalDependencies>HttpFramework.lib;libboost_iostreams-vc140-mt-1_65_1.lib;libboost_zlib-vc140-mt-1_65_1.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y .\third_party\curl\bin\libcurl.dll .\output
+xcopy /y .\third_party\openssl\bin\*.dll .\output
+xcopy /y ..\configs\* .\output
+
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\AccessRightInfo.h" />
