@@ -24,6 +24,10 @@ std::string Util::getExeDir()
     std::string::size_type pos = std::string(buffer).find_last_of("\\/");
     return std::string(buffer).substr(0, pos);
 }
+void Util::setWorkingDir(const std::string& path)
+{
+    SetCurrentDirectory(path.c_str());
+}
 #else
 std::string Util::getExeDir()
 {
@@ -37,6 +41,10 @@ std::string Util::getExeDir()
         return dir.generic_string();
     }
     return "";
+}
+void Util::setWorkingDir(const std::string& path)
+{
+    chdir(path.c_str());
 }
 #endif
 

@@ -41,13 +41,9 @@ void ProcessRequest(WorkQueue& queue, Communicator& communicator)
 int main(int argc, char* argv[])
 {
     try{
-
         std::string exePath = Util::getExeDir();
-#ifdef WIN32
-        SetCurrentDirectory(exePath.c_str());
-#else
-        chdir(exePath.c_str());
-#endif
+        Util::setWorkingDir(exePath);
+
         const Settings settings(kDefaultSettingPath);
         /* initialize logger */       
         logger_config config;              
