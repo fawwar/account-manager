@@ -90,7 +90,9 @@
     <PostBuildEvent>
       <Command>xcopy /y .\third_party\curl\bin\libcurl.dll .\output
 xcopy /y .\third_party\openssl\bin\*.dll .\output
-xcopy /y ..\configs\* .\output
+xcopy /y ..\configs\*.json .\output
+xcopy /y ..\configs\*.ini .\output
+xcopy /y ..\configs\*.pem .\output
 
 </Command>
     </PostBuildEvent>
@@ -115,6 +117,7 @@ xcopy /y ..\configs\* .\output
     <ClCompile Include="..\AccountManager.cpp" />
     <ClCompile Include="..\AdapterHandler.cpp" />
     <ClCompile Include="..\Communicator.cpp" />
+    <ClCompile Include="..\Config.cpp" />
     <ClCompile Include="..\Error.cpp" />
     <ClCompile Include="..\import\gorilla\log\logger.cpp" />
     <ClCompile Include="..\import\gorilla\log\logger_config.cpp" />
