@@ -1,5 +1,6 @@
 #include "AccessRightInfo.h"
 #include "AccountDB.h"
+#include "Config.h"
 
 #include "./import/json-develop/json_tools.hpp"
 #include "gorilla/log/logger.h"
@@ -17,7 +18,7 @@ namespace gorilla {
     namespace account{
 
         AccessRight::AccessRight(const std::string& str_access_right_info)
-            : m_json_access_right_info(DISABLE_ACCESSRIGHT)
+            : m_json_access_right_info(Config::getInstance().DISABLE_ACCESSRIGHT)
         { 
             SetAccessRightInfo(str_access_right_info);    
         }

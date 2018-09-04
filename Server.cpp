@@ -11,6 +11,7 @@
 #include "settings.h"
 #include "Communicator.h"
 #include "Util.h"
+#include "Config.h"
 #include <http/HttpServer.h>
 #include <http/HttpRouter.h>
 #include "AdapterHandler.h"
@@ -43,7 +44,7 @@ int main(int argc, char* argv[])
     try{
         std::string exePath = Util::getExeDir();
         Util::setWorkingDir(exePath);
-
+        Config::getInstance();
         const Settings settings(kDefaultSettingPath);
         /* initialize logger */       
         logger_config config;              

@@ -6,6 +6,7 @@
 #include "AccountDefine.h"
 #include "hash_codec.hpp"
 #include "AccountDB.h"
+#include "Config.h"
 #include "sqlite3.h"
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
@@ -269,7 +270,8 @@ namespace gorilla {
             }
             else if(str_table_name == "accessRights"){
 
-               json j_features(DEFAULT_PERMISSIONS); 
+               json::object_t DEFAULT_PERMISSIONS = Config::getInstance().DEFAULT_PERMISSIONS;
+               json j_features(DEFAULT_PERMISSIONS);
                std::string permissions = j_features.dump();
                 
                pSQLCommand += sprintf(pSQLCommand, "(accessRightName char(32) not null primary key,");

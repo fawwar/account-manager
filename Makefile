@@ -85,7 +85,9 @@ distclean:
 prebuild:
 	-mkdir -p $(OUTDIR)
 	-mkdir -p $(OBJDIR)
-	-cp -a configs/* $(OUTDIR)
+	-cp configs/*.json $(OUTDIR)
+	-cp configs/*.ini $(OUTDIR)
+	-cp configs/*.pem $(OUTDIR)
 	-cp VERSION.txt $(OUTDIR)
 
 -include $(OBJS:.o=.d)
