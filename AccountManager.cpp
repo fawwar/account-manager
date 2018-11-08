@@ -145,7 +145,8 @@ namespace gorilla {
                 if(!user->AddUser(sql_error)){
 
                     if((SQLError)sql_error == CONSTRAINT){
-                        out_str_reply = m_error_reply.GetError("DataBase Have This Account","<AccountManager::AddUser> FORBIDDEN");
+                        //out_str_reply = m_error_reply.GetError("DataBase Have This Account","<AccountManager::AddUser> FORBIDDEN");
+                        out_str_reply = m_error_reply.GetError("This account already exists.","ACCOUNT_DUPLICATE");
                         errorCode = FORBIDDEN;
                     }
                     else
@@ -211,8 +212,8 @@ namespace gorilla {
                      }
                      */
                      /* check userinfo vaild */
-                     if(!IsUserInfoVaild(str_user_info, out_str_reply))
-                        return FORBIDDEN;
+/*                     if(!IsUserInfoVaild(str_user_info, out_str_reply))
+                        return FORBIDDEN;*/
                      /* update userinfo */
                      errorCode = SUCCESS_RESPONSE;   
                      out_str_reply = it->second->UpdateUser(str_user_info);
