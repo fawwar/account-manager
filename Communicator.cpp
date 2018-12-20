@@ -707,7 +707,7 @@ Server::connection::status_t Communicator::GetUserPermissions(const Server::requ
     }
     else{
        err = gorilla::account::UNAUTHORIZED; 
-       reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::GetUserPermissions> UNAUTHORIZED");
+       reply_str = m_error_reply.GetError("Account Or Password Error", "USER_PASSWORD_INCORRECT");
     }
     
     if(err == gorilla::account::SUCCESS_RESPONSE){

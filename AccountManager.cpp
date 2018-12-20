@@ -439,7 +439,8 @@ namespace gorilla {
                    else{
 
                        errorCode = FORBIDDEN; 
-                       out_str_reply = m_error_reply.GetError("AccessRight Name Be Using", "<AccountManager::UpdateAccessRight> FORBIDDEN");
+                       //out_str_reply = m_error_reply.GetError("AccessRight Name Be Using", "<AccountManager::UpdateAccessRight> FORBIDDEN");
+                       out_str_reply = m_error_reply.GetError("This access right is in use.", "ACCESS_RIGHT_IS_IN_USE");
                        return errorCode;    
                    }
                 }
@@ -476,7 +477,7 @@ namespace gorilla {
                 else{
        
                     errorCode = FORBIDDEN;
-                    out_str_reply = m_error_reply.GetError("AccessRight Name Be Using", "<AccountManager::UpdateAccessRight> FORBIDDEN");
+                    out_str_reply = m_error_reply.GetError("This access right is in use.", "ACCESS_RIGHT_IS_IN_USE");
                 }
             }
             else{
