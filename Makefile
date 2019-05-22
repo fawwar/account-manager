@@ -4,6 +4,10 @@ SRCDIR    = $(PWD)
 LIBDIR    = $(PWD)/import
 OUTDIR    = $(PWD)/output
 OBJDIR    = $(PWD)/.obj
+BOOSTDIR  = $(PWD)/external/linux-x86_64/boost
+
+CXXFLAGS += -I$(BOOSTDIR)/include
+LDFLAGS  += -L$(BOOSTDIR)/lib
 
 CXXFLAGS += -DBOOST_NETWORK_NO_LIB
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
@@ -89,5 +93,13 @@ prebuild:
 	-cp configs/*.ini $(OUTDIR)
 	-cp configs/*.pem $(OUTDIR)
 	-cp VERSION.txt $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_filesystem.so.1.67.0 $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_iostreams.so.1.67.0 $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_log.so.1.67.0 $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_locale.so.1.67.0 $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_regex.so.1.67.0 $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_system.so.1.67.0 $(OUTDIR)
+	-cp $(BOOSTDIR)/lib/libboost_thread.so.1.67.0 $(OUTDIR)
+
 
 -include $(OBJS:.o=.d)
