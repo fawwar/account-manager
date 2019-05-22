@@ -19,7 +19,7 @@ CFLAGS   += -I$(LIBDIR)/hash
 SRCS     += $(wildcard $(LIBDIR)/jsoncpp/jsoncpp.cpp)
 CFLAGS   += -I$(LIBDIR)/jsoncpp
 
-LDFLAGS  += -licudata -licui18n -licutu -licuuc
+#LDFLAGS  += -licudata -licui18n -licutu -licuuc
 
 CXXFLAGS += -I$(LIBDIR)
 LDFLAGS  += -lcurl -lsqlite3
@@ -34,8 +34,8 @@ CPPFLAGS += -DASIO_HEADER_ONLY -DBOOST_NETWORK_DEBUG
 CXXFLAGS += -I$(LIBDIR)/cppnetlib/include
 
 CXXFLAGS += -DBOOST_SPIRIT_USE_PHOENIX_V3 -DBOOST_LOG_DYN_LINK
-LDFLAGS  += -lboost_atomic -lboost_chrono -lboost_coroutine -lboost_context
-LDFLAGS  += -lboost_date_time -lboost_exception -lboost_filesystem
+LDFLAGS  += -lboost_chrono -lboost_context
+LDFLAGS  += -lboost_date_time -lboost_filesystem
 LDFLAGS  += -lboost_iostreams -lboost_log -lboost_log_setup -lboost_locale
 LDFLAGS  += -lboost_program_options -lboost_regex -lboost_system -lboost_thread
 
