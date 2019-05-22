@@ -2,6 +2,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include "HttpResponse.h"
 #include "HttpUtil.h"
 #include "HttpServer.h"
@@ -142,17 +144,66 @@ void HttpResponse::sendHtml(const std::string& s)
     });
 }
 
-void HttpResponse::sendFile(const std::string& fileName)
+void HttpResponse::sendFile(const std::string& fileName, const std::string& rangeHeader)
 {
     HttpConnectionPtr connection = this->connection.lock();
     boost::filesystem::path fullPath(fileName);
     //here IO api is sync(filesize, stat, open)
     auto fsize = boost::filesystem::file_size(fullPath);
-    
-    headers.setHeader("Content-Length", fsize);
+    std::vector<std::string> s1;
+    if(!rangeHeader.empty())
+    {
+      boost::split(s1, rangeHeader, boost::is_any_of("-"));
+    }
+    size_t beginPos = 0;
+    size_t endPos = fsize;
+    if(s1.size() == 1)
+    {
+      if(!s1[0].empty())
+      {
+        beginPos = boost::lexical_cast<size_t>(s1[0]);
+      }
+    }
+    else if(s1.size() == 2)
+    {
+      if(!s1[0].empty())
+      {
+        beginPos = boost::lexical_cast<size_t>(s1[0]);
+      }
+      if(!s1[1].empty())
+      {
+        endPos = boost::lexical_cast<size_t>(s1[1]) + 1;
+      }
+    }
+    else
+    {
+      //wrong or 0
+    }
+    if(beginPos > endPos || endPos > fsize) //wrong range
+    {
+      this->setStatusCode(HttpStatusCode::RANGE_NOT_SATISFIABLE);
+      std::stringstream ss;
+      ss << "*/" << fsize;
+      headers.setHeader("Content-Range", ss.str());
+      send(""); 
+      return;
+    }
+    else if(s1.size() > 0)
+    {
+      std::stringstream ss;      
+      ss << "bytes ";
+      ss << beginPos << "-" << (endPos - 1) << "/" << fsize;
+      headers.setHeader("Content-Range", ss.str());
+    }
+    headers.setHeader("Content-Length", endPos - beginPos);
     headers.setHeader("Content-type", HttpUtil::getContentType(fileName));
     fileReader = std::make_shared<FileReader>();
     fileReader->setFileName(fileName);
+    if(s1.size() > 0)
+    {
+      fileReader->setPosition1(beginPos);
+      fileReader->setPosition2(endPos);
+    }
     //connection must be captured!
     fileReader->on("data", [connection, this](const char* buffer, int len){
         this->send(std::string(buffer, len), [connection, this](boost::system::error_code ec){

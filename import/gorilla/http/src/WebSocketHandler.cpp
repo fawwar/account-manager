@@ -98,20 +98,19 @@ int WebSocketHandler::sendText(const HttpConnectionPtr& conn, const std::string&
 }
 int WebSocketHandler::sendBinary(const HttpConnectionPtr& conn, const std::string& message)
 {   
-    conn->io_service_ptr->post([conn, message](){
-      if(conn->wsClosed)
-      {
-        std::cout << "conn close, send abort, " << conn.get() << std::endl;
-        return;
-      }
-      conn->ws_connection->send(message, websocketpp::frame::opcode::binary);
-    });
+    if(conn->wsClosed)
+    {
+      //std::cout << "conn close, send abort, " << conn.get() << std::endl;
+      return 0;
+    }
+    conn->ws_connection->send(message, websocketpp::frame::opcode::binary);    
     return conn->wsPending;
 }
 int WebSocketHandler::wait(const HttpConnectionPtr& conn, int maxBytes, int timeoutMS, bool *abortWait)
 {
     if(timeoutMS < 0)
     {
+	  std::lock_guard<std::mutex> lk(conn->mtxQueue);
       return conn->wsPending;
     }
     auto t1 = std::chrono::system_clock::now();

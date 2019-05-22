@@ -1,5 +1,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 #include "HttpClient.h"
 #include "JobManager.h"
 

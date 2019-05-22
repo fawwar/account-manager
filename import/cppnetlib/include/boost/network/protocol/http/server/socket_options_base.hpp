@@ -21,8 +21,9 @@ struct socket_options_base {
   boost::optional<asio::socket_base::receive_low_watermark>
       receive_low_watermark;
   boost::optional<asio::socket_base::send_low_watermark> send_low_watermark;
-  asio::socket_base::non_blocking_io non_blocking_io;
+  //asio::socket_base::non_blocking_io non_blocking_io;
   asio::socket_base::linger linger;
+  bool non_blocking;
 
   template <class Tag, class Handler>
   explicit socket_options_base(server_options<Tag, Handler> const &options)
@@ -32,7 +33,8 @@ struct socket_options_base {
         send_buffer_size(options.send_buffer_size()),
         receive_low_watermark(options.receive_low_watermark()),
         send_low_watermark(options.send_low_watermark()),
-        non_blocking_io(options.non_blocking_io()),
+        //non_blocking_io(options.non_blocking_io()),
+        non_blocking(options.non_blocking_io()),
         linger(options.linger(), options.linger_timeout()) {}
 
   void acceptor_options(boost::asio::ip::tcp::acceptor &acceptor) {
@@ -42,7 +44,8 @@ struct socket_options_base {
 
   void socket_options(boost::asio::ip::tcp::socket &socket) {
     boost::system::error_code ignored;
-    socket.io_control(non_blocking_io, ignored);
+    //socket.io_control(non_blocking_io, ignored);
+    socket.non_blocking(non_blocking, ignored);
     socket.set_option(linger, ignored);
     if (receive_buffer_size) socket.set_option(*receive_buffer_size, ignored);
     if (receive_low_watermark)

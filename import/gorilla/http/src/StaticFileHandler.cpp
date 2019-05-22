@@ -1,4 +1,5 @@
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include "StaticFileHandler.h"
 #include "HttpConnection.h"
 #include "HttpRequest.h"
@@ -26,6 +27,7 @@ void StaticFileHandler::_handle(const HttpConnectionPtr& conn, const Callback& n
     HttpResponsePtr res = conn->res;
     if(req->method == "GET")
     {
+        res->headers.setHeader("Access-Control-Allow-Origin", "*"); //cors
         fs::path dir(baseDir);
         std::string top = req->paths.top();
         if(top.empty())
@@ -53,8 +55,27 @@ void StaticFileHandler::_handle(const HttpConnectionPtr& conn, const Callback& n
             std::cout << "GET " + dir2.string() << std::endl;            
             //just for testing
             //res->headers.setHeader("Content-Encoding", "gzip");
-            //res->headers.setHeader("Transfer-Encoding", "chunked");            
-            res->sendFile(fullPath.string());
+            //res->headers.setHeader("Transfer-Encoding", "chunked");
+            std::string rangeHeader = req->headers.get("Range");
+            if(rangeHeader.empty())
+            {
+              res->headers.setHeader("Accept-Ranges", "bytes");
+              res->sendFile(fullPath.string());
+            }
+            else
+            {
+              std::vector<std::string> s1;
+              boost::split(s1, rangeHeader, boost::is_any_of("="));
+              //only support
+              if(s1.size() == 2)
+              {
+                res->sendFile(fullPath.string(), s1[1]);
+              }
+              else
+              {
+                throw std::runtime_error("RANGE_NOT_SUPPORT");
+              }
+            }
         }
         catch(std::exception &e)
         {

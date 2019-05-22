@@ -42,9 +42,11 @@ class HttpConnection: public std::enable_shared_from_this<HttpConnection>
     std::atomic_bool wsClosed;//used for sync onclose event of websocketpp
     std::string wsBuffer; //for websocketpp read buffer
     ws_server::connection_ptr ws_connection; //websocketpp, default null ptr
+	std::mutex mtxQueue;
     std::queue<std::string> wsQueue;
     int wsPending; //pending bytes        
-    bool wsIsWriting;    
+    bool wsIsWriting;
+	bool wsIsReading;
     
     
     uint16_t seqNum; //for websocket handler v2

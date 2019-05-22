@@ -51,7 +51,7 @@ public:
     void sendText(const std::string& s);//text/plain
     void sendHtml(const std::string& s);//text/html
     //send file by file path
-    void sendFile(const std::string& fileName); //decide mime type by filename
+    void sendFile(const std::string& fileName,  const std::string& rangeHeader = ""); //decide mime type by filename
     
     //TODO Range Request, rfc7233
     //void sendPartialFile(const std::string& fileName, uint64_t position);

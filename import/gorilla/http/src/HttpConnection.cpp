@@ -19,6 +19,7 @@ HttpConnection::HttpConnection(HttpServer& httpServer):
     wsClosed = false;
     seqNum = 0;
     wsIsWriting = false;
+	wsIsReading = false;
     wsPending = 0;
     totalReadBytes = 0;
     //std::cout << "HttpConnection::HttpConnection():" << this << std::endl;
@@ -84,38 +85,92 @@ void HttpConnection::sendBody(const std::string& data, std::function<void(boost:
 
 void HttpConnection::sendBody2(const std::string& data)
 {
+	if (wsClosed) return; //MUST	
     //only called in io service thread
-    if(!data.empty())
-    {
-      wsQueue.push(data);
-      wsPending+= data.size();
-    }
-    if(wsQueue.empty()) return;
-    if(wsIsWriting) return;
-    if(wsClosed) return; //MUST
-    wsIsWriting = true;
-    std::string toSent = wsQueue.front();
-    wsQueue.pop();
-    wsPending-= toSent.size();
-    HttpConnectionPtr conn = shared_from_this();
-    try{
-    connection->write(toSent, [conn](boost::system::error_code ec) {
-        if(ec) 
-        {
-            std::cout << "sendBody2 failed, " << ec << std::endl;
-            
-            return;
-        }
-        conn->wsIsWriting = false;
-        conn->io_service_ptr->post([conn](){
-          conn->sendBody2("");
-        });
-    });
-    }
-    catch(...)
-    {
-      std::cout << "sendBody2 got exception!!!" << std::endl;
-    }
+	{
+		bool isAdded = false;
+		std::lock_guard<std::mutex> lk(mtxQueue);
+		if (!data.empty())
+		{
+			if (wsQueue.size() >= 2)
+			{
+				if (wsQueue.back().size() + data.size() <= 64 * 1024)
+				{
+					wsQueue.back().append(data);
+					wsPending += data.size();
+					isAdded = true;
+				}				
+			}			
+			if (!isAdded)
+			{
+				wsQueue.push(data);
+				wsPending += data.size();
+			}
+		}
+		
+		if (wsQueue.empty()) return;		
+		if (wsIsWriting) return;
+		wsIsWriting = true;
+	}    
+	//io_service_ptr->post([this]() {
+		HttpConnectionPtr conn = shared_from_this();
+		try {
+			std::string *toSent = NULL;
+			int wQsize = 0;
+			{
+				std::lock_guard<std::mutex> lk(mtxQueue);
+				toSent = &wsQueue.front();
+				wQsize = wsQueue.size();
+			}
+			/*
+			connection->write(toSent, [conn](boost::system::error_code ec) {
+			if(ec)
+			{
+			std::cout << "sendBody2 failed, " << ec << std::endl;
+
+			return;
+			}
+			conn->wsIsWriting = false;
+			conn->io_service_ptr->post([conn](){
+			conn->sendBody2("");
+			});
+			});
+			*/
+			//std::cout << this << " sending " << (*toSent).length() << ", " << wQsize << ", " << wsPending << std::endl;
+			
+			connection->write(*toSent, [this, conn](boost::system::error_code ec) {
+			//boost::asio::async_write(connection->socket(), boost::asio::buffer(*toSent), [this, conn](boost::system::error_code ec, std::size_t length) {
+				if (ec)
+				{
+					std::cout << "sendBody2 failed, " << ec << std::endl;
+					wsClosed = true;
+					wsIsWriting = false;
+					connection->socket().close(ec);
+					return;
+				}
+				//std::cout << this << " sending done ";
+				{
+					std::lock_guard<std::mutex> lk(mtxQueue);
+					wsPending -= wsQueue.front().size();
+					wsQueue.pop();
+					//std::cout << wsQueue.size() << " / " << wsPending << std::endl;
+					wsIsWriting = false;
+					if (wsQueue.empty())
+					{						
+						return;
+					}
+				}				
+				conn->io_service_ptr->post([conn]() {
+					conn->sendBody2("");
+				});
+			});
+		}
+		catch (...)
+		{
+			std::cout << "sendBody2 got exception!!!" << std::endl;
+		}
+	//});
+    
 }
 
 void HttpConnection::readBody(int len, std::string& data, std::function<void(boost::system::error_code ec)> callback)
@@ -146,7 +201,32 @@ void HttpConnection::readBody(int len, std::string& data, std::function<void(boo
 
 void HttpConnection::readBody2(std::string& data, std::function<void(boost::system::error_code ec)> callback)
 {
-    try{
+	//assert(!wsIsReading);
+    try{	
+		/*
+		HttpConnectionPtr conn = shared_from_this();
+		wsIsReading = true;
+		connection->socket().async_read_some(boost::asio::buffer(&readBuffer[0], 64 * 1024), [this, &data, callback, conn](const boost::system::error_code& ec, std::size_t bytes_transferred) {
+			wsIsReading = false;
+			if (ec)
+			{				
+				callback(ec);				
+				return;
+			}
+			if (bytes_transferred)
+			{				
+				data.append(&readBuffer[0], bytes_transferred);
+			}
+			else
+			{
+				std::cout << "Q0" << std::endl;
+			}
+			callback(ec);
+		});
+		*/
+		///*
+		
+			
     connection->read([this, &data, callback](Lib::HttpServer::connection::input_range input, boost::system::error_code ec, std::size_t bytes_transferred, Lib::HttpConnection connection){
        if(ec)
        {
@@ -156,6 +236,7 @@ void HttpConnection::readBody2(std::string& data, std::function<void(boost::syst
        data.append(boost::begin(input), bytes_transferred);
        callback(ec);
     });
+	//*/
     }
     catch(...)
     {
@@ -225,7 +306,10 @@ void HttpConnection::syncBytes(std::function<void(boost::system::error_code ec)>
             callback(boost::system::error_code());
             return;
         }
-        ws_connection->read_some(wsBuffer.c_str(), wsBuffer.length());
+		if (wsBuffer.length())
+		{			
+			ws_connection->read_some(wsBuffer.c_str(), wsBuffer.length());
+		}        
         syncBytes(callback);
     });
 }
