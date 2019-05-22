@@ -93,13 +93,6 @@ prebuild:
 	-cp configs/*.ini $(OUTDIR)
 	-cp configs/*.pem $(OUTDIR)
 	-cp VERSION.txt $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_filesystem.so.1.67.0 $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_iostreams.so.1.67.0 $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_log.so.1.67.0 $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_locale.so.1.67.0 $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_regex.so.1.67.0 $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_system.so.1.67.0 $(OUTDIR)
-	-cp $(BOOSTDIR)/lib/libboost_thread.so.1.67.0 $(OUTDIR)
 
 
 -include $(OBJS:.o=.d)
