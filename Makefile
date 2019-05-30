@@ -49,6 +49,12 @@ LDFLAGS  += -lcurl
 
 LIBPATH   = .
 
+CONFIGPATH = configs
+ifdef TELSTRA
+  CONFIGPATH = configs/telstra
+  CXXFLAGS += -DTELSTRA=1
+endif
+
 
 ################################################################################
 CC       := $(TOOLCHAIN_PREFIX)gcc
@@ -87,10 +93,11 @@ distclean:
 	-rm -rf $(OUTDIR) $(OBJS)
 
 prebuild:
+	-rm -f $(OBJDIR)/Config.*
 	-mkdir -p $(OUTDIR)
 	-mkdir -p $(OBJDIR)
-	-cp configs/*.json $(OUTDIR)
-	-cp configs/*.ini $(OUTDIR)
+	-cp $(CONFIGPATH)/config.json $(OUTDIR)
+	-cp configs/settings.ini $(OUTDIR)
 	-cp configs/*.pem $(OUTDIR)
 	-cp VERSION.txt $(OUTDIR)
 

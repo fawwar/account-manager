@@ -2,4 +2,7 @@ Ubuntu 16 build required packages:
 apt-get install libcurl4-openssl-dev
 apt-get install libboost1.58-all-dev
 apt-get install libsqlite3-dev
- 
+
+telstra build: make TELSTRA=1
+std build: make
+
