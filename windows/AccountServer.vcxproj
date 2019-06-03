@@ -73,8 +73,8 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y .\third_party\curl\bin\libcurl.dll .\output
-xcopy /y .\third_party\openssl\bin\*.dll .\output
+      <Command>xcopy /y ..\external\win-x86_64\curl\bin\libcurl.dll .\output
+xcopy /y ..\external\win-x86_64\openssl\bin\*.dll .\output
 xcopy /y ..\configs\*.json .\output
 xcopy /y ..\configs\*.ini .\output
 xcopy /y ..\configs\*.pem .\output
@@ -103,8 +103,8 @@ xcopy /y ..\configs\*.pem .\output
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y .\third_party\curl\bin\libcurl.dll .\output
-xcopy /y .\third_party\openssl\bin\*.dll .\output
+      <Command>xcopy /y ..\external\win-x86_64\curl\bin\libcurl.dll .\output
+xcopy /y ..\external\win-x86_64\openssl\bin\*.dll .\output
 xcopy /y ..\configs\telstra\config.json .\output
 xcopy /y ..\configs\*.ini .\output
 xcopy /y ..\configs\*.pem .\output
