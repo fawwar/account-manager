@@ -2,7 +2,7 @@ TARGET    = account-manager
 
 SRCDIR    = $(PWD)
 LIBDIR    = $(PWD)/import
-OUTDIR    = $(PWD)/output
+OUTDIR    = $(PWD)/outputs
 OBJDIR    = $(PWD)/.obj
 BOOSTDIR  = $(PWD)/external/linux-x86_64/boost
 
@@ -94,11 +94,12 @@ distclean:
 
 prebuild:
 	-rm -f $(OBJDIR)/Config.*
-	-mkdir -p $(OUTDIR)
+	-mkdir -p $(OUTDIR)/default
 	-mkdir -p $(OBJDIR)
 	-cp $(CONFIGPATH)/config.json $(OUTDIR)
-	-cp configs/settings.ini $(OUTDIR)
+	-cp configs/settings.ini $(OUTDIR)/default
 	-cp configs/*.pem $(OUTDIR)
+	-cp -r packaging/systemd $(OUTDIR)
 	-cp VERSION.txt $(OUTDIR)
 
 

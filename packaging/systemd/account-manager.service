@@ -1,0 +1,18 @@
+[Unit]
+Description=Account Manager
+After=ivar.service
+
+[Service]
+Environment=LD_LIBRARY_PATH=/opt/GorillaIVAR/account-manager:/opt/GorillaIVAR/ivar-core/lib:$LD_LIBRARY_PATH
+ExecStart=/opt/GorillaIVAR/account-manager/account-manager
+IgnoreSIGPIPE=true
+Restart=always
+RestartSec=3
+TimeoutStopSec=3
+Type=simple
+WorkingDirectory=/opt/GorillaIVAR/account-manager
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
