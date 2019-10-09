@@ -1,6 +1,6 @@
 [Unit]
 Description=Account Manager
-After=ivar.service
+After=ivar-core.service
 
 [Service]
 Environment=LD_LIBRARY_PATH=/opt/GorillaIVAR/account-manager:/opt/GorillaIVAR/ivar-core/lib:$LD_LIBRARY_PATH
