@@ -16,7 +16,6 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AccountServer</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>account-manager</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='std|x64'" Label="Configuration">
@@ -47,11 +46,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='std|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)outputs\</OutDir>
+    <OutDir>$(SolutionDir)output\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='telstra|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)outputs\</OutDir>
+    <OutDir>$(SolutionDir)output\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='std|x64'">
     <ClCompile>
@@ -74,14 +73,12 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>
-mkdir .\outputs\default
-xcopy /y ..\external\win-x86_64\curl\bin\libcurl.dll .\outputs
-xcopy /y ..\external\win-x86_64\openssl\bin\*.dll .\outputs
-xcopy /y ..\configs\*.json .\outputs
-xcopy /y ..\configs\*.ini .\outputs\default
-xcopy /y ..\configs\*.pem .\outputs
-xcopy /y ..\packaging\servicewrapper\* .\outputs
+      <Command>xcopy /y ..\external\win-x86_64\curl\bin\libcurl.dll .\output
+xcopy /y ..\external\win-x86_64\openssl\bin\*.dll .\output
+xcopy /y ..\configs\*.json .\output
+xcopy /y ..\configs\*.ini .\output
+xcopy /y ..\configs\*.pem .\output
+
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -106,12 +103,12 @@ xcopy /y ..\packaging\servicewrapper\* .\outputs
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y ..\external\win-x86_64\curl\bin\libcurl.dll .\outputs
-xcopy /y ..\external\win-x86_64\openssl\bin\*.dll .\outputs
-xcopy /y ..\configs\telstra\config.json .\outputs
-xcopy /y ..\configs\*.ini .\outputs
-xcopy /y ..\configs\*.pem .\outputs
-xcopy /y ..\packaging\servicewrapper\* .\outputs
+      <Command>xcopy /y ..\external\win-x86_64\curl\bin\libcurl.dll .\output
+xcopy /y ..\external\win-x86_64\openssl\bin\*.dll .\output
+xcopy /y ..\configs\telstra\config.json .\output
+xcopy /y ..\configs\*.ini .\output
+xcopy /y ..\configs\*.pem .\output
+
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
