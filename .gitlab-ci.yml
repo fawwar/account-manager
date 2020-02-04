@@ -1,0 +1,89 @@
+# Specify the docker image to use (only used if using docker runners)
+# See: http://doc.gitlab.com/ee/ci/docker/using_docker_images.html
+variables:
+  GIT_DEPTH: "1"
+  GIT_SSL_NO_VERIFY: "1"
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - build
+  - cleanup
+
+linux-test-build:
+  tags:
+    - ubuntu
+  image: vincenthsu/ivar-build:latest
+  stage: build
+  except:
+    - tags
+  script:
+    - bash ./scripts/build.sh $PROJECT
+    - bash ./scripts/packaging.sh
+    - mkdir -p smbtmp
+    - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager/$PROJECT/linux-x86_64 smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
+    - cp account-manager.tar.gz smbtmp && umount smbtmp && rm -rf smbtmp
+
+linux-release-build:
+  tags:
+    - ubuntu
+  image: vincenthsu/ivar-build:latest
+  stage: build
+  only:
+    - tags
+  except:
+    - branches
+  script:
+    - bash ./scripts/build.sh $PROJECT
+    - bash ./scripts/packaging.sh
+    - mkdir -p smbtmp
+    - mount -t cifs //$SMB_URL/IOT-Release/account-manager/$PROJECT/linux-x86_64 smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
+    - cp account-manager.tar.gz smbtmp && umount smbtmp && rm -rf smbtmp
+
+windows-test-build:
+  tags:
+    - windows
+  stage: build
+  except:
+    - tags
+  before_script:
+    - chcp 65001
+  script:
+    - call .\scripts\build.bat $PROJECT
+    - call .\scripts\packaging.bat
+    - if exist "X:\" ( net use "X:" /delete /y )
+    - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
+    - copy ivar-core.zip "X:\"
+    - net use "X:" /delete /y
+
+windows-release-build:
+  tags:
+    - windows
+  stage: build
+  only:
+    - tags
+  except:
+    - branches
+  before_script:
+    - chcp 65001
+  script:
+    - call .\scripts\build.bat $PROJECT
+    - call .\scripts\packaging.bat
+    - if exist "X:\" ( net use "X:" /delete /y )
+    - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
+    - copy ivar-core.zip "X:\"
+    - net use "X:" /delete /y
+
+windows-cleanup:
+  tags:
+    - windows
+  stage: cleanup
+  script:
+    - echo "Time to clean up"
+  after_script:
+    - set "BUILD_DIR=%CI_PROJECT_DIR%"
+    - set "BUILD_DIR=%BUILD_DIR:/=\%"
+    - echo "Cleaning %BUILD_DIR%"
+    - rmdir /S /Q %BUILD_DIR%
+    - exit /b 0
+         
+  
