@@ -14,7 +14,7 @@
 #ifdef WIN32
 static const std::string DB_PATH = "./";// "C:/opt/ivar/var/";
 #else
-static const std::string DB_PATH = "/opt/ivar/var/";
+static const std::string DB_PATH = "./";
 #endif
 static const std::string DB_NAME = "account.db";
 static const std::vector<std::string> TABLE_NAME = {"users", "accessRights"};
