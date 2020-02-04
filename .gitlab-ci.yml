@@ -48,7 +48,7 @@ windows-test-build:
   before_script:
     - chcp 65001
   script:
-    - call .\scripts\build.bat $PROJECT
+    - call .\scripts\build.bat %PROJECT%
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
@@ -66,7 +66,7 @@ windows-release-build:
   before_script:
     - chcp 65001
   script:
-    - call .\scripts\build.bat $PROJECT
+    - call .\scripts\build.bat %PROJECT%
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
