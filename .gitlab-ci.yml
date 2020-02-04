@@ -52,7 +52,7 @@ windows-test-build:
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy ivar-core.zip "X:\"
+    - copy account-manager.zip "X:\"
     - net use "X:" /delete /y
 
 windows-release-build:
@@ -70,7 +70,7 @@ windows-release-build:
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy ivar-core.zip "X:\"
+    - copy account-manager.zip "X:\"
     - net use "X:" /delete /y
 
 windows-cleanup:
