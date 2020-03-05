@@ -528,13 +528,21 @@ namespace gorilla {
 
             LOGGER_S(info) << account;
             
+            /*
             if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]+$"))){
                 
                 LOGGER_S(debug) << "User Account Invaild";
                 out_str_reply += "Account Invaild. ";
                 vaild = false;
             }
-
+            */
+            
+            if(account.length() == 0){
+                LOGGER_S(debug) << "User Account Invaild";
+                out_str_reply += "Account Invaild. ";
+                vaild = false;
+            }
+            
             return vaild;
         }
 

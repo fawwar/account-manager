@@ -385,6 +385,7 @@ std::string Communicator::GetName(const std::string &str_check_tag,
             name = name.substr(0, pos);
     }
     
+    name = Util::urlDecode(name);
     return name;
 }
 
