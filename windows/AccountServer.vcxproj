@@ -62,15 +62,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;BOOST_NETWORK_NO_LIB;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;BOOST_NETWORK_ENABLE_HTTPS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)..\import\hash;$(SolutionDir)..\import\websocketpp\include;$(SolutionDir)..\import\cppnetlib\include;$(SolutionDir)..\import\gorilla\utility;$(SolutionDir)..\import\gorilla\http\include;$(SolutionDir)..\import\jsoncpp;$(SolutionDir)..\import;$(SolutionDir)..\external\win-x86_64\boost\include;$(SolutionDir)..\external\win-x86_64\openssl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)..\import\hash;$(SolutionDir)..\import\websocketpp\include;$(SolutionDir)..\import\cppnetlib\include;$(SolutionDir)..\import\gorilla\utility;$(SolutionDir)..\import\gorilla\http\include;$(SolutionDir)..\import\jsoncpp;$(SolutionDir)..\import;$(SolutionDir)..\external\win-x86_64\boost\include;$(SolutionDir)..\external\win-x86_64\openssl\include;$(SolutionDir)..\external\win-x86_64\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\import\gorilla\http\lib;$(SolutionDir)..\external\win-x86_64\boost\lib;$(SolutionDir)..\external\win-x86_64\openssl\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libboost_zlib-vc140-mt-x64-1_67.lib;libboost_iostreams-vc140-mt-x64-1_67.lib;HttpFramework.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\import\gorilla\http\lib;$(SolutionDir)..\external\win-x86_64\boost\lib;$(SolutionDir)..\external\win-x86_64\openssl\lib;$(SolutionDir)..\external\win-x86_64\curl\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libboost_zlib-vc140-mt-x64-1_67.lib;libboost_iostreams-vc140-mt-x64-1_67.lib;HttpFramework.lib;libeay32.lib;ssleay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
@@ -94,15 +94,15 @@ xcopy /y ..\packaging\servicewrapper\* .\outputs
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;BOOST_NETWORK_NO_LIB;_WIN32_WINNT=0x0601;_CRT_SECURE_NO_WARNINGS;BOOST_NETWORK_ENABLE_HTTPS;TELSTRA=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)..\import\hash;$(SolutionDir)..\import\websocketpp\include;$(SolutionDir)..\import\cppnetlib\include;$(SolutionDir)..\import\gorilla\utility;$(SolutionDir)..\import\gorilla\http\include;$(SolutionDir)..\import\jsoncpp;$(SolutionDir)..\import;$(SolutionDir)..\external\win-x86_64\boost\include;$(SolutionDir)..\external\win-x86_64\openssl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)..\import\hash;$(SolutionDir)..\import\websocketpp\include;$(SolutionDir)..\import\cppnetlib\include;$(SolutionDir)..\import\gorilla\utility;$(SolutionDir)..\import\gorilla\http\include;$(SolutionDir)..\import\jsoncpp;$(SolutionDir)..\import;$(SolutionDir)..\external\win-x86_64\boost\include;$(SolutionDir)..\external\win-x86_64\openssl\include;$(SolutionDir)..\external\win-x86_64\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\import\gorilla\http\lib;$(SolutionDir)..\external\win-x86_64\boost\lib;$(SolutionDir)..\external\win-x86_64\openssl\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libboost_zlib-vc140-mt-x64-1_67.lib;libboost_iostreams-vc140-mt-x64-1_67.lib;HttpFramework.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\import\gorilla\http\lib;$(SolutionDir)..\external\win-x86_64\boost\lib;$(SolutionDir)..\external\win-x86_64\openssl\lib;$(SolutionDir)..\external\win-x86_64\curl\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libboost_zlib-vc140-mt-x64-1_67.lib;libboost_iostreams-vc140-mt-x64-1_67.lib;HttpFramework.lib;libeay32.lib;ssleay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>

@@ -2,6 +2,7 @@
 #include <list>
 #include <sstream>
 #include <boost/regex.hpp>
+#include <curl/curl.h>
 
 #include "AccountManager.h"
 #include "AccountDB.h"
@@ -12,6 +13,7 @@
 #include "./import/json-develop/json_tools.hpp"
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
+#include "Util.h"
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
 
@@ -264,6 +266,15 @@ namespace gorilla {
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             auto it = m_map_users.find(str_account.c_str());
             if (it != m_map_users.end()){
+
+                std::string url = "http://127.0.0.1:8001/session/kick/";
+                url += Util::urlEncode(str_account);
+                //notify proxy service
+                CURL* handle = curl_easy_init();
+                curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+                //curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
+                CURLcode resCode = curl_easy_perform(handle);
+                curl_easy_cleanup(handle);
 
                 if(!it->second->DeleteUser()){
                     
