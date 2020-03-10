@@ -272,6 +272,7 @@ namespace gorilla {
                 //notify proxy service
                 CURL* handle = curl_easy_init();
                 curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+                curl_easy_setopt(handle, CURLOPT_TIMEOUT, 5L); //5 seconds
                 //curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
                 CURLcode resCode = curl_easy_perform(handle);
                 curl_easy_cleanup(handle);
