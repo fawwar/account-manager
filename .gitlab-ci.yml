@@ -20,8 +20,9 @@ linux-test-build:
     - bash ./scripts/build.sh $PROJECT
     - bash ./scripts/packaging.sh
     - mkdir -p smbtmp
-    - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager/$PROJECT/linux-x86_64 smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
-    - cp account-manager.tar.gz smbtmp && umount smbtmp && rm -rf smbtmp
+    - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
+    - mkdir -p smbtmp/$PROJECT/linux-x86_64
+    - cp account-manager.tar.gz smbtmp/$PROJECT/linux-x86_64 && umount smbtmp && rm -rf smbtmp
 
 linux-release-build:
   tags:
@@ -36,8 +37,9 @@ linux-release-build:
     - bash ./scripts/build.sh $PROJECT
     - bash ./scripts/packaging.sh
     - mkdir -p smbtmp
-    - mount -t cifs //$SMB_URL/IOT-Release/account-manager/$PROJECT/linux-x86_64 smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
-    - cp account-manager.tar.gz smbtmp && umount smbtmp && rm -rf smbtmp
+    - mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
+    - mkdir -p smbtmp/$PROJECT/linux-x86_64
+    - cp account-manager.tar.gz smbtmp/$PROJECT/linux-x86_64 && umount smbtmp && rm -rf smbtmp
 
 windows-test-build:
   tags:
@@ -51,8 +53,9 @@ windows-test-build:
     - call .\scripts\build.bat %PROJECT%
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
-    - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy account-manager.zip "X:\"
+    - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
+    - md "X:\%PROJECT%\win-x86_64" 2>NUL
+    - copy account-manager.zip "X:\%PROJECT%\win-x86_64"
     - net use "X:" /delete /y
 
 windows-release-build:
@@ -69,8 +72,9 @@ windows-release-build:
     - call .\scripts\build.bat %PROJECT%
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
-    - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager\%PROJECT%\win-x86_64" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy account-manager.zip "X:\"
+    - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
+    - md "X:\%PROJECT%\win-x86_64" 2>NUL
+    - copy account-manager.zip "X:\%PROJECT%\win-x86_64"
     - net use "X:" /delete /y
 
 windows-cleanup:
