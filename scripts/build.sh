@@ -7,6 +7,8 @@ PROJECT=$1
 
 if [ "$PROJECT" == "telstra" ]; then
   make TELSTRA=1 || { echo "make failed"; exit 1; }
+elif [ "$PROJECT" == "bi" ]; then
+  make TELSTRA=1 || { echo "make failed"; exit 1; }
 else
   make || { echo "make failed"; exit 1; }
 fi
