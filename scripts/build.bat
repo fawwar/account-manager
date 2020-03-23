@@ -8,8 +8,8 @@ CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd6
 
 IF "%PROJECT%" == "bi" (
   echo PROJECT IS %PROJECT% , use telstra settings
-  set PROJECT=telstra
+  MSBuild windows\account-manager.sln /p:Configuration=telstra /p:Platform=x64
+) ELSE (
+  MSBuild windows\account-manager.sln /p:Configuration=%PROJECT% /p:Platform=x64
 )
-
-MSBuild windows\account-manager.sln /p:Configuration=%PROJECT% /p:Platform=x64
 
