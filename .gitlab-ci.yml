@@ -54,7 +54,6 @@ windows-test-build:
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - md X:\%PROJECT%\win-x86_64 2>NUL & ECHO md X:\%PROJECT%\win-x86_64
     - copy account-manager.zip X:\%PROJECT%\win-x86_64
     - net use "X:" /delete /y
 
@@ -73,7 +72,6 @@ windows-release-build:
     - call .\scripts\packaging.bat
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - md X:\%PROJECT%\win-x86_64 2>NUL & ECHO md X:\%PROJECT%\win-x86_64
     - copy account-manager.zip X:\%PROJECT%\win-x86_64
     - net use "X:" /delete /y
 
