@@ -9,6 +9,7 @@
 #include "settings.h"
 #include "Communicator.h"
 #include "Util.h"
+#include "Error.h"
 
 using namespace gorilla::log;
 using gorilla::http::HttpUtil;
@@ -112,72 +113,78 @@ void Communicator::ProcessRequest(const Server::request& request,
     LOGGER_S(info) << "From: " << "\n" <<request.source << " \n"
        << request.method << " \n" << request.destination << "\n"
        << request.http_version_major << "\n" << request.http_version_minor;
-
-    
-    GetAuthorization(request, m_str_account, m_str_password);
-
-    
-    int cl;
-    Server::request::headers_container_type const &hs = request.headers;
-    for(auto it = hs.begin(); it != hs.end(); ++it) {
-        if(boost::to_lower_copy(it->name)=="content-length") {
-            cl = boost::lexical_cast<int>(it->value);
-            break;
-        }
-    }
-    
-    std::string body_str;
-
-    if (request.method == "POST" || request.method == "PUT"){
-
-        LOGGER_S(debug) << "Body length: " << cl << " byte";
-        is_body_ready_ = false;
-		
-		/* make sure read wait first then to do read notify_one*/
-        std::unique_lock<std::mutex> lck(request_mtx_);
-        ReadChunk(connection_ptr, cl, boost::ref(body_str));
-
-        if(! is_body_ready_) {            
-            LOGGER_S(debug) << "Wait For Request Body...";  
-            
-			/* read wait can unlock request_mtx_ */
-			/* use wait_for can prevent connect time out, 
-			cause process block here (because read chuck no data to read, then can't notify_one)*/
-			request_cv_.wait_for(lck, std::chrono::milliseconds(CONNECTION_READ_TIMEOUT_MS));        
-        }
-   
-        /* web post content */	
-        //LOGGER_S(debug)<< "Web Post Content> " <<"\n"<< body_str;
-    }
-
-
     std::string reply_str;
     Server::connection::status_t status_code =
-            Server::connection::internal_server_error;
-    
-    if(request.method != "OPTIONS"){
+        Server::connection::internal_server_error;
+    try
+    {
+        GetAuthorization(request, m_str_account, m_str_password);
 
-        const boost::network::uri::uri uri_instance(
-            std::string("http://127.0.0.1" + request.destination));
 
-        LOGGER_S(info) << "URI Path> " << uri_instance.path() << "\n";
+        int cl;
+        Server::request::headers_container_type const &hs = request.headers;
+        for (auto it = hs.begin(); it != hs.end(); ++it) {
+            if (boost::to_lower_copy(it->name) == "content-length") {
+                cl = boost::lexical_cast<int>(it->value);
+                break;
+            }
+        }
 
-        // search iot function
-        std::string new_uri_instance_path = SetURIPath(request.method, uri_instance.path());
+        std::string body_str;
 
-        auto it = request_handler_mapping_.find(new_uri_instance_path);
-        if (it != request_handler_mapping_.end()) {
-            status_code = it->second(request, body_str, reply_str);
-        } 
+        if (request.method == "POST" || request.method == "PUT") {
+
+            LOGGER_S(debug) << "Body length: " << cl << " byte";
+            is_body_ready_ = false;
+
+            /* make sure read wait first then to do read notify_one*/
+            std::unique_lock<std::mutex> lck(request_mtx_);
+            ReadChunk(connection_ptr, cl, boost::ref(body_str));
+
+            if (!is_body_ready_) {
+                LOGGER_S(debug) << "Wait For Request Body...";
+
+                /* read wait can unlock request_mtx_ */
+                /* use wait_for can prevent connect time out,
+                cause process block here (because read chuck no data to read, then can't notify_one)*/
+                request_cv_.wait_for(lck, std::chrono::milliseconds(CONNECTION_READ_TIMEOUT_MS));
+            }
+
+            /* web post content */
+            //LOGGER_S(debug)<< "Web Post Content> " <<"\n"<< body_str;
+        }
+
+        if (request.method != "OPTIONS") {
+            const boost::network::uri::uri uri_instance(
+                std::string("http://127.0.0.1" + request.destination));
+
+            LOGGER_S(info) << "URI Path> " << uri_instance.path() << "\n";
+
+            // search iot function
+            std::string new_uri_instance_path = SetURIPath(request.method, uri_instance.path());
+
+            auto it = request_handler_mapping_.find(new_uri_instance_path);
+            if (it != request_handler_mapping_.end()) {
+                status_code = it->second(request, body_str, reply_str);
+            }
+            else {
+                LOGGER_S(info) << "Command not found";
+                status_code = Server::connection::bad_request;
+            }
+        }
         else {
-            LOGGER_S(info) << "Command not found";
-            status_code = Server::connection::bad_request;
+
+            LOGGER_S(info) << "IS OPTIONS \n";
+            status_code = Server::connection::ok;
         }
     }
-    else{
-
-        LOGGER_S(info) << "IS OPTIONS \n";
-        status_code = Server::connection::ok;
+    catch (std::exception& e)
+    {
+        gorilla::account::ErrorReply errorReply;
+        status_code =
+            Server::connection::internal_server_error;
+        reply_str = errorReply.GetError("INTERNAL_ERROR", e.what());
+        LOGGER_S(info) << e.what();
     }
     
 
