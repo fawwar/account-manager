@@ -222,6 +222,22 @@ namespace gorilla {
                      /* update userinfo */
                      errorCode = SUCCESS_RESPONSE;   
                      out_str_reply = it->second->UpdateUser(str_user_info);
+		     if (IsKeyExsist(info,"password"))
+			{
+				LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_user_info" << str_user_info.c_str();
+				LOGGER_S(debug)<<"Error AccountManager::UpdateUser out_str_reply if (true)" <<out_str_reply  ;
+				
+				std::string url = "http://127.0.0.1:8001/session/kick/";
+               			url += Util::urlEncode(str_account);
+                		//notify proxy service
+                		CURL* handle = curl_easy_init();
+                		curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+                		curl_easy_setopt(handle, CURLOPT_TIMEOUT, 5L); //5 seconds
+                		//curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
+                		CURLcode resCode = curl_easy_perform(handle);
+                		curl_easy_cleanup(handle);
+
+			}
                      /* if account change reset map */   
                      if(it->second->Account() != str_account){   
                         m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(it->second->Account(), it->second));
