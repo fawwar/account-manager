@@ -124,7 +124,13 @@ void Communicator::ProcessRequest(const Server::request& request,
         int cl;
         Server::request::headers_container_type const &hs = request.headers;
         for (auto it = hs.begin(); it != hs.end(); ++it) {
-            if (boost::to_lower_copy(it->name) == "content-length") {
+	   /* if (boost::iequals(it->name,"cookie"))  // request headers cookie
+		{
+		LOGGER()<<"Communicator::ProcessRequest it->name !"<< it->name;
+		LOGGER()<<"Communicator::ProcessRequest it->value !"<< it->value;
+		}
+       		*/
+	    if (boost::to_lower_copy(it->name) == "content-length") {
                 cl = boost::lexical_cast<int>(it->value);
                 break;
             }
@@ -166,6 +172,7 @@ void Communicator::ProcessRequest(const Server::request& request,
             auto it = request_handler_mapping_.find(new_uri_instance_path);
             if (it != request_handler_mapping_.end()) {
                 status_code = it->second(request, body_str, reply_str);
+		LOGGER()<<"Communicator::ProcessRequest Command found !";
             }
             else {
                 LOGGER_S(info) << "Command not found";
@@ -438,7 +445,8 @@ void Communicator::GetAuthorization(const Server::request& request,
     out_str_password = "";
     
     for (const auto& header : request.headers) {
-
+	//	LOGGER()<<"Communicator::GetAuthorization header.name !"<<header.name;
+	//	LOGGER()<<"Communicator::GetAuthorization header.value !" <<header.value;
             if(boost::iequals(header.name, "Authorization")){
 
                 const std::string FIELD = "Basic ";
@@ -596,6 +604,19 @@ Server::connection::status_t Communicator::GetUser(const Server::request& reques
 Server::connection::status_t Communicator::UpdateUser(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
 {
+
+	Server::request::headers_container_type const &hs_cookie = request.headers;
+	{
+	    for(auto it = hs_cookie.begin(); it !=hs_cookie.end(); ++it)
+	    {
+		if (boost::iequals(it->name,"cookie"))
+		{
+		    LOGGER()<<"Server::connection::status_t Communicator::UpdateUser it->name !" << it->name;
+		    LOGGER()<<"Server::connection::status_t Communicator::UpdateUser it-value !" << it->value; 
+		}
+	    }
+	}
+
     gorilla::account::Error err;
     
     const boost::network::uri::uri uri_instance(
@@ -612,7 +633,7 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
        
         //if(m_str_account == user_name || level == "admin"){
         if(true){//ALL PASS
-            err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str);
+            err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str,request);
         }
         else{
 
