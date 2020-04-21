@@ -191,28 +191,6 @@ namespace gorilla {
                 const std::string &str_user_info, std::string &out_str_reply, const Server::request& request)
         {
             Error errorCode(INTERNAL_SERVER_ERROR); 
-            /*
-	    std::string str_cookie_name;
-	    std::string str_cookie_value;
-	    Server::request::headers_container_type const &hs_cookie = request.headers;
-	    {
-		for (auto it = hs_cookie.begin(); it!=hs_cookie.end(); ++it)
-		{
-		    if(boost::iequals(it->name,"cookie"))
-			{
-			   // LOGGER()<<"Error AccountManager::UpdateUser it->name !" << it->name;
-			   // LOGGER()<<"Error AccountManager::UpdateUser it->value !" << it->value;
-			    str_cookie_name = it->name;
-			    str_cookie_value = it->value;
-			}
-		}
-	    } 
-	    */
-	//	LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !"<< str_account.c_str();
-	//	LOGGER_S(debug)<<"Error AccountManager::UpdateUser login_level !"<< str_login_level.c_str();
-	//	LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_user_info !" << str_user_info.c_str();
-	//	LOGGER_S(debug)<<"Error AccountManager::UpdateUser out_str_reply !" <<out_str_reply;	
-
             /* check level name exist in level map */
             if(!IsAccessRightNameExist(str_user_info)){
 
@@ -245,11 +223,7 @@ namespace gorilla {
                      out_str_reply = it->second->UpdateUser(str_user_info);
 	             if (IsKeyExsist(info,"password"))
 			{
-				//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_user_info" << str_user_info.c_str();
-				//LOGGER_S(debug)<<"Error AccountManager::UpdateUser out_str_reply if (true)" <<out_str_reply  ;
-				//LOGGER()<<"Error AccountManager::UpdateUser it->name !" << str_cookie_name;
-			   	//LOGGER()<<"Error AccountManager::UpdateUser it->value !" << str_cookie_value;
-				/*
+			/*
 				std::string str_cookie_name;
 	    			std::string str_cookie_value="";
 				std::string str_x_sessiontoken_name;
@@ -279,10 +253,7 @@ namespace gorilla {
                 		//notify proxy service
                 		CURL* handle = curl_easy_init();
 				struct curl_slist *chunk = NULL;
-			        //const char* char_cookie_name = str_cookie_name.c_str();
-				//chunk = curl_slist_append(chunk , char_cookie_name);
-
-				if (str_cookie_value != "")
+			        if (str_cookie_value != "")
 				{
 				    str_cookie_name.append(": ").append(str_cookie_value);
 				    const char* char_cookie_name = str_cookie_name.c_str();
@@ -336,9 +307,7 @@ namespace gorilla {
                  }
 			if (IsKeyExsist(info,"password"))
 			{
-				//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_user_info" << str_user_info.c_str();
-				//LOGGER_S(debug)<<"Error AccountManager::UpdateUser out_str_reply if (true)" <<out_str_reply;          		
-                		                		
+			                		
 				std::string str_cookie_name;
 	    			std::string str_cookie_value="";
 				std::string str_x_sessiontoken_name;
@@ -350,15 +319,15 @@ namespace gorilla {
 		    		    	if(boost::iequals(it->name,"cookie"))
 				    	{   str_cookie_name = it->name;
 			    		    str_cookie_value = it->value;
-			   		    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_cookie_name !" << str_cookie_name;
-			   		    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_cookie_value !" << str_cookie_value;
+			   		   // LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_cookie_name !" << str_cookie_name;
+			   		   // LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_cookie_value !" << str_cookie_value;
 				    	}
 					if(boost::iequals(it->name,"x-sessiontoken"))
 					{
 					    str_x_sessiontoken_name = it->name;
 					    str_x_sessiontoken_value = it->value;
-					    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_x_sessiontoken_name !" <<str_x_sessiontoken_name;
-					    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_x_sessiontoken_value !" <<str_x_sessiontoken_value;
+					   // LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_x_sessiontoken_name !" <<str_x_sessiontoken_name;
+					   // LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_x_sessiontoken_value !" <<str_x_sessiontoken_value;
 					}
 				    }
 	    			}	     
@@ -375,14 +344,14 @@ namespace gorilla {
 				{
 				    str_cookie_name.append(": ").append(str_cookie_value);
 				    const char* char_cookie_name = str_cookie_name.c_str();
-				    LOGGER_S(debug)<<"cookie test! "<<str_cookie_name;
+				    LOGGER_S(debug)<<str_cookie_name;
 				    chunk = curl_slist_append(chunk , char_cookie_name);
 				}
 				if (str_x_sessiontoken_value != "")
 				{
 				    str_x_sessiontoken_name.append(": ").append(str_x_sessiontoken_value);
 				    const char* char_x_sessiontoken_name = str_x_sessiontoken_name.c_str();
-				    LOGGER_S(debug)<<"x_sessiontoken test! "<<str_x_sessiontoken_name;
+				    LOGGER_S(debug)<<str_x_sessiontoken_name;
 				    chunk = curl_slist_append(chunk, char_x_sessiontoken_name);
 				    
 				}
