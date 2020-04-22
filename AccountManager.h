@@ -9,6 +9,8 @@
 #include "Error.h"
 #include "AccountDefine.h"
 
+#include "LegacyHttp.h" 
+
 namespace gorilla {
     namespace account{
 
@@ -33,7 +35,7 @@ namespace gorilla {
             Error GetUser(const std::string &str_account, std::string &out_str_reply);
 
             Error UpdateUser(const std::string &str_account, const std::string &str_login_level, 
-                const std::string &str_user_info, std::string &out_str_reply);
+                const std::string &str_user_info, std::string &out_str_reply, const Server::request& request);
 
             Error DeleteUser(const std::string &str_account, std::string &out_str_reply);
 
