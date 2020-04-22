@@ -202,10 +202,10 @@ namespace gorilla {
             auto it = m_map_users.find(str_account.c_str());
             if (it != m_map_users.end()){
 
-                 if(str_login_level == "admin" && str_account != "admin"){
-                // if(true){
+                 //if(str_login_level == "admin" && str_account != "admin"){
+                 if(true){
                      /* admin account only change password */   
-                     
+                   /*  
                      if(str_account == "admin"){
                         if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
                             out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
@@ -214,7 +214,7 @@ namespace gorilla {
                             return FORBIDDEN;
                         }
                      }
-                     
+                     */
                      /* check userinfo vaild */
                      /*  if(!IsUserInfoVaild(str_user_info, out_str_reply))
                         return FORBIDDEN;*/
