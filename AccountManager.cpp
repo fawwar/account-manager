@@ -202,10 +202,10 @@ namespace gorilla {
             auto it = m_map_users.find(str_account.c_str());
             if (it != m_map_users.end()){
 
-                 //if(str_login_level == "admin" && str_account != "admin"){
-                 if(true){
+                 if(str_login_level == "admin" && str_account != "admin"){
+                // if(true){
                      /* admin account only change password */   
-                     /*
+                     
                      if(str_account == "admin"){
                         if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
                             out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
@@ -214,72 +214,14 @@ namespace gorilla {
                             return FORBIDDEN;
                         }
                      }
-                     */
+                     
                      /* check userinfo vaild */
-/*                     if(!IsUserInfoVaild(str_user_info, out_str_reply))
+                     /*  if(!IsUserInfoVaild(str_user_info, out_str_reply))
                         return FORBIDDEN;*/
                      /* update userinfo */
                      errorCode = SUCCESS_RESPONSE;   
                      out_str_reply = it->second->UpdateUser(str_user_info);
-	             if (IsKeyExsist(info,"password"))
-			{
-			/*
-				std::string str_cookie_name;
-	    			std::string str_cookie_value="";
-				std::string str_x_sessiontoken_name;
-				std::string str_x_sessiontoken_value="";
-	    			Server::request::headers_container_type const &hs_cookie = request.headers;
-	    			{
-				    for (auto it = hs_cookie.begin(); it!=hs_cookie.end(); ++it)
-				    {
-		    		    	if(boost::iequals(it->name,"cookie"))
-				    	{   str_cookie_name = it->name;
-			    		    str_cookie_value = it->value;
-			   		    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_cookie_name !" << str_cookie_name;
-			   		    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_cookie_value !" << str_cookie_value;
-				    	}
-					if(boost::iequals(it->name,"x-sessiontoken"))
-					{
-					    str_x_sessiontoken_name = it->name;
-					    str_x_sessiontoken_value = it->value;
-					    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_x_sessiontoken_name !" <<str_x_sessiontoken_name;
-					    LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_x_sessiontoken_value !" <<str_x_sessiontoken_value;
-					}
-				    }
-	    			}	     
-
-				std::string url = "http://127.0.0.1:8001/session/kick/";
-               			url += Util::urlEncode(str_account);				
-                		//notify proxy service
-                		CURL* handle = curl_easy_init();
-				struct curl_slist *chunk = NULL;
-			        if (str_cookie_value != "")
-				{
-				    str_cookie_name.append(": ").append(str_cookie_value);
-				    const char* char_cookie_name = str_cookie_name.c_str();
-				    LOGGER_S(debug)<<"cookie test! "<<str_cookie_name;
-				    chunk = curl_slist_append(chunk , char_cookie_name);
-				}
-				if (str_x_sessiontoken_value != "")
-				{
-				    str_x_sessiontoken_name.append(": ").append(str_x_sessiontoken_value);
-				    const char* char_x_sessiontoken_name = str_x_sessiontoken_name.c_str();
-				    LOGGER_S(debug)<<"x_sessiontoken test! "<<str_x_sessiontoken_name;
-				    chunk = curl_slist_append(chunk, char_x_sessiontoken_name);
-				    
-				}
-				curl_easy_setopt(handle, CURLOPT_HTTPHEADER, chunk);
-                		curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
-                		curl_easy_setopt(handle, CURLOPT_TIMEOUT, 5L); //5 seconds
-                		//curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
-                		CURLcode resCode = curl_easy_perform(handle);
-                		curl_easy_cleanup(handle);
-				curl_slist_free_all(chunk);
-				*/
-			}
-
-
-		                        /* if account change reset map */   
+	             /* if account change reset map */   
                      if(it->second->Account() != str_account){   
                         m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(it->second->Account(), it->second));
                         m_map_users.erase(it);
@@ -306,12 +248,11 @@ namespace gorilla {
                     out_str_reply = it->second->UpdateUser(str_user_info);
                  }
 			if (IsKeyExsist(info,"password"))
-			{
-			                		
+			{        		
 				std::string str_cookie_name;
-	    			std::string str_cookie_value="";
+	    			std::string str_cookie_value;
 				std::string str_x_sessiontoken_name;
-				std::string str_x_sessiontoken_value="";
+				std::string str_x_sessiontoken_value;
 	    			Server::request::headers_container_type const &hs_cookie = request.headers;
 	    			{
 				    for (auto it = hs_cookie.begin(); it!=hs_cookie.end(); ++it)
@@ -337,9 +278,6 @@ namespace gorilla {
                 		//notify proxy service
                 		CURL* handle = curl_easy_init();
 				struct curl_slist *chunk = NULL;
-			        //const char* char_cookie_name = str_cookie_name.c_str();
-				//chunk = curl_slist_append(chunk , char_cookie_name);
-
 				if (str_cookie_value != "")
 				{
 				    str_cookie_name.append(": ").append(str_cookie_value);
