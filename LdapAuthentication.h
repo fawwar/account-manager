@@ -30,7 +30,7 @@ public:
 	LdapAuthenticator();
 	~LdapAuthenticator();
 
-	bool AuthenticateActiveDirectory (const std::string& str_account, const std::string& str_password);
+	bool AuthenticateActiveDirectory (const std::string& str_account, const std::string& str_password, const std::string& str_ldap_account);
 
 private:
 	LDAP* pLdapConnection = NULL;
