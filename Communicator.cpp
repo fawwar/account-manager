@@ -109,7 +109,9 @@ void Communicator::ProcessRequest(const Server::request& request,
     // print http request message
     std::ostringstream oss;
     std::string account, password;
-    
+   
+	//LOGGER_S(info)<<"Communicator::ProcessRequest " << request;
+ 
     LOGGER_S(info) << "From: " << "\n" <<request.source << " \n"
        << request.method << " \n" << request.destination << "\n"
        << request.http_version_major << "\n" << request.http_version_minor;
@@ -198,7 +200,17 @@ void Communicator::ProcessRequest(const Server::request& request,
 void Communicator::RequestHandlers()
 {
      request_handler_mapping_ =
-     {   
+     {
+		{
+			 "GET/ldapConfig",
+			 std::bind(&Communicator::GetLdapConfig, this,
+			 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
+		 },
+		 {
+			 "PUT/ldapConfig",
+			 std::bind(&Communicator::UpdateLdapConfig, this,
+			 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
+		 },   
             {
                 "GET/users",
                 std::bind(&Communicator::GetUsers, this,
@@ -482,9 +494,87 @@ void Communicator::SendReply(Server::connection_ptr& connection_ptr, std::string
     reply_cv_.wait_for(lck, std::chrono::milliseconds(CONNECTION_WRITE_TIMEOUT_MS), 
         boost::bind(&Communicator::GetIsAsyncWriteReady, this));
 
-    
     //LOGGER_S(debug) << "Server Reply End> ";
 }
+
+Server::connection::status_t Communicator::GetLdapConfig(const Server::request& request,
+	std::string &request_str, std::string &reply_str)
+{
+	gorilla::account::Error err;
+
+	const boost::network::uri::uri uri_instance(
+		std::string("http://127.0.0.1" + request.destination));
+
+	/*LOGGER_S(debug) << "GetUsers = " << m_str_account << "," << m_str_password;
+
+	std::string level;
+	m_accountManager.GetUserAccessRight(m_str_account, level);
+
+	LOGGER_S(debug) << "GetUsers AccessRight = " << level;*/
+
+	//if(level == "admin"){
+	if (true) { //ALL PASS
+
+		bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
+		if (res) {
+			err = m_accountManager.GetLdapConfig(reply_str);
+		}
+		else {
+			err = gorilla::account::UNAUTHORIZED;
+			reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::UpdateLdapConfig> UNAUTHORIZED");
+		}
+	}
+	else {
+		err = gorilla::account::FORBIDDEN;
+		reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::UpdateLdapConfig> FORBIDDEN");
+	}
+	
+	return (Server::connection::status_t)err;
+}
+
+Server::connection::status_t Communicator::UpdateLdapConfig(const Server::request& request,
+	std::string &request_str, std::string &reply_str)
+{
+	gorilla::account::Error err;
+
+	const boost::network::uri::uri uri_instance(
+		std::string("http://127.0.0.1" + request.destination));
+
+	//LOGGER_S(debug) << "Server::Connection::status_t Communicator::UpdateLdapConfig request_str" << request_str;
+	//LOGGER_S(debug) << "Server::Connection::status_t Communicator::UpdateLdapConfig reply_str" << reply_str;
+	//LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
+
+	std::string level;
+	m_accountManager.GetUserAccessRight(m_str_account, level);
+
+	if (level == "admin") {
+		//if(true){//ACCOUNT PAGE REQUIRES    
+		bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
+		if (res) {
+
+			//std::string level_name = GetName("/accessRights/", uri_instance.path());
+			//encode base64
+			//request_str = transformRequest(request_str);
+			err = m_accountManager.UpdateLdapConfig(request_str, reply_str);
+			/*if (err == gorilla::account::SUCCESS_RESPONSE)
+			{
+				reply_str = transformResponse(reply_str);
+			}*/
+		}
+		else {
+			err = gorilla::account::UNAUTHORIZED;
+			reply_str = m_error_reply.GetError("Account Or Password Error", "<Communicator::UpdateAccessRight> UNAUTHORIZED");
+		}
+	}
+	else {
+
+		err = gorilla::account::FORBIDDEN;
+		reply_str = m_error_reply.GetError("Need To Administrator AccessRight Permission", "<Communicator::UpdateAccessRight> FORBIDDEN");
+	}
+	LOGGER_S(debug) << "Server::connection::status_t Communicator::UpdateLdapConfig reply_str " << reply_str;
+	return (Server::connection::status_t)err;
+}
+
 
 Server::connection::status_t Communicator::GetUsers(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
@@ -501,7 +591,7 @@ Server::connection::status_t Communicator::GetUsers(const Server::request& reque
 
     LOGGER_S(debug) << "GetUsers AccessRight = " << level; 
     
-//  if(level == "admin"){
+    //if(level == "admin"){
     if(true){ //ALL PASS
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
@@ -534,8 +624,8 @@ Server::connection::status_t Communicator::AddUser(const Server::request& reques
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-//  if(level == "admin"){
-    if(true){//ALL PASS
+    if(level == "admin"){
+   // if(true){//ALL PASS
         
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
@@ -572,7 +662,7 @@ Server::connection::status_t Communicator::GetUser(const Server::request& reques
         m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
         
-        //if(m_str_account == user_name || level == "admin")
+        //if(m_str_account == user_name || level == "admin"){
         if(true){//ALL PASS
             err = m_accountManager.GetUser(user_name, reply_str);
         }
@@ -611,8 +701,11 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
         m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
        
-        //if(m_str_account == user_name || level == "admin"){
-        if(true){//ALL PASS
+        if(m_str_account == user_name || level == "admin"){
+		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
+		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
+		LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
+        //if(true){//ALL PASS
             err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str,request);
         }
         else{
@@ -652,8 +745,8 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
             err = gorilla::account::FORBIDDEN;
             reply_str = m_error_reply.GetError("Can't Delete admin", "<Communicator::DeleteUser> FORBIDDEN");
         }
-        //else if(level == "admin"){
-        else if(true){
+        else if(level == "admin"){
+       // else if(true){
 
             /* can't delete self */
             if(m_str_account == user_name){
@@ -701,8 +794,8 @@ Server::connection::status_t Communicator::GetUserPermissions(const Server::requ
         std::list<std::string> fields;
         ParseURIFields(uri_instance.query(), fields);
 
-        //if(m_str_account == user_name || level == "admin")
-        if(true){//ACCOUNT PAGE REQUIRES
+        if(m_str_account == user_name || level == "admin"){
+        //if(true){//ACCOUNT PAGE REQUIRES
             err = m_accountManager.GetUserPermissions(user_name, fields, reply_str);
         }
         else{
@@ -782,8 +875,8 @@ Server::connection::status_t Communicator::AddAccessRight(const Server::request&
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    //if(level == "admin"){
-    if(true){//ACCOUNT PAGE REQUIRES
+    if(level == "admin"){
+    //if(true){//ACCOUNT PAGE REQUIRES
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
             //encode base64
@@ -822,8 +915,8 @@ Server::connection::status_t Communicator::GetAccessRight(const Server::request&
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    //if(level == "admin"){
-    if(true){//ACCOUNT PAGE REQUIRES    
+    if(level == "admin"){
+    //if(true){//ACCOUNT PAGE REQUIRES    
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
@@ -862,8 +955,8 @@ Server::connection::status_t Communicator::UpdateAccessRight(const Server::reque
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    //if(level == "admin"){
-    if(true){//ACCOUNT PAGE REQUIRES    
+    if(level == "admin"){
+    //if(true){//ACCOUNT PAGE REQUIRES    
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 
@@ -903,8 +996,8 @@ Server::connection::status_t Communicator::DeleteAccessRight(const Server::reque
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    //if(level == "admin"){
-    if(true){//ACCOUNT PAGE REQUIRES
+    if(level == "admin"){
+    //if(true){//ACCOUNT PAGE REQUIRES
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){
 

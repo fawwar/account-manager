@@ -1,4 +1,4 @@
-//#include <regex>
+#include <regex>
 #include <list>
 #include <sstream>
 #include <boost/regex.hpp>
@@ -14,6 +14,10 @@
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "Util.h"
+
+#include "LdapAuthentication.h"
+#include <fstream> 
+#include "LdapConfig.h"
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
 
@@ -44,50 +48,184 @@ namespace gorilla {
             return false;
         }
 
-        bool AccountManager::VerifyAccount(const std::string& str_account, const std::string& str_password)
-        {
-             LOGGER_S(info) << "Verify = " << str_account << "," << str_password;
+		bool AccountManager::VerifyAccount(const std::string& str_account, const std::string& str_password)
+		{
+			LOGGER_S(info) << "Verify = " << str_account << "," << str_password;
 
-             if(str_account == "admin" && str_password == ADMIN_PASSWORD) return true;
+			if (str_account == "admin" && str_password == ADMIN_PASSWORD) return true;
 
-             std::lock_guard<std::mutex> autoLock(m_mux_users);   
-             auto it = m_map_users.find(str_account);
-             if (it != m_map_users.end()){
+			/*
+			   LdapAuthenticator* m_ldapAuthenticator = new LdapAuthenticator();
+			   if (m_ldapAuthenticator->Authenticator(str_account, str_password))
+			   {
+				   delete[] m_ldapAuthenticator;
+				   return true;
+			   }
+		   */
+			std::string str_token = "ldap/";   // ldap account begining 
+			try {
+				if (str_account.substr(0, str_token.size()) == str_token)
+				{
+					std::string str_ldap_account = str_account.substr(str_token.size());
+					LdapAuthenticator ldapAuthenticator;
+					if (ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account))
+					{
+						//insert DB 
+						Json::Value json_user_info;
+						json_user_info["accessRightName"] = "admin";
+						json_user_info["account"] = str_account;
+						json_user_info["description"] = "";
+						json_user_info["password"] = str_password;
+						Json::StyledWriter styledWriter;
+						std::string str_user_info_test = styledWriter.write(json_user_info);
+						Error errorCode(INTERNAL_SERVER_ERROR);
 
-                /* 20 bytes hash text = 16 bytes(md5) + 4 bytes(salt)*/
-                std::string password = it->second->EncryptedPassword();
+						/* create user map */
+						auto user = std::make_shared<User>(str_user_info_test);
+						{
+							std::lock_guard<std::mutex> autoLock(m_mux_users);
+							std::string account = user->Account();
+							/*LOGGER_S(info) << "bool AccountManager::VerifyAccount user" << user;
+							LOGGER_S(info) << "bool AccountManager::VerifyAccount account" << account;*/
 
-                LOGGER_S(info) << "SQL Pass = " << password;
+							bool user_exist = false;
+							for (auto& it : m_map_users) 
+							{
+								std::string account_str = it.second->Account();
+							
+								if (account_str == str_account)
+								{
+									LOGGER_S(info) << "account_str " << account_str;
+									LOGGER_S(info) << "user exist!";
+									user_exist = true;
+								}
+							}
 
-                std::string str_salt = password.substr(MD5LEN*2);
-                std::string str_md5_password = password.substr(0, MD5LEN*2);
+							if (user_exist == false) {
+								int sql_error;
+								user->AddUser(sql_error);
+							
+							}
 
-                /* parser last 4 bytes salt */
-                unsigned long ul_salt;
-                std::istringstream iss(str_salt);
-                iss >> std::hex >> ul_salt;
-                LOGGER_S(info) << "SQL Salt = " << str_salt;
+							m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(account, user));
+							errorCode = SUCCESS_RESPONSE;
+						}
 
-                /* use original password and 4 bytes salt to decode md5 text */
-                const size_t PASSWORD_LEN = str_password.size();
-                unsigned char* uc_password = new unsigned char[PASSWORD_LEN];
-                char decode_md5_password[MD5LEN * 2 + 1] = {00};
-                memcpy(uc_password, str_password.c_str(), PASSWORD_LEN);
+						return true;   //ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account);
+					}
+					else return false;
+						
+				//	return  ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password,str_ldap_account);
+				}
+				else {
+					std::lock_guard<std::mutex> autoLock(m_mux_users);
+					auto it = m_map_users.find(str_account);
+					if (it != m_map_users.end()) {
+						/* 20 bytes hash text = 16 bytes(md5) + 4 bytes(salt)*/
+						std::string password = it->second->EncryptedPassword();
 
-                TextMD5(ul_salt, uc_password, PASSWORD_LEN, decode_md5_password);
-                delete []uc_password;  
+						LOGGER_S(info) << "SQL Pass = " << password;
 
-                printf("Decode MD5 Pass = %s ", decode_md5_password);
-                
-                if(str_md5_password == decode_md5_password){
+						std::string str_salt = password.substr(MD5LEN * 2);
+						std::string str_md5_password = password.substr(0, MD5LEN * 2);
 
-                    LOGGER_S(info) << ">>>> Compare Success  ";
-                    return true;
-                }
-             }
+						/* parser last 4 bytes salt */
+						unsigned long ul_salt;
+						std::istringstream iss(str_salt);
+						iss >> std::hex >> ul_salt;
+						LOGGER_S(info) << "SQL Salt = " << str_salt;
 
-             return false;
+						/* use original password and 4 bytes salt to decode md5 text */
+						const size_t PASSWORD_LEN = str_password.size();
+						unsigned char* uc_password = new unsigned char[PASSWORD_LEN];
+						char decode_md5_password[MD5LEN * 2 + 1] = { 00 };
+						memcpy(uc_password, str_password.c_str(), PASSWORD_LEN);
+
+						TextMD5(ul_salt, uc_password, PASSWORD_LEN, decode_md5_password);
+						delete[]uc_password;
+
+						printf("Decode MD5 Pass = %s ", decode_md5_password);
+
+						if (str_md5_password == decode_md5_password) {
+
+							LOGGER_S(info) << ">>>> Compare Success  ";
+							return true;
+						}
+					}
+
+					return false;
+				}
+			}// try
+			catch(const std::exception& e){
+				LOGGER() << "Abnormal termination - exception:" << e.what();
+
+			}
+		
         }
+
+		Error AccountManager::GetLdapConfig(std::string &out_str_reply)
+		{
+			Error errorCode(INTERNAL_SERVER_ERROR);
+
+			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
+			LdapConfig ldapconfig;
+			/*LOGGER_S(info) << "Error AccountManager::GetLdapConfig" << ldapconfig.host_name;
+			LOGGER_S(info) << "Error AccountManager::GetLdapConfig" << ldapconfig.ldap_port;*/
+			std::string output = "host_name: ";
+			output.append(ldapconfig.host_name);
+			output.append(" ldap_port: ");
+			output.append(std::to_string(ldapconfig.ldap_port));
+			/* send device list */
+			if (!ldapconfig.host_name.empty() && ldapconfig.ldap_port!=0) {
+				errorCode = SUCCESS_RESPONSE;
+				out_str_reply = output; //ldapconfig.host_name;   
+			}
+			else {
+				errorCode = NAME_NOT_FOUND;
+				out_str_reply = m_error_reply.GetError("Haven't Any LDAP host_name & ldap_port", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
+			}
+
+			return errorCode;
+		}
+
+		Error AccountManager::UpdateLdapConfig(const std::string &str_ldap_config_info, std::string &out_str_reply)
+		{
+			Error errorCode(INTERNAL_SERVER_ERROR);
+			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
+			LOGGER_S(info) << "Error AccountManager::str_ldap_config_info" << str_ldap_config_info;
+			//LOGGER_S(info) << "Error AccountManager::out_str_reply" << out_str_reply;
+			
+			Json::Reader reader;
+			Json::Value root;
+			reader.parse(str_ldap_config_info, root);
+			std::ofstream op_file_id;
+			op_file_id.open("ldap_config.json");
+			Json::Value event;			
+			LdapConfig ldapconfig;
+			if (reader.parse(str_ldap_config_info, root))
+			{
+				if (root.isMember("host_name"))
+				{
+					ldapconfig.host_name = const_cast<char*>(root["host_name"].asString().c_str());
+					event["host_name"] = ldapconfig.host_name;
+					//LOGGER_S(info)<<"Error AccountManager::UpdateLdapConfig host_name!!!!!!!!!" << ldapconfig.host_name;
+				}
+				if (root.isMember("ldap_port"))
+				{
+					std::stringstream stringToint(root["ldap_port"].asString());
+					stringToint >> ldapconfig.ldap_port;
+					event["ldap_port"] = ldapconfig.ldap_port;
+					//LOGGER_S(info) << "Error AccountManager::UpdateLdapConfig ldap_port!!!!!!!!!" << ldapconfig.ldap_port;
+				}
+			}
+
+			Json::StyledWriter styledWriter;
+			op_file_id << styledWriter.write(event);
+			op_file_id.close();
+	
+			out_str_reply = styledWriter.write(event);
+			return errorCode;
+		}
 
         Error AccountManager::GetUsers(std::string &out_str_reply)
         {
@@ -202,8 +340,11 @@ namespace gorilla {
             auto it = m_map_users.find(str_account.c_str());
             if (it != m_map_users.end()){
 
-                 //if(str_login_level == "admin" && str_account != "admin"){
-                 if(true){
+                 if(str_login_level == "admin" && str_account != "admin"){
+                 //if(true){
+			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
+			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
+			LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
                      /* admin account only change password */   
                    /*  
                      if(str_account == "admin"){
@@ -239,6 +380,7 @@ namespace gorilla {
                     }
                      
                     /* check password vaild */
+                    
                     if (!IsPasswordVaild(str_user_info, out_str_reply)){
                         out_str_reply = m_error_reply.GetError("User Password Invaild","<AccountManager::UpdateUser> FORBIDDEN"); 
                         return FORBIDDEN;
@@ -480,7 +622,7 @@ namespace gorilla {
 
                 json info = json::parse(str_access_right_info); 
                 std::string level;
-
+				//LOGGER_S(debug) << "Error AccountManager::UpdateAccessRight " << str_access_right_info;
                 /* check have level name to change */
                 if(IsKeyExsist(info, "accessRightName", level)){
 

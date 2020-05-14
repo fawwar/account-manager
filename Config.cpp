@@ -4,6 +4,12 @@
 #include <json/json.h>
 #include "Config.h"
 
+#include "gorilla/log/logger.h"
+#include "gorilla/log/logger_config.h"
+
+
+using namespace gorilla::log;
+
 Config::Config()
 {
 #ifdef TELSTRA
@@ -23,7 +29,17 @@ Config::Config()
       if(root.isMember("permission"))
       {
         permission = root["permission"].asString();
-      }      
+      }
+      
+      if(root.isMember("host_name"))
+      {
+	host_name = root["host_name"].asString();
+      }   
+      if(root.isMember("ldap_port"))
+      {
+	ldap_port = root["ldap_port"].asString();
+//	LOGGER_S(info)<<"Config.cpp ldap_port!!!!!!!!!" << ldap_port;
+      }   
     }
   }
   catch(std::exception& e)

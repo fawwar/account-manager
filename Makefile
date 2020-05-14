@@ -5,9 +5,15 @@ LIBDIR    = $(PWD)/import
 OUTDIR    = $(PWD)/outputs
 OBJDIR    = $(PWD)/.obj
 BOOSTDIR  = $(PWD)/external/linux-x86_64/boost
+OPENLDAPDIR = $(PWD)/external/linux-x86_64/openldap
+CURLDIR = $(PWD)/external/linux-x86_64/curl
 
-CXXFLAGS += -I$(BOOSTDIR)/include
+CXXFLAGS += -I$(BOOSTDIR)/include 
+CXXFLAGS += -I$(OPENLDAPDIR)/include
+CXXFLAGS += -I$(CURLDIR)/include
 LDFLAGS  += -L$(BOOSTDIR)/lib
+LDFLAGS  += -L$(OPENLDAPDIR)/lib
+LDFLAGS  += -L$(CURLDIR)/lib
 
 CXXFLAGS += -DBOOST_NETWORK_NO_LIB
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
@@ -15,6 +21,7 @@ CFLAGS   += -I$(LIBDIR)/gorilla/log
 SRCS     += $(wildcard $(LIBDIR)/gorilla/utility/*.cpp)
 CFLAGS   += -I$(LIBDIR)/gorilla/utility
 SRCS     += $(wildcard $(LIBDIR)/hash/*.c)
+SRCS     += 
 CFLAGS   += -I$(LIBDIR)/hash
 SRCS     += $(wildcard $(LIBDIR)/jsoncpp/jsoncpp.cpp)
 CFLAGS   += -I$(LIBDIR)/jsoncpp
@@ -41,11 +48,12 @@ LDFLAGS  += -lboost_program_options -lboost_regex -lboost_system -lboost_thread
 
 CXXFLAGS += -DBOOST_NETWORK_ENABLE_HTTPS
 LDFLAGS  += -lcrypto -lssl
+LDFLAGS  += -lldapcpp -lldap
+LDFLAGS  += -llber
 
 CXXFLAGS += -std=c++11
 LDFLAGS  += -lpthread
 
-LDFLAGS  += -lcurl
 
 LIBPATH   = .
 

@@ -9,8 +9,9 @@
 #include "Error.h"
 #include "AccountDefine.h"
 
-#include "LegacyHttp.h" 
+#include "LegacyHttp.h"
 
+ 
 namespace gorilla {
     namespace account{
 
@@ -27,6 +28,10 @@ namespace gorilla {
             bool GetUserAccessRight(const std::string str_account, std::string& out_str_access_right);
 
             bool VerifyAccount(const std::string& str_account, const std::string& str_password);
+
+			Error GetLdapConfig(std::string &out_str_reply);   //Get ldap info
+
+			Error UpdateLdapConfig(const std::string &str_ldap_config_info, std::string &out_str_reply);   //Update ldap info
 
             Error GetUsers(std::string &out_str_reply);
 
@@ -61,6 +66,9 @@ namespace gorilla {
             std::map<std::string, std::shared_ptr<User>> m_map_users;
             mutable std::mutex m_mux_access_rights;
             std::map<std::string, std::shared_ptr<AccessRight>> m_map_access_rights;
+
+			mutable std::mutex m_mux_ldapconfig;
+		
 
             
 
