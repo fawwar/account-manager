@@ -30,7 +30,7 @@ LdapAuthenticator::LdapAuthenticator()
 {
 	LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator()";
 	LdapConfig ldapConfig;
-	pLdapConnection = ldap_init(const_cast<char *>(ldapConfig.host_name.c_str()), ldap_port);
+	pLdapConnection = ldap_init(const_cast<char *>(ldapConfig.host_name.c_str()), ldapConfig.ldap_port);
 	if (pLdapConnection == NULL)
 	{       
 		LOGGER_S(info)<<"ldap_init failed with 0x"<<LdapGetLastError();  
