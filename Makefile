@@ -7,16 +7,16 @@ OBJDIR    = $(PWD)/.obj
 BOOSTDIR  = $(PWD)/external/linux-x86_64/boost
 OPENLDAPDIR = $(PWD)/external/linux-x86_64/openldap
 CURLDIR = $(PWD)/external/linux-x86_64/curl
-OPENLDAP_2.4.49DIR = $(PWD)/external/linux-x86_64/openldap-2.4.49
+OPENLDAP_2.4.49DIR = $(PWD)/external/linux-x86_64/openldap-2.4.49/openldapc
 
 CXXFLAGS += -I$(BOOSTDIR)/include 
 CXXFLAGS += -I$(OPENLDAPDIR)/include
 CXXFLAGS += -I$(CURLDIR)/include
-CXXFLAGS += -I$(OPENLDAP_2.4.49DIR)/include
+CXXFLAGS += -I$(OPENLDAP_2.4.49DIR)
 LDFLAGS  += -L$(BOOSTDIR)/lib
 LDFLAGS  += -L$(OPENLDAPDIR)/lib
 LDFLAGS  += -L$(CURLDIR)/lib
-
+LDFALGS  += -L$(OPENLDAP_2.4.49DIR)/libraries
 
 CXXFLAGS += -DBOOST_NETWORK_NO_LIB
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
