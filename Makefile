@@ -112,6 +112,7 @@ prebuild:
 	-cp configs/*.pem $(OUTDIR)
 	-cp -r packaging/systemd $(OUTDIR)
 	-cp VERSION.txt $(OUTDIR)
+	-cp configs/ldap_config.json $(OUTDIR)
 
 
 -include $(OBJS:.o=.d)
