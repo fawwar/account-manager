@@ -26,23 +26,39 @@ IAuthenticator::~IAuthenticator()
 
 #ifdef WIN32
 
+LdapConnection::LdapConnection()
+{
+	LdapConfig &ldapConfig = LdapConfig::getInstance();
+	pLdapConnection = ldap_init((char*)ldapConfig.host_name.c_str(), ldapConfig.ldap_port);
+	//LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator " << ldapConfig.host_name.c_str();
+	//LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator " << ldapConfig.ldap_port;
+
+
+		if (pLdapConnection == NULL)
+		{
+			//LOGGER_S(info) << "ldap_init failed with 0x" << LdapGetLastError();
+			throw std::runtime_error("ldap_init failed with 0x ") ;
+		}
+		else
+		{
+			LOGGER_S(info) << "ldap_init succeeded";
+		}
+	
+
+	
+}
+
+LdapConnection::~LdapConnection()
+{
+	ldap_unbind(pLdapConnection);
+}
+
 LdapAuthenticator::LdapAuthenticator()
 {
 	LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator()";
-	LdapConfig ldapConfig;
-	pLdapConnection = ldap_init(const_cast<char *>(ldapConfig.host_name.c_str()), ldapConfig.ldap_port);
-	if (pLdapConnection == NULL)
-	{       
-		LOGGER_S(info)<<"ldap_init failed with 0x"<<LdapGetLastError();  
-		ldap_unbind(pLdapConnection);
-	}
-	else
-	{
-		LOGGER_S(info)<<"ldap_init succeeded";
-	}
 
 	lRtn = ldap_set_option(
-		pLdapConnection,           // Session handle
+		conn.pLdapConnection,           // Session handle
 		LDAP_OPT_PROTOCOL_VERSION, // Option
 		(void*)&version);         // Option value
 	if (lRtn == LDAP_SUCCESS)
@@ -51,19 +67,20 @@ LdapAuthenticator::LdapAuthenticator()
 	}
 	else
 	{
+		throw std::runtime_error("ldap_setOption error ");
 		LOGGER_S(info)<<"SetOption Error:" << lRtn;
-		ldap_unbind(pLdapConnection);
 	}
 
-	lRtn = ldap_connect(pLdapConnection, NULL);
+	lRtn = ldap_connect(conn.pLdapConnection, NULL);
 	if (lRtn == LDAP_SUCCESS)
 	{
 		LOGGER_S(info)<<"ldap_connect succeeded";
 	}
 	else
 	{
+		throw std::runtime_error("ldap_connect fail ");
 		LOGGER_S(info)<<"ldap_connect faied with 0x"<<lRtn;
-		ldap_unbind(pLdapConnection);
+		
 	}
 
 }
@@ -72,26 +89,16 @@ LdapAuthenticator::LdapAuthenticator()
 LdapAuthenticator::~LdapAuthenticator()
 {
 	LOGGER_S(info) << "LdapAuthenticator::~LdapAuthenticator()";
-	ldap_unbind(pLdapConnection);
+	
 }
 
-bool LdapAuthenticator::AuthenticateActiveDirectory(const std::string& str_account, const std::string& str_password, const std::string& str_ldap_account)
+bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account)
 {
-	//if (str_account.substr(0, str_ldap.size()) == str_ldap)
-	//{
-		//std::string str_ldap_account = str_account.substr(str_ldap.size());
-		std::string str_username = str_ldap_account + "@gorillascience.com";
-		//LOGGER() << "str_username " << str_username;
-		//char *username = str_username.c_str();
-		char *username = new char[str_username.length() + 1];
-		strcpy(username, str_username.c_str());
-		char *password = new char[str_password.length() + 1];
-		strcpy(password, str_password.c_str());
+		
+		LdapConfig &ldapConfig = LdapConfig::getInstance();
+		std::string str_username = str_ldap_account + ldapConfig.address;
+		lRtn = ldap_simple_bind_s(conn.pLdapConnection, username, password);
 
-		lRtn = ldap_simple_bind_s(pLdapConnection, username, password);
-
-		delete[] username;
-		delete[] password;
 		if (lRtn == LDAP_SUCCESS)
 		{
 			LOGGER_S(info) <<"ldap_simple_bind_s succeeses";
@@ -100,13 +107,9 @@ bool LdapAuthenticator::AuthenticateActiveDirectory(const std::string& str_accou
 		else
 		{	
 			LOGGER_S(info) << "ldap_simple_bind_s failed with 0x" << lRtn;
-			ldap_unbind(pLdapConnection);
+			//ldap_unbind(pLdapConnection);
 			return false;
 		}
-	//}
-	//else {
-	//	return false;
-	//}
 }
 
 #else    // linux 
@@ -126,16 +129,13 @@ bool LdapAuthenticator::AuthenticateActiveDirectory(const std::string& str_accou
 LdapAuthenticator::LdapAuthenticator()
 {
 	LOGGER_S(info)<< "LdapAuthenticator::LdapAuthenticator";
-	LdapConfig ldapConfig;
-	cons=new LDAPConstraints;
-	ctrls=new LDAPControlSet;
-	lc=new LDAPConnection(ldapConfig.host_name,ldapConfig.ldap_port);
+	
+	LdapConfig &ldapConfig = LdapConfig::getInstance();
 	
         try{
-            ctrls->add(LDAPCtrl(LDAP_CONTROL_MANAGEDSAIT));
-            cons->setServerControls(ctrls); 
-            lc->setConstraints(cons);
-	}catch(LDAPException &e)
+	    cons=new LDAPConstraints; 
+	    lc=new LDAPConnection(ldapConfig.host_name,ldapConfig.port,cons);
+           }catch(LDAPException &e)
 	{
 	 LOGGER_S(info)<<"-----------constructor caught Exeception --------";
 	 LOGGER_S(info)<<e;	
@@ -154,15 +154,13 @@ LdapAuthenticator::~LdapAuthenticator()
 }
 
 
-bool LdapAuthenticator::AuthenticateActiveDirectory(const std::string& str_account, const std::string& str_password, const std::string& str_ldap_account)
+bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account)
 {	
-	//if (str_account.substr(0,str_ldap.size()) == str_ldap)
-        //        {
-                    //std::string str_ldap_account = str_account.substr(str_ldap.size());
-                    //LOGGER_S(info)<<"str_ldap_accont " <<str_ldap_account;
-                    	
+                   	
                     LOGGER_S(info) << "----------------doing bind --------";
-                    std::string str_username  = str_ldap_account +"@gorillascience.com";
+                    //std::string str_username  = str_ldap_account +"@gorillascience.com";
+		    LdapConfig &ldapConfig = LdapConfig::getInstance();
+                    std::string str_username  = str_ldap_account +ldapConfig.address;
                     try{
 			/*
 			ctrls->add(LDAPCtrl(LDAP_CONTROL_MANAGEDSAIT));
@@ -177,13 +175,7 @@ bool LdapAuthenticator::AuthenticateActiveDirectory(const std::string& str_accou
                         LOGGER_S(info) << e ;
 			return false;
                     }
-		//return true;
-                //}
 
-	//else 
-	//{	
-	//	return false;
-	//}	
 
 }
 

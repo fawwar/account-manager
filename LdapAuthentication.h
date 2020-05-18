@@ -7,14 +7,15 @@
 
 using namespace gorilla::log;
 
+
 class IAuthenticator {	
 	public:
 		IAuthenticator();
 		
 		virtual ~IAuthenticator(){}
-	protected:
+
 		//virtual bool IAuthenticator_connection(const std::string& str_account, const std::string& str_password)=0;
-		virtual bool AuthenticateActiveDirectory(const std::string& str_account, const std::string& str_password, const std::string& str_ldap_account) = 0;
+		virtual bool AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account) = 0;
 		
 };
 
@@ -25,17 +26,24 @@ class IAuthenticator {
 #include<winldap.h>
 #include<stdio.h>
 
-class LdapAuthenticator : IAuthenticator  {
+class LdapConnection{
+	puclic:
+	    LdapConnection();
+	    ~LdapConnection();
+	    LDAP* pLdapConnection = NULL;
+}
+
+class LdapAuthenticator : public  IAuthenticator  {
 public:	
 	LdapAuthenticator();
 	~LdapAuthenticator();
 
-	bool AuthenticateActiveDirectory (const std::string& str_account, const std::string& str_password, const std::string& str_ldap_account);
-
+	bool AuthenticateActiveDirectory ( const std::string& str_password, const std::string& str_ldap_account);
+	LdapConnection conn;
 private:
-	LDAP* pLdapConnection = NULL;
+	//LDAP* pLdapConnection = NULL;
 	ULONG lRtn = 0;
-	int version = LDAP_VERSION3;
+	ULONG version = LDAP_VERSION3;
 	
 };
 
@@ -47,13 +55,13 @@ private:
 class LDAPConstraints;
 class LDAPControlSet;
 class LDAPConnection;
-class LdapAuthenticator:IAuthenticator{
+class LdapAuthenticator: public IAuthenticator{
 
 public:
         LdapAuthenticator();
         ~LdapAuthenticator();
 
-        bool AuthenticateActiveDirectory(const std::string& str_account, const std::string& str_password, const std::string& str_ldap_account);
+        bool AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account);
 private:
 	LDAPConstraints* cons;
         LDAPControlSet* ctrls;

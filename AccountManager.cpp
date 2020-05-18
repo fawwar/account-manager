@@ -68,7 +68,7 @@ namespace gorilla {
 				{
 					std::string str_ldap_account = str_account.substr(str_token.size());
 					LdapAuthenticator ldapAuthenticator;
-					if (ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account))
+					if (ldapAuthenticator.AuthenticateActiveDirectory(str_password, str_ldap_account))
 					{
 						//insert DB 
 						Json::Value json_user_info;
@@ -77,16 +77,14 @@ namespace gorilla {
 						json_user_info["description"] = "";
 						json_user_info["password"] = str_password;
 						Json::StyledWriter styledWriter;
-						std::string str_user_info_test = styledWriter.write(json_user_info);
+						std::string str_user_info = styledWriter.write(json_user_info);
 						Error errorCode(INTERNAL_SERVER_ERROR);
 
 						/* create user map */
-						auto user = std::make_shared<User>(str_user_info_test);
+						auto user = std::make_shared<User>(str_user_info);
 						{
 							std::lock_guard<std::mutex> autoLock(m_mux_users);
 							std::string account = user->Account();
-							/*LOGGER_S(info) << "bool AccountManager::VerifyAccount user" << user;
-							LOGGER_S(info) << "bool AccountManager::VerifyAccount account" << account;*/
 
 							bool user_exist = false;
 							for (auto& it : m_map_users) 
@@ -114,8 +112,7 @@ namespace gorilla {
 						return true;   //ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account);
 					}
 					else return false;
-						
-				//	return  ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password,str_ldap_account);
+
 				}
 				else {
 					std::lock_guard<std::mutex> autoLock(m_mux_users);
@@ -168,21 +165,21 @@ namespace gorilla {
 			Error errorCode(INTERNAL_SERVER_ERROR);
 
 			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
-			LdapConfig ldapconfig;
-			/*LOGGER_S(info) << "Error AccountManager::GetLdapConfig" << ldapconfig.host_name;
-			LOGGER_S(info) << "Error AccountManager::GetLdapConfig" << ldapconfig.ldap_port;*/
-			std::string output = "host_name: ";
-			output.append(ldapconfig.host_name);
-			output.append(" ldap_port: ");
-			output.append(std::to_string(ldapconfig.ldap_port));
+			LdapConfig &ldapConfig = LdapConfig::getInstance();
+			std::string output_reply = "host_name: ";
+			output_reply.append(ldapConfig.host_name);
+			output_reply.append(" ldap_port: ");
+			output_reply.append(std::to_string(ldapConfig.port));
+			output_reply.append(" address: ");
+			output_reply.append(ldapConfig.address);
 			/* send device list */
-			if (!ldapconfig.host_name.empty() && ldapconfig.ldap_port!=0) {
+			if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
 				errorCode = SUCCESS_RESPONSE;
-				out_str_reply = output; //ldapconfig.host_name;   
+				out_str_reply = output_reply; //ldapconfig info   
 			}
 			else {
 				errorCode = NAME_NOT_FOUND;
-				out_str_reply = m_error_reply.GetError("Haven't Any LDAP host_name & ldap_port", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
+				out_str_reply = m_error_reply.GetError("Haven't Any LDAP host_name & Port", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
 			}
 
 			return errorCode;
@@ -192,38 +189,19 @@ namespace gorilla {
 		{
 			Error errorCode(INTERNAL_SERVER_ERROR);
 			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
-			LOGGER_S(info) << "Error AccountManager::str_ldap_config_info" << str_ldap_config_info;
-			//LOGGER_S(info) << "Error AccountManager::out_str_reply" << out_str_reply;
-			
-			Json::Reader reader;
-			Json::Value root;
-			reader.parse(str_ldap_config_info, root);
-			std::ofstream op_file_id;
-			op_file_id.open("ldap_config.json");
-			Json::Value event;			
-			LdapConfig ldapconfig;
-			if (reader.parse(str_ldap_config_info, root))
-			{
-				if (root.isMember("host_name"))
-				{
-					ldapconfig.host_name = const_cast<char*>(root["host_name"].asString().c_str());
-					event["host_name"] = ldapconfig.host_name;
-					//LOGGER_S(info)<<"Error AccountManager::UpdateLdapConfig host_name!!!!!!!!!" << ldapconfig.host_name;
-				}
-				if (root.isMember("ldap_port"))
-				{
-					std::stringstream stringToint(root["ldap_port"].asString());
-					stringToint >> ldapconfig.ldap_port;
-					event["ldap_port"] = ldapconfig.ldap_port;
-					//LOGGER_S(info) << "Error AccountManager::UpdateLdapConfig ldap_port!!!!!!!!!" << ldapconfig.ldap_port;
-				}
-			}
 
-			Json::StyledWriter styledWriter;
-			op_file_id << styledWriter.write(event);
-			op_file_id.close();
-	
-			out_str_reply = styledWriter.write(event);
+			LOGGER_S(info) << "Error AccountManager::str_ldap_config_info" << str_ldap_config_info;			
+			LdapConfig &ldapConfig = LdapConfig::getInstance();
+			if (ldapConfig.IsUpdateInfoVaild(str_ldap_config_info))
+			{
+			    out_str_reply = ldapConfig.Write(str_ldap_config_info);
+			    errorCode = SUCCESS_RESPONSE;
+			}
+			else
+			{
+			    out_str_reply = m_error_reply.GetError("Host Name Not Found", "<AccountManager::UpdateLdapConfig> HOST_NOT_FOUND");
+			    errorCode = NAME_NOT_FOUND;
+			}			
 			return errorCode;
 		}
 
