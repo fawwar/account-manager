@@ -29,7 +29,7 @@ IAuthenticator::~IAuthenticator()
 LdapConnection::LdapConnection()
 {
 	LdapConfig &ldapConfig = LdapConfig::getInstance();
-	pLdapConnection = ldap_init((char*)ldapConfig.host_name.c_str(), ldapConfig.ldap_port);
+	pLdapConnection = ldap_init((char*)ldapConfig.host_name.c_str(), ldapConfig.port);
 	//LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator " << ldapConfig.host_name.c_str();
 	//LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator " << ldapConfig.ldap_port;
 
@@ -94,10 +94,9 @@ LdapAuthenticator::~LdapAuthenticator()
 
 bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account)
 {
-		
 		LdapConfig &ldapConfig = LdapConfig::getInstance();
 		std::string str_username = str_ldap_account + ldapConfig.address;
-		lRtn = ldap_simple_bind_s(conn.pLdapConnection, username, password);
+		lRtn = ldap_simple_bind_s(conn.pLdapConnection, (char*)str_username.c_str(), (char*)str_password.c_str());
 
 		if (lRtn == LDAP_SUCCESS)
 		{

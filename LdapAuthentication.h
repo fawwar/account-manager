@@ -27,7 +27,7 @@ class IAuthenticator {
 #include<stdio.h>
 
 class LdapConnection{
-	puclic:
+	public:
 	    LdapConnection();
 	    ~LdapConnection();
 	    LDAP* pLdapConnection = NULL;
