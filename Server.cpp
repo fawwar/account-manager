@@ -16,6 +16,7 @@
 #include <http/HttpRouter.h>
 #include "AdapterHandler.h"
 
+
 using namespace gorilla::http;
 using namespace gorilla::log;
 static const std::string kDefaultSettingPath("./settings.ini");
@@ -54,6 +55,7 @@ int main(int argc, char* argv[])
         config.configure_with(boost::filesystem::path(kDefaultSettingPath));
         
         LOGGER_S(info)<< "Account Server Started ... ";
+
     
         /* intial */
         boost::thread_group thread_group;

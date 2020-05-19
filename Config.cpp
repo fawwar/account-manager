@@ -4,6 +4,12 @@
 #include <json/json.h>
 #include "Config.h"
 
+#include "gorilla/log/logger.h"
+#include "gorilla/log/logger_config.h"
+
+
+using namespace gorilla::log;
+
 Config::Config()
 {
 #ifdef TELSTRA
@@ -23,7 +29,9 @@ Config::Config()
       if(root.isMember("permission"))
       {
         permission = root["permission"].asString();
-      }      
+      }
+      
+         
     }
   }
   catch(std::exception& e)

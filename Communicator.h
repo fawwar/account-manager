@@ -86,6 +86,12 @@ private:
     void GetAuthorization(const Server::request& request, 
         std::string& out_str_account, std::string& out_str_password);
 
+	Server::connection::status_t GetLdapConfig(const Server::request& request,
+		std::string &request_str, std::string &reply_str);
+
+	Server::connection::status_t UpdateLdapConfig(const Server::request& request,
+		std::string &request_str, std::string &reply_str);
+
     Server::connection::status_t GetUsers(const Server::request& request, 
         std::string &request_str, std::string &reply_str);
 
