@@ -7,11 +7,14 @@ class Config
 {
   Config();  
 public:
+  
   std::string permission;
   json::object_t DISABLE_PERMISSIONS;
   json::object_t DISABLE_ACCESSRIGHT;
   json::object_t DEFAULT_PERMISSIONS;
   json::object_t DEFAULT_ACCESSRIGHT;
+
+  
   
   static Config& getInstance();
 };
