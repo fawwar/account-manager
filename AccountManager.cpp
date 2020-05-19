@@ -101,8 +101,14 @@ namespace gorilla {
 
 							if (user_exist == false) {
 								int sql_error;
-								user->AddUser(sql_error);
-							
+								//user->AddUser(sql_error);
+								if (user->AddUser(sql_error))
+								{
+									if ((SQLError)sql_error == CONSTRAINT) {
+									errorCode = FORBIDDEN;
+									return errorCode;
+									}
+								}	
 							}
 
 							m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(account, user));
