@@ -31,7 +31,7 @@ class LdapConnection{
 	    LdapConnection();
 	    ~LdapConnection();
 	    LDAP* pLdapConnection = NULL;
-}
+};
 
 class LdapAuthenticator : public  IAuthenticator  {
 public:	
