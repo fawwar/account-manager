@@ -15,7 +15,7 @@ class IAuthenticator {
 		virtual ~IAuthenticator(){}
 
 		//virtual bool IAuthenticator_connection(const std::string& str_account, const std::string& str_password)=0;
-		virtual bool AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account) = 0;
+		virtual bool AuthenticateActiveDirectory( const std::string& str_ldap_account ,const std::string& str_password) = 0;
 		
 };
 
@@ -38,7 +38,7 @@ public:
 	LdapAuthenticator();
 	~LdapAuthenticator();
 
-	bool AuthenticateActiveDirectory ( const std::string& str_password, const std::string& str_ldap_account);
+	bool AuthenticateActiveDirectory (const std::string& str_ldap_account, const std::string& str_password );
 	LdapConnection conn;
 private:
 	//LDAP* pLdapConnection = NULL;
@@ -61,7 +61,7 @@ public:
         LdapAuthenticator();
         ~LdapAuthenticator();
 
-        bool AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account);
+        bool AuthenticateActiveDirectory( const std::string& str_ldap_account, const std::string& str_password );
 private:
 	LDAPConstraints* cons;
         LDAPControlSet* ctrls;

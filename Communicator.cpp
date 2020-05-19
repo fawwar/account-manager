@@ -502,8 +502,7 @@ Server::connection::status_t Communicator::GetLdapConfig(const Server::request& 
 {
 	gorilla::account::Error err;
 
-	const boost::network::uri::uri uri_instance(
-		std::string("http://127.0.0.1" + request.destination));
+	
 
 	/*LOGGER_S(debug) << "GetUsers = " << m_str_account << "," << m_str_password;
 

@@ -67,8 +67,8 @@ LdapAuthenticator::LdapAuthenticator()
 	}
 	else
 	{
-		throw std::runtime_error("ldap_setOption error ");
 		LOGGER_S(info)<<"SetOption Error:" << lRtn;
+		throw std::runtime_error("ldap_setOption error ");
 	}
 
 	lRtn = ldap_connect(conn.pLdapConnection, NULL);
@@ -78,8 +78,8 @@ LdapAuthenticator::LdapAuthenticator()
 	}
 	else
 	{
-		throw std::runtime_error("ldap_connect fail ");
 		LOGGER_S(info)<<"ldap_connect faied with 0x"<<lRtn;
+		throw std::runtime_error("ldap_connect fail ");
 		
 	}
 
@@ -92,7 +92,7 @@ LdapAuthenticator::~LdapAuthenticator()
 	
 }
 
-bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account)
+bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap_account, const std::string& str_password) 
 {
 		LdapConfig &ldapConfig = LdapConfig::getInstance();
 		std::string str_username = str_ldap_account + ldapConfig.address;
@@ -135,10 +135,11 @@ LdapAuthenticator::LdapAuthenticator()
 	    cons=new LDAPConstraints; 
 	    lc=new LDAPConnection(ldapConfig.host_name,ldapConfig.port,cons);
            }catch(LDAPException &e)
-	{
-	 LOGGER_S(info)<<"-----------constructor caught Exeception --------";
-	 LOGGER_S(info)<<e;	
-	}
+	    {
+	     LOGGER_S(info)<<"-----------constructor caught Exeception --------";
+	     LOGGER_S(info)<<e;
+	     throw ;	
+	    }
 
 
 }
@@ -153,7 +154,7 @@ LdapAuthenticator::~LdapAuthenticator()
 }
 
 
-bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_password, const std::string& str_ldap_account)
+bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap_account,const std::string& str_password )
 {	
                    	
                     LOGGER_S(info) << "----------------doing bind --------";

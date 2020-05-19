@@ -39,7 +39,7 @@ void LdapConfig::Read()  // read to json
 
 		if (root.isMember("host_name"))
 		{
-			host_name = root["host_name"].asString().c_str();
+			host_name = root["host_name"].asString();
 			//LOGGER_S(info) << "LdapConfig.cpp host_name!!!!!!!!!" << host_name;
 		}
 		if (root.isMember("ldap_port"))
@@ -49,7 +49,7 @@ void LdapConfig::Read()  // read to json
 		}
 		if (root.isMember("address"))
 		{
-			address = root["address"].asString().c_str();
+			address = root["address"].asString();
 			//LOGGER_S(info) << "LdapConfig.cpp address!!!!!!!!!" << address;
 		}
 	}
@@ -70,7 +70,7 @@ std::string LdapConfig::Write(const std::string &str_ldap_config_info)  // write
 		{
 			if (root.isMember("host_name"))
 			{
-				ldapConfig.host_name = root["host_name"].asString().c_str();
+				ldapConfig.host_name = root["host_name"].asString();
 				root["host_name"] = ldapConfig.host_name;
 				//LOGGER_S(info)<<"Error AccountManager::UpdateLdapConfig host_name!!!!!!!!!" << ldapconfig.host_name;
 			}
@@ -82,7 +82,7 @@ std::string LdapConfig::Write(const std::string &str_ldap_config_info)  // write
 			}
                         if (root.isMember("address"))
 			{
-				ldapConfig.address = root["address"].asString().c_str();
+				ldapConfig.address = root["address"].asString();
 				root["address"] = ldapConfig.address;
 				//LOGGER_S(info) << "Error AccountManager::UpdateLdapConfig ldap_port!!!!!!!!!" << ldapconfig.ldap_port;
 			}

@@ -68,7 +68,7 @@ namespace gorilla {
 				{
 					std::string str_ldap_account = str_account.substr(str_token.size());
 					LdapAuthenticator ldapAuthenticator;
-					if (ldapAuthenticator.AuthenticateActiveDirectory(str_password, str_ldap_account))
+					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
 					{
 						//insert DB 
 						Json::Value json_user_info;
@@ -157,7 +157,7 @@ namespace gorilla {
 				LOGGER() << "Abnormal termination - exception:" << e.what();
 
 			}
-		
+		return false; 
         }
 
 		Error AccountManager::GetLdapConfig(std::string &out_str_reply)
@@ -173,15 +173,11 @@ namespace gorilla {
 			output_reply.append(" address: ");
 			output_reply.append(ldapConfig.address);
 			/* send device list */
-			if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
+		//	if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
 				errorCode = SUCCESS_RESPONSE;
 				out_str_reply = output_reply; //ldapconfig info   
-			}
-			else {
-				errorCode = NAME_NOT_FOUND;
-				out_str_reply = m_error_reply.GetError("Haven't Any LDAP host_name & Port", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
-			}
-
+		//	}
+		
 			return errorCode;
 		}
 
@@ -199,8 +195,8 @@ namespace gorilla {
 			}
 			else
 			{
-			    out_str_reply = m_error_reply.GetError("Host Name Not Found", "<AccountManager::UpdateLdapConfig> HOST_NOT_FOUND");
-			    errorCode = NAME_NOT_FOUND;
+			    out_str_reply = m_error_reply.GetError("Host Name BAD_REQUEST", "<AccountManager::UpdateLdapConfig> HOST_BAD_REQUEST");
+			    errorCode = BAD_REQUEST;
 			}			
 			return errorCode;
 		}

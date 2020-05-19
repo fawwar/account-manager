@@ -31,15 +31,7 @@ Config::Config()
         permission = root["permission"].asString();
       }
       
-      if(root.isMember("host_name"))
-      {
-	host_name = root["host_name"].asString();
-      }   
-      if(root.isMember("ldap_port"))
-      {
-	ldap_port = root["ldap_port"].asString();
-//	LOGGER_S(info)<<"Config.cpp ldap_port!!!!!!!!!" << ldap_port;
-      }   
+         
     }
   }
   catch(std::exception& e)
