@@ -315,27 +315,34 @@ namespace gorilla {
                 out_str_reply = m_error_reply.GetError("AccessRightName Is Not Exist","<AccountManager::UpdateUser> FORBIDDEN");
                 return FORBIDDEN;
             }
-            json info = json::parse(str_user_info); 
+            //json info = json::parse(str_user_info); 
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             auto it = m_map_users.find(str_account.c_str());
+	    LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info "<< str_user_info;
+	    Json::Value info;
+	    Json::Reader reader;
+ 	    reader.parse(str_user_info,info);
+	    LOGGER_S(debug) << "Error AccountManager::UpdateUser root[account]" << info["account"];  
             if (it != m_map_users.end()){
 
-                 if(str_login_level == "admin" && str_account != "admin"){
+                 if(str_login_level == "admin" ){
                  //if(true){
 			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
 			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
 			LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
                      /* admin account only change password */   
-                   /*  
+                     
                      if(str_account == "admin"){
-                        if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
-                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
-                                "<AccountManager::UpdateUser> FORBIDDEN");
-                            
-                            return FORBIDDEN;
+                        if(info.isMember("account") && str_account != info["account"].asString()){
+                            if (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())
+			    {	
+				out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
+                                "<AccountManager::UpdateUser> FORBIDDEN");    
+                                return FORBIDDEN;
+			    }
                         }
                      }
-                     */
+                     
                      /* check userinfo vaild */
                      /*  if(!IsUserInfoVaild(str_user_info, out_str_reply))
                         return FORBIDDEN;*/
@@ -351,12 +358,13 @@ namespace gorilla {
                  else{ //admin only can modify password
    
                     /* user account only change password */
-                    if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
-
-                        out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
+                    if(info.isMember("account") && str_account != info["account"].asString()){
+                        if(info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())
+			{
+                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
                             "<AccountManager::UpdateUser> FORBIDDEN");
-                        
-                        return FORBIDDEN;
+                            return FORBIDDEN;
+			}
                     }
                      
                     /* check password vaild */
@@ -369,7 +377,7 @@ namespace gorilla {
                     errorCode = SUCCESS_RESPONSE;   
                     out_str_reply = it->second->UpdateUser(str_user_info);
                  }
-			if (IsKeyExsist(info,"password"))
+			if (info.isMember("password"))
 			{        		
 				std::string str_cookie_name;
 	    			std::string str_cookie_value;
