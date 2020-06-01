@@ -201,6 +201,7 @@ void Communicator::RequestHandlers()
 {
      request_handler_mapping_ =
      {
+#ifdef LDAP_OPTION
 		{
 			 "GET/ldapConfig",
 			 std::bind(&Communicator::GetLdapConfig, this,
@@ -211,6 +212,7 @@ void Communicator::RequestHandlers()
 			 std::bind(&Communicator::UpdateLdapConfig, this,
 			 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
 		 },   
+#endif 
             {
                 "GET/users",
                 std::bind(&Communicator::GetUsers, this,
@@ -496,7 +498,7 @@ void Communicator::SendReply(Server::connection_ptr& connection_ptr, std::string
 
     //LOGGER_S(debug) << "Server Reply End> ";
 }
-
+#ifdef LDAP_OPTION
 Server::connection::status_t Communicator::GetLdapConfig(const Server::request& request,
 	std::string &request_str, std::string &reply_str)
 {
@@ -573,7 +575,7 @@ Server::connection::status_t Communicator::UpdateLdapConfig(const Server::reques
 	LOGGER_S(debug) << "Server::connection::status_t Communicator::UpdateLdapConfig reply_str " << reply_str;
 	return (Server::connection::status_t)err;
 }
-
+#endif
 
 Server::connection::status_t Communicator::GetUsers(const Server::request& request, 
         std::string &request_str, std::string &reply_str)

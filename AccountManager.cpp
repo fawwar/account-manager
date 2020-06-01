@@ -20,6 +20,7 @@
 #include "LdapConfig.h"
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
+//#define LDAP_OPTION 0 
 
 using namespace gorilla::log;
 
@@ -64,8 +65,11 @@ namespace gorilla {
 		   */
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
-				if (str_account.substr(0, str_token.size()) == str_token)
+				if (str_account.substr(0, str_token.size()) == str_token )
 				{
+					#ifndef LDAP_OPTION
+					return false;
+					#else
 					std::string str_ldap_account = str_account.substr(str_token.size());
 					LdapAuthenticator ldapAuthenticator;
 					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
@@ -118,6 +122,7 @@ namespace gorilla {
 						return true;   //ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account);
 					}
 					else return false;
+					#endif
 
 				}
 				else {
@@ -165,7 +170,7 @@ namespace gorilla {
 			}
 		return false; 
         }
-
+#ifdef LDAP_OPTION
 		Error AccountManager::GetLdapConfig(std::string &out_str_reply)
 		{
 			Error errorCode(INTERNAL_SERVER_ERROR);
@@ -206,7 +211,7 @@ namespace gorilla {
 			}			
 			return errorCode;
 		}
-
+#endif 
         Error AccountManager::GetUsers(std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR);
@@ -333,14 +338,11 @@ namespace gorilla {
                      /* admin account only change password */   
                      
                      if(str_account == "admin"){
-                        if(info.isMember("account") && str_account != info["account"].asString()){
-                            if (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())
-			    {	
-				out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
-                                "<AccountManager::UpdateUser> FORBIDDEN");    
-                                return FORBIDDEN;
-			    }
-                        }
+                        if((info.isMember("account") && str_account != info["account"].asString())|| (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())){   	
+				    out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
+                                    "<AccountManager::UpdateUser> FORBIDDEN");    
+                                    return FORBIDDEN;
+                        	}
                      }
                      
                      /* check userinfo vaild */
@@ -358,14 +360,11 @@ namespace gorilla {
                  else{ //admin only can modify password
    
                     /* user account only change password */
-                    if(info.isMember("account") && str_account != info["account"].asString()){
-                        if(info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())
-			{
-                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
-                            "<AccountManager::UpdateUser> FORBIDDEN");
-                            return FORBIDDEN;
-			}
-                    }
+                    if((info.isMember("account") && str_account != info["account"].asString()) || (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())){                 		
+                            	out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
+                            	"<AccountManager::UpdateUser> FORBIDDEN");
+                            	return FORBIDDEN;
+                    	     }
                      
                     /* check password vaild */
                     
