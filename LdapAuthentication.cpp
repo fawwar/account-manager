@@ -112,7 +112,7 @@ bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap
 }
 
 #else    // linux 
-
+#ifdef LDAP_OPTION
 #include "LDAPConnection.h"
 #include "LDAPConstraints.h"
 #include "LDAPSearchReference.h"
@@ -178,7 +178,7 @@ bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap
 
 
 }
-
+#endif
 #endif
 
 
