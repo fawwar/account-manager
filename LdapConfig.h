@@ -1,4 +1,5 @@
 #pragma once
+#ifdef LDAP_OPTION
 #include "./import/json-develop/json_tools.hpp"
 
 using json = nlohmann::json;
@@ -20,3 +21,4 @@ private:
   void Read();
 
 };
+#endif

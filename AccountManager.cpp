@@ -14,12 +14,15 @@
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "Util.h"
+#include <fstream>
 
+#ifdef LDAP_OPTION
 #include "LdapAuthentication.h"
-#include <fstream> 
 #include "LdapConfig.h"
+#endif
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
+//#define LDAP_OPTION 0 
 
 using namespace gorilla::log;
 
@@ -64,8 +67,11 @@ namespace gorilla {
 		   */
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
-				if (str_account.substr(0, str_token.size()) == str_token)
+				if (str_account.substr(0, str_token.size()) == str_token )
 				{
+					#ifndef LDAP_OPTION
+					return false;
+					#else
 					std::string str_ldap_account = str_account.substr(str_token.size());
 					LdapAuthenticator ldapAuthenticator;
 					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
@@ -118,6 +124,7 @@ namespace gorilla {
 						return true;   //ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account);
 					}
 					else return false;
+					#endif
 
 				}
 				else {
@@ -165,7 +172,7 @@ namespace gorilla {
 			}
 		return false; 
         }
-
+#ifdef LDAP_OPTION
 		Error AccountManager::GetLdapConfig(std::string &out_str_reply)
 		{
 			Error errorCode(INTERNAL_SERVER_ERROR);
@@ -206,7 +213,7 @@ namespace gorilla {
 			}			
 			return errorCode;
 		}
-
+#endif 
         Error AccountManager::GetUsers(std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR);
@@ -315,27 +322,31 @@ namespace gorilla {
                 out_str_reply = m_error_reply.GetError("AccessRightName Is Not Exist","<AccountManager::UpdateUser> FORBIDDEN");
                 return FORBIDDEN;
             }
-            json info = json::parse(str_user_info); 
+            //json info = json::parse(str_user_info); 
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             auto it = m_map_users.find(str_account.c_str());
+	    LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info "<< str_user_info;
+	    Json::Value info;
+	    Json::Reader reader;
+ 	    reader.parse(str_user_info,info);
+	    LOGGER_S(debug) << "Error AccountManager::UpdateUser root[account]" << info["account"];  
             if (it != m_map_users.end()){
 
-                 if(str_login_level == "admin" && str_account != "admin"){
+                 if(str_login_level == "admin" ){
                  //if(true){
 			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
 			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
 			LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
                      /* admin account only change password */   
-                   /*  
+                     
                      if(str_account == "admin"){
-                        if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
-                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
-                                "<AccountManager::UpdateUser> FORBIDDEN");
-                            
-                            return FORBIDDEN;
-                        }
+                        if((info.isMember("account") && str_account != info["account"].asString())|| (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())){   	
+				    out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
+                                    "<AccountManager::UpdateUser> FORBIDDEN");    
+                                    return FORBIDDEN;
+                        	}
                      }
-                     */
+                     
                      /* check userinfo vaild */
                      /*  if(!IsUserInfoVaild(str_user_info, out_str_reply))
                         return FORBIDDEN;*/
@@ -351,13 +362,11 @@ namespace gorilla {
                  else{ //admin only can modify password
    
                     /* user account only change password */
-                    if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
-
-                        out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
-                            "<AccountManager::UpdateUser> FORBIDDEN");
-                        
-                        return FORBIDDEN;
-                    }
+                    if((info.isMember("account") && str_account != info["account"].asString()) || (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())){                 		
+                            	out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
+                            	"<AccountManager::UpdateUser> FORBIDDEN");
+                            	return FORBIDDEN;
+                    	     }
                      
                     /* check password vaild */
                     
@@ -369,7 +378,7 @@ namespace gorilla {
                     errorCode = SUCCESS_RESPONSE;   
                     out_str_reply = it->second->UpdateUser(str_user_info);
                  }
-			if (IsKeyExsist(info,"password"))
+			if (info.isMember("password"))
 			{        		
 				std::string str_cookie_name;
 	    			std::string str_cookie_value;

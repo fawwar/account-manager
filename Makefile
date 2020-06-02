@@ -9,15 +9,17 @@ OPENLDAPDIR = $(PWD)/external/linux-x86_64/openldap
 CURLDIR = $(PWD)/external/linux-x86_64/curl
 OPENLDAP_2.4.49DIR = $(PWD)/external/linux-x86_64/openldap-2.4.49/openldapc
 
-CXXFLAGS += -I$(BOOSTDIR)/include 
-CXXFLAGS += -I$(OPENLDAPDIR)/include
+CXXFLAGS += -I$(BOOSTDIR)/include
+
 CXXFLAGS += -I$(CURLDIR)/include
 CXXFLAGS += -I$(OPENLDAP_2.4.49DIR)
 LDFLAGS  += -L$(BOOSTDIR)/lib
 LDFLAGS  += -L$(OPENLDAPDIR)/lib
 LDFLAGS  += -L$(CURLDIR)/lib
+ifdef LDAP_OPTION
 LDFALGS  += -L$(OPENLDAP_2.4.49DIR)/libraries
-
+CXXFLAGS += -I$(OPENLDAPDIR)/include
+endif
 CXXFLAGS += -DBOOST_NETWORK_NO_LIB
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
 CFLAGS   += -I$(LIBDIR)/gorilla/log
@@ -65,6 +67,11 @@ ifdef TELSTRA
   CONFIGPATH = configs/telstra
   CXXFLAGS += -DTELSTRA=1
 endif
+
+ifdef LDAP_OPTION 
+  CXXFLAGS += -DLDAP_OPTION=1
+endif
+
 
 
 ################################################################################

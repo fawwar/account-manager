@@ -1,5 +1,5 @@
+#ifdef LDAP_OPTION
 #include "LdapAuthentication.h"
-
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 //#include <json/json.h> 
@@ -111,8 +111,7 @@ bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap
 		}
 }
 
-#else    // linux 
-
+#else    // linux
 #include "LDAPConnection.h"
 #include "LDAPConstraints.h"
 #include "LDAPSearchReference.h"
@@ -180,5 +179,5 @@ bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap
 }
 
 #endif
-
+#endif
 
