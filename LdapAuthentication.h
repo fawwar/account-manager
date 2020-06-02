@@ -1,3 +1,5 @@
+#pragma once
+#ifdef LDAP_OPTION
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
@@ -74,5 +76,5 @@ private:
  
 
 #endif 
-
+#endif
 

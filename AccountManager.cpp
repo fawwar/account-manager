@@ -14,10 +14,12 @@
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "Util.h"
+#include <fstream>
 
+#ifdef LDAP_OPTION
 #include "LdapAuthentication.h"
-#include <fstream> 
 #include "LdapConfig.h"
+#endif
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
 //#define LDAP_OPTION 0 

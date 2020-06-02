@@ -69,8 +69,9 @@ namespace gorilla {
             mutable std::mutex m_mux_access_rights;
             std::map<std::string, std::shared_ptr<AccessRight>> m_map_access_rights;
 
+		#ifdef LDAP_OPTION
 		mutable std::mutex m_mux_ldapconfig;
-		
+		#endif
 
             
 

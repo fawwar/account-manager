@@ -1,3 +1,4 @@
+#ifdef LDAP_OPTION
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -125,3 +126,4 @@ LdapConfig& LdapConfig::getInstance()
   static LdapConfig m;
   return m;
 }
+#endif
