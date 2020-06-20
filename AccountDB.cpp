@@ -116,7 +116,7 @@ namespace gorilla {
 		{
 			std::string szSQLCommand_str;
 			szSQLCommand_str.append("insert into ");
-			szSQLCommand_str.append(TABLE_NAME[e_table_name].c_str());
+			szSQLCommand_str.append(TABLE_NAME[e_table_name]);
 			std::string json_str = json_obj.dump();
 			Json::Reader reader;
 			Json::Value info;
@@ -153,9 +153,10 @@ namespace gorilla {
 
 			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &insert_stmt, NULL);
 			if (SQLITE_OK != rc) {
-				LOGGER_S(debug) << "Can't prepare insert statment "<< szSQLCommand <<" " << rc << " : " <<sqlite3_errmsg(m_pSQLDB);
-				sqlite3_close(m_pSQLDB);
-				
+				//LOGGER_S(debug) << "Can't prepare insert statment "<< szSQLCommand <<" " << rc << " : " <<sqlite3_errmsg(m_pSQLDB);
+				throw std::runtime_error("Can't prepare insert statment ");
+				//sqlite3_close(m_pSQLDB);
+				return false;
 			}
 	
 			int i = 1;
@@ -168,25 +169,29 @@ namespace gorilla {
 				//LOGGER_S(debug) << "str_val.size " << str_val.size();
 				
 				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
-				if (i <= count) {
+				
 					rc = sqlite3_bind_text(insert_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
 					if (SQLITE_OK != rc) {
 						
-						LOGGER_S(debug) << "Error binding value in insert " << rc <<" : "<<sqlite3_errmsg(m_pSQLDB);
-						sqlite3_close(m_pSQLDB);
+						//LOGGER_S(debug) << "Error binding value in insert " << rc <<" : "<<sqlite3_errmsg(m_pSQLDB);
+						throw std::runtime_error ("Error bindinf value in insert " );
+						//sqlite3_close(m_pSQLDB);
+						return false;
 					}
 					else {
 						LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str(); 
 					}
 					
-					//LOGGER_S(debug) << "i " << i;
-				}
+					
+				
 				i++;
 			}
 
 			rc = sqlite3_step(insert_stmt);
 			if (SQLITE_DONE != rc) {
-				LOGGER_S(debug) << "insert statement didn't return DONE "<<rc <<" "<< sqlite3_errmsg(m_pSQLDB);
+				//LOGGER_S(debug) << "insert statement didn't return DONE "<<rc <<" "<< sqlite3_errmsg(m_pSQLDB);
+				throw std::runtime_error ("insert statement didn't return DONE ");
+				return false;
 			}
 			else {
 				LOGGER_S(debug) << "INSERT complete " ;
@@ -221,7 +226,7 @@ namespace gorilla {
 		{
 			std::string szSQLCommand_str;
 			szSQLCommand_str.append("update ");
-			szSQLCommand_str.append(TABLE_NAME[e_table_name].c_str());
+			szSQLCommand_str.append(TABLE_NAME[e_table_name]);
 			szSQLCommand_str.append(" set ");
 
 			//LOGGER_S(debug) << "str_update_key_field " << str_update_key_field;
@@ -259,17 +264,12 @@ namespace gorilla {
 			
 			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &update_stmt, NULL);
 			if (SQLITE_OK != rc) {
-				LOGGER_S(debug) << "Can't prepare insert statment " << szSQLCommand << " " << rc << " " << sqlite3_errmsg(m_pSQLDB);
-				sqlite3_close(m_pSQLDB);
+				//LOGGER_S(debug) << "Can't prepare insert statment " << szSQLCommand << " " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+			 	throw std::runtime_error("Can't prepare insert statement");
+				return false; 
+				//sqlite3_close(m_pSQLDB);
 			}
-			if (SQLITE_OK != rc) {
-				LOGGER_S(debug) << "Error binding value in update " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
-				sqlite3_close(m_pSQLDB);
-			}
-			else {
-				LOGGER_S(debug) << "Successfully bound string for update: " << str_update_key_field;
-			}
-
+		
 			int i = 1;  // For bind_text index 
 			for (auto it = json_obj.begin(); it != json_obj.end(); ++it) {
 
@@ -280,17 +280,19 @@ namespace gorilla {
 				//LOGGER_S(debug) << "str_val.size " << str_val.size();
 				
 				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
-				if (i <= count ) {
+				
 					rc = sqlite3_bind_text(update_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
 					if (SQLITE_OK != rc) {
 						
-						LOGGER_S(debug) << "Error binding value in insert: " << rc << " " << sqlite3_errmsg(m_pSQLDB);
-						sqlite3_close(m_pSQLDB);
+						//LOGGER_S(debug) << "Error binding value in insert: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+						throw std::runtime_error("Error binding value in insert ");
+						return false;
+						//sqlite3_close(m_pSQLDB);
 					}
 					else {
 						LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str();	
 					}
-					}
+			
 				i++;
 			}
 			
@@ -303,13 +305,14 @@ namespace gorilla {
 
 			rc = sqlite3_step(update_stmt);
 			if (SQLITE_DONE != rc) {
-				LOGGER_S(debug) << "update statement didn't return DONE " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+				//LOGGER_S(debug) << "update statement didn't return DONE " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+				throw std::runtime_error("update statemet didn't return DONE ");
+				return false;
 			}
 			else {
 				LOGGER_S(debug) << "UPDATE completed";
 			}
 
-			sqlite3_reset(update_stmt);
 			sqlite3_finalize(update_stmt);
 	/*
             pSQLCommand += sprintf(pSQLCommand, "update %s set ", TABLE_NAME[e_table_name].c_str());
