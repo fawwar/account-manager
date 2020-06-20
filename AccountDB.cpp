@@ -112,47 +112,40 @@ namespace gorilla {
             return true;
         }
 
-        bool AccountDB::Insert(TableName e_table_name, const json& json_obj, int& out_n_sql_error)
-        {   
-            char szSQLCommand[SQL_CMD_LEN];
-            char *pSQLCommand = &szSQLCommand[0];
+	int AccountDB::SetInsertCommand(TableName e_table_name, const json& json_obj, char*& out_cmd)
+		{
 			std::string szSQLCommand_str;
 			szSQLCommand_str.append("insert into ");
 			szSQLCommand_str.append(TABLE_NAME[e_table_name].c_str());
-			LOGGER_S(info) << "AccountDB::Insert json_obj " << json_obj.dump();
 			std::string json_str = json_obj.dump();
-			LOGGER_S(info) << "AccountDB::Insert json_str " << json_str;
 			Json::Reader reader;
 			Json::Value info;
-			reader.parse(json_str, info);
-			/*
-			if (reader.parse(json_str, info))
-			{
-				if (info.isMember("account"))
-				{
-					
-					LOGGER_S(debug) << "AccountDB::Insert account " ;
-				}
-			}
-			*/
+			reader.parse(json_str,info);
 			szSQLCommand_str.append("(");
 			for (auto const&id : info.getMemberNames())
 			{
-				LOGGER_S(debug) << id;
 				szSQLCommand_str.append(id);
 				szSQLCommand_str.append(",");
 			}
 			szSQLCommand_str = szSQLCommand_str.replace(szSQLCommand_str.end() - 1, szSQLCommand_str.end(), ")");
 			szSQLCommand_str.append("values (");
-			LOGGER_S(debug) << "info.size " << info.size();
 			for (int i = 0; i < info.size(); i++)
 			{
 				szSQLCommand_str.append("?,");
 			}
 			szSQLCommand_str = szSQLCommand_str.replace(szSQLCommand_str.end() - 1, szSQLCommand_str.end(), ")");
 			LOGGER_S(debug) << "szSQLCommand_str " << szSQLCommand_str;
-			strcpy(szSQLCommand, szSQLCommand_str.c_str());
+			strcpy(out_cmd, szSQLCommand_str.c_str());
 			
+			return info.size();
+		}
+
+        bool AccountDB::Insert(TableName e_table_name, const json& json_obj, int& out_n_sql_error)
+        {   
+            char szSQLCommand[SQL_CMD_LEN];
+            char *pSQLCommand = &szSQLCommand[0];
+			
+			int count  = SetInsertCommand(e_table_name,json_obj,pSQLCommand);		
 			// For the insert and select, we will prepare statements
 			sqlite3_stmt *insert_stmt = NULL;
 			// SQLite return value
@@ -175,7 +168,7 @@ namespace gorilla {
 				//LOGGER_S(debug) << "str_val.size " << str_val.size();
 				
 				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
-				if (i <= info.size()) {
+				if (i <= count) {
 					rc = sqlite3_bind_text(insert_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
 					if (SQLITE_OK != rc) {
 						
@@ -223,48 +216,47 @@ namespace gorilla {
             return true;
         }
 
-        bool AccountDB::Update(TableName e_table_name, const std::string& str_update_key_field,
-                 const std::string& str_update_key_value, const json& json_obj)
-        {
-            char szSQLCommand[SQL_CMD_LEN];
-            char *pSQLCommand = &szSQLCommand[0];
+	int AccountDB::SetUpdateCommand(TableName e_table_name, const std::string& str_update_key_field,
+			const std::string& str_update_key_value, const json& json_obj, char*& out_cmd)
+		{
 			std::string szSQLCommand_str;
 			szSQLCommand_str.append("update ");
 			szSQLCommand_str.append(TABLE_NAME[e_table_name].c_str());
 			szSQLCommand_str.append(" set ");
 
-			LOGGER_S(debug) << "str_update_key_field " << str_update_key_field;
-			LOGGER_S(debug) << "str_update_key_value " << str_update_key_value;
+			//LOGGER_S(debug) << "str_update_key_field " << str_update_key_field;
+			//LOGGER_S(debug) << "str_update_key_value " << str_update_key_value;
 			std::string json_str = json_obj.dump();
 			Json::Reader reader;
 			Json::Value info;
 			reader.parse(json_str, info);
-			/*
-			if (reader.parse(json_str, info))
-			{
-				if (info.isMember("account"))
-				{
-					LOGGER_S(debug) << "AccountDB::Insert account ";
-				}
-			}
-			*/
+
 			for (auto const&id : info.getMemberNames())
 			{
-				//LOGGER_S(debug) << id;
 				szSQLCommand_str.append(id);
 				szSQLCommand_str.append("= ?,");
-				
 			}
 			szSQLCommand_str = szSQLCommand_str.replace(szSQLCommand_str.end() - 1, szSQLCommand_str.end(), " where ");
 			szSQLCommand_str.append(str_update_key_field);
 			szSQLCommand_str.append(" = ?");
 			LOGGER_S(debug) << "szSQLCommand_str " << szSQLCommand_str;
-			strcpy(szSQLCommand, szSQLCommand_str.c_str());
+			strcpy(out_cmd, szSQLCommand_str.c_str());
+
+			return info.size();
+		}
+
+        bool AccountDB::Update(TableName e_table_name, const std::string& str_update_key_field,
+                 const std::string& str_update_key_value, const json& json_obj)
+        {
+            char szSQLCommand[SQL_CMD_LEN];
+            char *pSQLCommand = &szSQLCommand[0];
+			
+			int count = SetUpdateCommand(e_table_name, str_update_key_field, str_update_key_value, json_obj, pSQLCommand);  //indo.size()
 			// For the insert and select, we will prepare statements
 			sqlite3_stmt *update_stmt = NULL;
 			// SQLite return value
 			int rc;
-			std::string value_str;
+			
 			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &update_stmt, NULL);
 			if (SQLITE_OK != rc) {
 				LOGGER_S(debug) << "Can't prepare insert statment " << szSQLCommand << " " << rc << " " << sqlite3_errmsg(m_pSQLDB);
@@ -288,7 +280,7 @@ namespace gorilla {
 				//LOGGER_S(debug) << "str_val.size " << str_val.size();
 				
 				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
-				if (i <= info.size()) {
+				if (i <= count ) {
 					rc = sqlite3_bind_text(update_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
 					if (SQLITE_OK != rc) {
 						
@@ -303,6 +295,7 @@ namespace gorilla {
 			}
 			
 			//value_str = SetSQLBindText(str_update_key_value);
+			std::string value_str;
 			value_str = "\"";
 			value_str.append(str_update_key_value);
 			value_str.append("\"");

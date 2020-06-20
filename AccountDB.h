@@ -68,7 +68,11 @@ namespace gorilla {
 
             void SetSQLUpdatetTableCmd(const json& json_obj, CommandType e_cmd_type,
                 char*& out_cmd);
-
+	   
+	    int SetUpdateCommand(TableName e_table_name, const std::string& str_update_key_field,
+		const std::string& str_update_key_value, const json& json_obj, char*& out_cmd);
+	    
+	    int SetInsertCommand(TableName e_table_name, const json& json_obj, char*& out_cmd);
 	         
         };
     }
