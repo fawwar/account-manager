@@ -11,6 +11,10 @@
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 
+#include "./import/json-develop/json_tools.hpp"
+#include "json/json.h"
+#include<string>
+
 #ifdef WIN32
 static const std::string DB_PATH = "./";// "C:/opt/ivar/var/";
 #else
@@ -109,10 +113,93 @@ namespace gorilla {
         }
 
         bool AccountDB::Insert(TableName e_table_name, const json& json_obj, int& out_n_sql_error)
-        {
+        {   
             char szSQLCommand[SQL_CMD_LEN];
             char *pSQLCommand = &szSQLCommand[0];
+			std::string szSQLCommand_str;
+			szSQLCommand_str.append("insert into ");
+			szSQLCommand_str.append(TABLE_NAME[e_table_name].c_str());
+			LOGGER_S(info) << "AccountDB::Insert json_obj " << json_obj.dump();
+			std::string json_str = json_obj.dump();
+			LOGGER_S(info) << "AccountDB::Insert json_str " << json_str;
+			Json::Reader reader;
+			Json::Value info;
+			reader.parse(json_str, info);
+			/*
+			if (reader.parse(json_str, info))
+			{
+				if (info.isMember("account"))
+				{
+					
+					LOGGER_S(debug) << "AccountDB::Insert account " ;
+				}
+			}
+			*/
+			szSQLCommand_str.append("(");
+			for (auto const&id : info.getMemberNames())
+			{
+				LOGGER_S(debug) << id;
+				szSQLCommand_str.append(id);
+				szSQLCommand_str.append(",");
+			}
+			szSQLCommand_str = szSQLCommand_str.replace(szSQLCommand_str.end() - 1, szSQLCommand_str.end(), ")");
+			szSQLCommand_str.append("values (");
+			LOGGER_S(debug) << "info.size " << info.size();
+			for (int i = 0; i < info.size(); i++)
+			{
+				szSQLCommand_str.append("?,");
+			}
+			szSQLCommand_str = szSQLCommand_str.replace(szSQLCommand_str.end() - 1, szSQLCommand_str.end(), ")");
+			LOGGER_S(debug) << "szSQLCommand_str " << szSQLCommand_str;
+			strcpy(szSQLCommand, szSQLCommand_str.c_str());
+			
+			// For the insert and select, we will prepare statements
+			sqlite3_stmt *insert_stmt = NULL;
+			// SQLite return value
+			int rc;
 
+			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &insert_stmt, NULL);
+			if (SQLITE_OK != rc) {
+				LOGGER_S(debug) << "Can't prepare insert statment "<< szSQLCommand <<" " << rc << " : " <<sqlite3_errmsg(m_pSQLDB);
+				sqlite3_close(m_pSQLDB);
+				
+			}
+	
+			int i = 1;
+			for (auto it = json_obj.begin(); it != json_obj.end(); ++it ) {
+				
+				std::string str_val =  it.value().dump();
+				std::string str_key = it.key();
+				//LOGGER_S(debug) << "str_key " << str_key;
+				//LOGGER_S(debug) << "str_val " << str_val;
+				//LOGGER_S(debug) << "str_val.size " << str_val.size();
+				
+				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
+				if (i <= info.size()) {
+					rc = sqlite3_bind_text(insert_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
+					if (SQLITE_OK != rc) {
+						
+						LOGGER_S(debug) << "Error binding value in insert " << rc <<" : "<<sqlite3_errmsg(m_pSQLDB);
+						sqlite3_close(m_pSQLDB);
+					}
+					else {
+						LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str(); 
+					}
+					
+					//LOGGER_S(debug) << "i " << i;
+				}
+				i++;
+			}
+
+			rc = sqlite3_step(insert_stmt);
+			if (SQLITE_DONE != rc) {
+				LOGGER_S(debug) << "insert statement didn't return DONE "<<rc <<" "<< sqlite3_errmsg(m_pSQLDB);
+			}
+			else {
+				LOGGER_S(debug) << "INSERT complete " ;
+			}
+			sqlite3_finalize(insert_stmt);
+	/*
             pSQLCommand += sprintf(pSQLCommand, "insert into %s", TABLE_NAME[e_table_name].c_str());
             SetSQLInsertTableCmd(json_obj, INSERT_FIELD ,pSQLCommand); 
 
@@ -132,7 +219,7 @@ namespace gorilla {
                     return false;
                 }
             }
-
+	*/
             return true;
         }
 
@@ -141,6 +228,97 @@ namespace gorilla {
         {
             char szSQLCommand[SQL_CMD_LEN];
             char *pSQLCommand = &szSQLCommand[0];
+			std::string szSQLCommand_str;
+			szSQLCommand_str.append("update ");
+			szSQLCommand_str.append(TABLE_NAME[e_table_name].c_str());
+			szSQLCommand_str.append(" set ");
+
+			LOGGER_S(debug) << "str_update_key_field " << str_update_key_field;
+			LOGGER_S(debug) << "str_update_key_value " << str_update_key_value;
+			std::string json_str = json_obj.dump();
+			Json::Reader reader;
+			Json::Value info;
+			reader.parse(json_str, info);
+			/*
+			if (reader.parse(json_str, info))
+			{
+				if (info.isMember("account"))
+				{
+					LOGGER_S(debug) << "AccountDB::Insert account ";
+				}
+			}
+			*/
+			for (auto const&id : info.getMemberNames())
+			{
+				//LOGGER_S(debug) << id;
+				szSQLCommand_str.append(id);
+				szSQLCommand_str.append("= ?,");
+				
+			}
+			szSQLCommand_str = szSQLCommand_str.replace(szSQLCommand_str.end() - 1, szSQLCommand_str.end(), " where ");
+			szSQLCommand_str.append(str_update_key_field);
+			szSQLCommand_str.append(" = ?");
+			LOGGER_S(debug) << "szSQLCommand_str " << szSQLCommand_str;
+			strcpy(szSQLCommand, szSQLCommand_str.c_str());
+			// For the insert and select, we will prepare statements
+			sqlite3_stmt *update_stmt = NULL;
+			// SQLite return value
+			int rc;
+			std::string value_str;
+			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &update_stmt, NULL);
+			if (SQLITE_OK != rc) {
+				LOGGER_S(debug) << "Can't prepare insert statment " << szSQLCommand << " " << rc << " " << sqlite3_errmsg(m_pSQLDB);
+				sqlite3_close(m_pSQLDB);
+			}
+			if (SQLITE_OK != rc) {
+				LOGGER_S(debug) << "Error binding value in update " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+				sqlite3_close(m_pSQLDB);
+			}
+			else {
+				LOGGER_S(debug) << "Successfully bound string for update: " << str_update_key_field;
+			}
+
+			int i = 1;  // For bind_text index 
+			for (auto it = json_obj.begin(); it != json_obj.end(); ++it) {
+
+				std::string str_val = it.value().dump();
+				std::string str_key = it.key();
+				//LOGGER_S(debug) << "str_key " << str_key;
+				//LOGGER_S(debug) << "str_val " << str_val;
+				//LOGGER_S(debug) << "str_val.size " << str_val.size();
+				
+				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
+				if (i <= info.size()) {
+					rc = sqlite3_bind_text(update_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
+					if (SQLITE_OK != rc) {
+						
+						LOGGER_S(debug) << "Error binding value in insert: " << rc << " " << sqlite3_errmsg(m_pSQLDB);
+						sqlite3_close(m_pSQLDB);
+					}
+					else {
+						LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str();	
+					}
+					}
+				i++;
+			}
+			
+			//value_str = SetSQLBindText(str_update_key_value);
+			value_str = "\"";
+			value_str.append(str_update_key_value);
+			value_str.append("\"");
+			rc = sqlite3_bind_text(update_stmt, i, value_str.c_str(), value_str.size(), SQLITE_TRANSIENT);
+
+			rc = sqlite3_step(update_stmt);
+			if (SQLITE_DONE != rc) {
+				LOGGER_S(debug) << "update statement didn't return DONE " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+			}
+			else {
+				LOGGER_S(debug) << "UPDATE completed";
+			}
+
+			sqlite3_reset(update_stmt);
+			sqlite3_finalize(update_stmt);
+	/*
             pSQLCommand += sprintf(pSQLCommand, "update %s set ", TABLE_NAME[e_table_name].c_str());
             SetSQLUpdatetTableCmd(json_obj, INSERT_FIELD ,pSQLCommand); 
             
@@ -159,7 +337,7 @@ namespace gorilla {
                     return false;
                 }
             }
-            
+         */  
             return true;
         }
 
@@ -333,5 +511,6 @@ namespace gorilla {
         }
     
     }
+
 }
 

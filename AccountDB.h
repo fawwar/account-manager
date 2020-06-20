@@ -68,7 +68,8 @@ namespace gorilla {
 
             void SetSQLUpdatetTableCmd(const json& json_obj, CommandType e_cmd_type,
                 char*& out_cmd);
-     
+
+	         
         };
     }
 }
