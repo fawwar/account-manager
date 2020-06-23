@@ -707,9 +707,9 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
         //if(true){//ALL PASS
 
         if(m_str_account == user_name || level == "admin"){
-		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
-		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
-		LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
+		//LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
+		//LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
+		//LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
         //if(true){//ALL PASS
 
             err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str,request);
