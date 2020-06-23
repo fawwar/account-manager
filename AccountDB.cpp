@@ -154,7 +154,7 @@ namespace gorilla {
 			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &insert_stmt, NULL);
 			if (SQLITE_OK != rc) {
 				//LOGGER_S(debug) << "Can't prepare insert statment "<< szSQLCommand <<" " << rc << " : " <<sqlite3_errmsg(m_pSQLDB);
-				insert_stmt = NULL;
+				
 				throw std::runtime_error("Can't prepare insert statment ");
 				//sqlite3_close(m_pSQLDB);
 			}
@@ -174,7 +174,8 @@ namespace gorilla {
 					if (SQLITE_OK != rc) {
 						
 						//LOGGER_S(debug) << "Error binding value in insert " << rc <<" : "<<sqlite3_errmsg(m_pSQLDB);
-						insert_stmt = NULL;
+						
+						sqlite3_finalize(insert_stmt);
 						throw std::runtime_error ("Error bindinf value in insert " );
 					}
 					else {
@@ -189,7 +190,8 @@ namespace gorilla {
 			rc = sqlite3_step(insert_stmt);
 			if (SQLITE_DONE != rc) {
 				//LOGGER_S(debug) << "insert statement didn't return DONE "<<rc <<" "<< sqlite3_errmsg(m_pSQLDB);
-				insert_stmt = NULL;
+				
+				sqlite3_finalize(insert_stmt);
 				throw std::runtime_error ("insert statement didn't return DONE ");
 			
 			}
@@ -265,8 +267,7 @@ namespace gorilla {
 			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &update_stmt, NULL);
 			if (SQLITE_OK != rc) {
 				//LOGGER_S(debug) << "Can't prepare insert statment " << szSQLCommand << " " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
-			 	update_stmt = NULL;
-				throw std::runtime_error("Can't prepare insert statement");
+			 	throw std::runtime_error("Can't prepare insert statement");
 			
 			}
 		
@@ -281,8 +282,8 @@ namespace gorilla {
 					rc = sqlite3_bind_text(update_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
 					if (SQLITE_OK != rc) {
 						
-						//LOGGER_S(debug) << "Error binding value in insert: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
-						update_stmt = NULL;
+						//LOGGER_S(debug) << "Error binding value in insert: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);		
+						sqlite3_finalize(update_stmt);
 						throw std::runtime_error("Error binding value in insert ");
 						
 					}
@@ -302,7 +303,7 @@ namespace gorilla {
 			if (SQLITE_OK != rc) {
 
                                 //LOGGER_S(debug) << "Error binding value in insert: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
-                                update_stmt = NULL;
+				sqlite3_finalize(update_stmt);
                          	throw std::runtime_error("Error binding value in insert ");               
                         }
                          else {
@@ -313,7 +314,7 @@ namespace gorilla {
 			rc = sqlite3_step(update_stmt);
 			if (SQLITE_DONE != rc) {
 				//LOGGER_S(debug) << "update statement didn't return DONE " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
-				update_stmt = NULL;
+				sqlite3_finalize(update_stmt);
 				throw std::runtime_error("update statemet didn't return DONE ");
 			
 			}
