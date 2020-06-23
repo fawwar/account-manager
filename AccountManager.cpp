@@ -325,18 +325,18 @@ namespace gorilla {
             //json info = json::parse(str_user_info); 
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             auto it = m_map_users.find(str_account.c_str());
-	    LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info "<< str_user_info;
+	    //LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info "<< str_user_info;
 	    Json::Value info;
 	    Json::Reader reader;
  	    reader.parse(str_user_info,info);
-	    LOGGER_S(debug) << "Error AccountManager::UpdateUser root[account]" << info["account"];  
+	    //LOGGER_S(debug) << "Error AccountManager::UpdateUser root[account]" << info["account"];  
             if (it != m_map_users.end()){
 
                  if(str_login_level == "admin" ){
                  //if(true){
-			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
-			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
-			LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
+			//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
+			//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
+			//LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
                      /* admin account only change password */   
                      
                      if(str_account == "admin"){
