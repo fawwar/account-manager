@@ -149,10 +149,11 @@ namespace gorilla {
 			// For the insert and select, we will prepare statements
 			sqlite3_stmt *insert_stmt = NULL;
 			// SQLite return value
-			int rc;
+			//int rc;
 
-			rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &insert_stmt, NULL);
-			if (SQLITE_OK != rc) {
+			out_n_sql_error = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &insert_stmt, NULL);
+
+			if (SQLITE_OK != out_n_sql_error) {
 				//LOGGER_S(debug) << "Can't prepare insert statment "<< szSQLCommand <<" " << rc << " : " <<sqlite3_errmsg(m_pSQLDB);
 				
 				throw std::runtime_error("Can't prepare insert statment ");
@@ -170,8 +171,8 @@ namespace gorilla {
 				
 				//The NULL is "Don't attempt to free() the value when it's bound", since it's on the stack here
 				
-					rc = sqlite3_bind_text(insert_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
-					if (SQLITE_OK != rc) {
+					out_n_sql_error = sqlite3_bind_text(insert_stmt, i, str_val.c_str(), str_val.size(), SQLITE_TRANSIENT);
+					if (SQLITE_OK != out_n_sql_error) {
 						
 						//LOGGER_S(debug) << "Error binding value in insert " << rc <<" : "<<sqlite3_errmsg(m_pSQLDB);
 						
@@ -187,10 +188,15 @@ namespace gorilla {
 				i++;
 			}
 
-			rc = sqlite3_step(insert_stmt);
-			if (SQLITE_DONE != rc) {
+			out_n_sql_error = sqlite3_step(insert_stmt);
+			if (SQLITE_DONE != out_n_sql_error) {
 				//LOGGER_S(debug) << "insert statement didn't return DONE "<<rc <<" "<< sqlite3_errmsg(m_pSQLDB);
-				
+				if (out_n_sql_error == CONSTRAINT)
+				{
+					LOGGER_S(debug) << "sql duplicate";
+					sqlite3_finalize(insert_stmt);
+					throw std::runtime_error("ACCOUNT_DUPLICATE");
+				}		
 				sqlite3_finalize(insert_stmt);
 				throw std::runtime_error ("insert statement didn't return DONE ");
 			
