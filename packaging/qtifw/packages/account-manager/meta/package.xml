@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>Account Manager</DisplayName>
     <Description>account manager services.</Description>
-    <Version>3.3.2</Version>
+    <Version>3.3.3</Version>
     <ReleaseDate>2020-06-23</ReleaseDate>
     <Default>true</Default>
 </Package>
