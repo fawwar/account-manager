@@ -34,6 +34,7 @@ void LdapConfig::Read()  // read to json
 		(std::istreambuf_iterator<char>()));
 	Json::Value root;
 	Json::Reader reader;
+	output_reply = text;
 	if (reader.parse(text, root))
 	{
 

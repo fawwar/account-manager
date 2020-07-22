@@ -166,17 +166,20 @@ namespace gorilla {
 
 			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
 			LdapConfig &ldapConfig = LdapConfig::getInstance();
+			/*
 			std::string output_reply = "host_name: ";
 			output_reply.append(ldapConfig.host_name);
 			output_reply.append(" ldap_port: ");
 			output_reply.append(std::to_string(ldapConfig.port));
 			output_reply.append(" address: ");
 			output_reply.append(ldapConfig.address);
+			*/
+			std::string output_reply = ldapConfig.output_reply;    // json format
 			/* send device list */
-		//	if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
+			if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
 				errorCode = SUCCESS_RESPONSE;
 				out_str_reply = output_reply; //ldapconfig info   
-		//	}
+			}
 		
 			return errorCode;
 		}
