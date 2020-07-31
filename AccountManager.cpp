@@ -15,6 +15,7 @@
 #include "gorilla/log/logger_config.h"
 #include "Util.h"
 #include <fstream>
+#include "Config.h"
 
 #ifdef LDAP_OPTION
 #include "LdapAuthentication.h"
@@ -724,15 +725,15 @@ namespace gorilla {
             IsKeyExsist(user_info, "account", account);
 
             LOGGER_S(info) << account;
+            Config &config = Config::getInstance();
             
-            /*
-            if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]+$"))){
+            if (!boost::regex_match (account, boost::regex(config.account_regexpr))){
                 
                 LOGGER_S(debug) << "User Account Invaild";
                 out_str_reply += "Account Invaild. ";
                 vaild = false;
             }
-            */
+            
             
             if(account.length() == 0){
                 LOGGER_S(debug) << "User Account Invaild";
@@ -753,9 +754,11 @@ namespace gorilla {
             IsKeyExsist(user_info, "password", password);
 
             LOGGER_S(info) << password;
-           
-            if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
-                
+            Config &config = Config::getInstance();
+	   
+            //if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
+            if (!boost::regex_match (password, boost::regex(config.password_regexpr))){
+    
                 LOGGER_S(debug) << "User Password Invaild";
                 out_str_reply += "Password Invaild. ";
                 vaild = false;
@@ -773,9 +776,9 @@ namespace gorilla {
             IsKeyExsist(user_info, "accessRightName", level);
 
             LOGGER_S(info) << level;
-           
+            
             if (!boost::regex_match (level, boost::regex("^[\x21-\x7F]*$"))){
-                
+   
                 LOGGER_S(debug) << "User AccessRightName Invaild";
                 out_str_reply += "AccessRightName Invaild. ";
                 vaild = false;
