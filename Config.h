@@ -9,6 +9,8 @@ class Config
 public:
   
   std::string permission;
+  std::string account_regexpr;
+  std::string password_regexpr;
   json::object_t DISABLE_PERMISSIONS;
   json::object_t DISABLE_ACCESSRIGHT;
   json::object_t DEFAULT_PERMISSIONS;
