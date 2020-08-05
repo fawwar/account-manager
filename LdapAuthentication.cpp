@@ -124,6 +124,9 @@ bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap
 #include "LDAPModification.h"
 #include "debug.h"
 
+#include "ldap.h"
+#include "lber.h"
+#define LDAP_DEPRECATED 1
 
 LdapAuthenticator::LdapAuthenticator()
 {
@@ -155,8 +158,20 @@ LdapAuthenticator::~LdapAuthenticator()
 
 
 bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap_account,const std::string& str_password )
-{	
-                   	
+{	/*
+		LdapConfig &ldapConfig1 = LdapConfig::getInstance();
+		LDAP* pLdapConnection = NULL;
+		pLdapConnection = ldap_open(ldapConfig1.host_name,ldapConfig1.port);
+		if(pLdapConnection == NULL)
+		{	
+			LOGGER_S(info) << "ldap_init failed with 0x";
+			ldap_unbind(pLdapConnection);
+		}
+		else 
+		{
+			LOGGER_S(info) << "ldap_init succeeded";
+		}
+	  */                 	
                     LOGGER_S(info) << "----------------doing bind --------";
                     //std::string str_username  = str_ldap_account +"@gorillascience.com";
 		    LdapConfig &ldapConfig = LdapConfig::getInstance();
@@ -176,6 +191,26 @@ bool LdapAuthenticator::AuthenticateActiveDirectory( const std::string& str_ldap
 			return false;
                     }
 
+
+}
+bool LdapAuthenticator::IsLDAPConnected ( std::string host_name, int port)
+{
+	 
+                LdapConfig &ldapConfig1 = LdapConfig::getInstance();
+                LDAP* pLdapConnection = NULL;
+                pLdapConnection = ldap_open(host_name.c_str(),port);
+                if(pLdapConnection == NULL)
+                {
+                        LOGGER_S(info) << "ldap_init failed with 0x";
+                        //ldap_unbind(pLdapConnection);
+			return false;
+                }
+                else
+                {
+                        LOGGER_S(info) << "ldap_init succeeded";
+			return true;
+                }
+          
 
 }
 

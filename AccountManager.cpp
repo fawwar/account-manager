@@ -19,6 +19,13 @@
 #include <fstream> 
 #include "LdapConfig.h"
 
+
+extern "C" {
+# define LDAP_DEPRECATED 1
+# include <ldap.h>
+# include <lber.h>
+}
+
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
 
 using namespace gorilla::log;
@@ -62,6 +69,21 @@ namespace gorilla {
 				   return true;
 			   }
 		   */
+			/*	
+			 LdapConfig &ldapConfig1 = LdapConfig::getInstance();
+               		 LDAP* pLdapConnection = NULL;
+			 pLdapConnection = ldap_open(ldapConfig1.host_name.c_str(),ldapConfig1.port);
+               		 if(pLdapConnection == NULL)
+               		 {
+                        	LOGGER_S(info) << "ldap_init failed with 0x";
+                        	ldap_unbind(pLdapConnection);
+                	}
+                	else
+                	{
+                        	LOGGER_S(info) << "ldap_init succeeded";
+                	}
+			*/
+		
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
 				if (str_account.substr(0, str_token.size()) == str_token)
@@ -198,9 +220,18 @@ namespace gorilla {
 			}
 			else
 			{
-			    out_str_reply = m_error_reply.GetError("Host Name BAD_REQUEST", "<AccountManager::UpdateLdapConfig> HOST_BAD_REQUEST");
-			    errorCode = BAD_REQUEST;
-			}			
+			    out_str_reply = m_error_reply.GetError("LdapConfig Invaild", "<AccountManager::UpdateLdapConfig> FORBIDDEN");
+			    errorCode = FORBIDDEN;
+			}
+			LdapConfig &ldapConfig1 = LdapConfig::getInstance();
+			//LdapAuthenticator ldapAuthenticator1;	
+			LdapAuthenticator ldapAuthenticator;
+			if (!ldapAuthenticator.IsLDAPConnected(ldapConfig1.host_name,ldapConfig1.port))
+			{
+				LOGGER_S(info) << "AccountManager ldap init falied";
+				out_str_reply = m_error_reply.GetError("LDAP_INIT_FAILED","<AccountManager::UpdateLdapConfig> FORBIDDEN");
+			}
+			
 			return errorCode;
 		}
 

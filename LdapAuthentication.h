@@ -50,6 +50,13 @@ private:
 #else
 //openldap    linux
 
+extern "C" {
+# define LDAP_DEPRECATED 1
+# include <ldap.h>
+# include <lber.h>
+}
+
+
 
 //class LdapConfig;
 class LDAPConstraints;
@@ -62,6 +69,7 @@ public:
         ~LdapAuthenticator();
 
         bool AuthenticateActiveDirectory( const std::string& str_ldap_account, const std::string& str_password );
+	bool IsLDAPConnected ( std::string host_name, int port); 
 private:
 	LDAPConstraints* cons;
         LDAPControlSet* ctrls;
