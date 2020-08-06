@@ -374,7 +374,7 @@ namespace gorilla {
 		LOGGER_S(debug)<<"sqliteCallback " << statement;
 	}
 	
-void AccountDB::findAndReplaceAll(  std::string & data, std::string toSearch, std::string replaceStr)
+void AccountDB::findAndReplaceAll( std::string & data, const std::string& toSearch, const  std::string& replaceStr)
 {
     // Get the first occurrence
     int pos = data.find(toSearch);
@@ -426,7 +426,7 @@ void AccountDB::findAndReplaceAll(  std::string & data, std::string toSearch, st
                 //LOGGER_S(debug) << "Successfully bound string for delete: " << str_delete_key_value.c_str();
             }
             rc = sqlite3_step(delete_stmt);
-	    std::string stmt_str = sqlite3_sql(delete_stmt);
+	    //std::string stmt_str = sqlite3_sql(delete_stmt);
             if (SQLITE_DONE != rc) {
                 LOGGER_S(debug) << "delete statement didn't return DONE " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
                 sqlite3_finalize(delete_stmt);
@@ -439,7 +439,7 @@ void AccountDB::findAndReplaceAll(  std::string & data, std::string toSearch, st
 		//LOGGER_S(debug) << "stmt_str " << stmt_str;
 		
             }
-	    sqlite3_trace(m_pSQLDB, sqliteCallbackFunc, NULL);
+	    //sqlite3_trace(m_pSQLDB, sqliteCallbackFunc, NULL);
             sqlite3_finalize(delete_stmt);
 
             

@@ -79,7 +79,7 @@ namespace gorilla {
 
 	    static void sqliteCallbackFunc(void * , const char* statement);
 
-	    void findAndReplaceAll( std::string & data, std::string toSearch, std::string replaceStr);	         
+	    void findAndReplaceAll( std::string & data, const std::string& toSearch, const std::string& replaceStr);	         
         };
     }
 }
