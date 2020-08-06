@@ -351,11 +351,101 @@ namespace gorilla {
          */  
             return true;
         }
+	
+	void AccountDB::SetDeleteCommand(TableName e_table_name, const std::string& str_delete_key_field,
+                        const std::string& str_delete_key_value,  char*& out_cmd)
+        {
+                        std::string szSQLCommand_str;
+                        szSQLCommand_str.append("delete from ");
+                        szSQLCommand_str.append(TABLE_NAME[e_table_name]);
+                        szSQLCommand_str.append(" where ");
+                        
+			szSQLCommand_str.append(str_delete_key_field);
+                        szSQLCommand_str.append(" = ? ");
+                        //LOGGER_S(debug) <<  "szSQLCommand_str " << szSQLCommand_str;
+                        strcpy(out_cmd, szSQLCommand_str.c_str());
+
+
+        }
+
+
+	void AccountDB::sqliteCallbackFunc(void* ,const char* statement) {
+    		
+		LOGGER_S(debug)<<"sqliteCallback " << statement;
+	}
+	
+void AccountDB::findAndReplaceAll( std::string & data, const std::string& toSearch, const  std::string& replaceStr)
+{
+    // Get the first occurrence
+    int pos = data.find(toSearch);
+    // Repeat till end is reached
+    while( pos != std::string::npos)
+    {
+        // Replace this occurrence of Sub String
+        data.replace(pos, toSearch.size(), replaceStr);
+        // Get the next occurrence from the current position
+        pos =data.find(toSearch, pos + replaceStr.size());
+    }
+}
 
         bool AccountDB::Delete(TableName e_table_name, const std::string& str_delete_key_field,
                  const std::string& str_delete_key_value)
-        {
-            char szSQLCommand[SQL_CMD_LEN];
+        {   
+	    char szSQLCommand[SQL_CMD_LEN];            
+	    char *pSQLCommand = &szSQLCommand[0];
+           
+            SetDeleteCommand(e_table_name, str_delete_key_field, str_delete_key_value, pSQLCommand);
+
+            // For the insert and select, we will prepare statements
+            sqlite3_stmt *delete_stmt = NULL;
+            // SQLite return value
+            int rc;
+            rc = sqlite3_prepare_v2(m_pSQLDB, szSQLCommand, -1, &delete_stmt, NULL);
+	    if (SQLITE_OK != rc) {
+		LOGGER_S(debug) << "Can't prepare delete statment " << szSQLCommand << " " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+		throw std::runtime_error("Can't prepare delete statement");
+	    }   
+          
+	std::string data = str_delete_key_value; 
+	findAndReplaceAll(data, "\\", "\\\\");
+	findAndReplaceAll(data, "\"", "\\\"");
+ 	//LOGGER_S(debug) << "data " << data; 
+            std::string test = "\"";
+	    test.append(data);
+	    test.append("\"");
+
+            rc = sqlite3_bind_text(delete_stmt, 1, test.c_str(), test.size(), SQLITE_TRANSIENT);
+            if (SQLITE_OK != rc) {
+
+                LOGGER_S(debug) << "Error binding value in delete: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+                sqlite3_finalize(delete_stmt);
+                throw std::runtime_error("Error binding value in delete ");
+
+            }
+            else {
+                //LOGGER_S(debug) << "Successfully bound string for delete: " << str_delete_key_value.c_str();
+            }
+            rc = sqlite3_step(delete_stmt);
+	    //std::string stmt_str = sqlite3_sql(delete_stmt);
+            if (SQLITE_DONE != rc) {
+                LOGGER_S(debug) << "delete statement didn't return DONE " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
+                sqlite3_finalize(delete_stmt);
+                throw std::runtime_error("delete statemet didn't return DONE ");
+
+            }
+            else {
+                LOGGER_S(debug) << "DELETE completed";
+		//std::string stmt_str = sqlite3_sql(delete_stmt);
+		//LOGGER_S(debug) << "stmt_str " << stmt_str;
+		
+            }
+	    //sqlite3_trace(m_pSQLDB, sqliteCallbackFunc, NULL);
+            sqlite3_finalize(delete_stmt);
+
+            
+
+	    /*
+	    char szSQLCommand[SQL_CMD_LEN];
             sprintf(szSQLCommand, "delete from %s where %s = '\"%s\"'", 
                 TABLE_NAME[e_table_name].c_str(), str_delete_key_field.c_str(), str_delete_key_value.c_str());
 
@@ -369,7 +459,7 @@ namespace gorilla {
                     return false;
                 }
             }
-            
+            */
             return true;
         }
 
@@ -388,6 +478,8 @@ namespace gorilla {
             }
 
             LOGGER_S(info) << "Database Open Successfully \n";
+	   sqlite3_trace(m_pSQLDB, sqliteCallbackFunc, NULL);
+
             return true;
         }
             
