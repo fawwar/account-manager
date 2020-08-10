@@ -14,10 +14,16 @@ LdapConfig::LdapConfig()
 {
   host_name = "192.168.0.248";
   port = 389;
+
+#ifdef TELSTRA
+  permission = "ewoiaXZhciI6IHsKICAgICAgImNoYW5uZWxzIjogewogICAgICAgICJjaGFubmVsIjogW10sCiAgICAgICAgInRlbXBsYXRlIjogewogICAgICAgICAgInZpc2libGUiOiB0cnVlLAogICAgICAgICAgImFzc2lnbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJ2aWRlbyI6ICJMaXZlK1BsYXliYWNrK0FyY2hpdmUiLAogICAgICAgICAgImNvbmRpdGlvbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJjYW1lcmEiOiAiU2V0dGluZyIsCiAgICAgICAgICAiaW5mb1NldHRpbmciOiAiU2V0dGluZyIsCiAgICAgICAgICAicmVjb3JkU2V0dGluZyI6ICJTZXR0aW5nIiwKICAgICAgICAgICJpdmFFdmVudCI6ICJSZWFkIiwKICAgICAgICAgICJzeXN0ZW1FdmVudCI6ICJSZWFkIgogICAgICAgIH0KICAgICAgfSwKICAgICAgInR2V2FsbHMiOiB7CiAgICAgICAgImVuYWJsZSI6IHRydWUKICAgICAgfSwKICAgICAgImV2ZW50cyI6IHsKICAgICAgICAiZW5hYmxlIjogdHJ1ZSwKICAgICAgICAic3Vic2NyaXB0aW9uIjogIlNldHRpbmciLAogICAgICAgICJldmVudE1hbmFnZXJTZXR0aW5nIjogIlNldHRpbmciCiAgICAgIH0sCiAgICAgICJpdmEiOiB7CiAgICAgICAgImFuYWx5c2lzIjogIkRlbnkiCiAgICAgIH0sCiAgICAgICJzeXN0ZW0iOiB7CiAgICAgICAgImluZm8iOiAiUmVhZCIsCiAgICAgICAgIm1tcyI6ICJEZW55IiwKICAgICAgICAgImFkU2V0dXAiIDogIlJlYWQiLAogICAgICAgICJsbXMiOiAiUmVhZCIsCiAgICAgICAgInN0b3JhZ2UiOiAiUmVhZCIsCiAgICAgICAgInRpbWUiOiAiUmVhZCIsCiAgICAgICAgImFjY291bnQiOiAiRGVueSIsCiAgICAgICAgInJlYm9vdCI6ICJEZW55IiwKICAgICAgICAic21hcnRSZXRhaWxTZXJ2aWNlIjogIkRlbnkiLAogICAgICAgICJ1cGdyYWRlIjogIkRlbnkiLAogICAgICAgICJiZXRhIjogIkRlbnkiCiAgICAgIH0KICAgIH0sCiAgICAidm1zIjogewogICAgICAidmlldyI6ICJEZW55IgogICAgfQp9Cgo=";
+#else
+ permission = "ewoiaXZhciI6IHsKICAgICAgImNoYW5uZWxzIjogewogICAgICAgICJjaGFubmVsIjogW10sCiAgICAgICAgInRlbXBsYXRlIjogewogICAgICAgICAgInZpc2libGUiOiB0cnVlLAogICAgICAgICAgImFzc2lnbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJ2aWRlbyI6ICJMaXZlK1BsYXliYWNrK0FyY2hpdmUiLAogICAgICAgICAgImNvbmRpdGlvbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJjYW1lcmEiOiAiU2V0dGluZyIsCiAgICAgICAgICAiaW5mb1NldHRpbmciOiAiU2V0dGluZyIsCiAgICAgICAgICAicmVjb3JkU2V0dGluZyI6ICJTZXR0aW5nIiwKICAgICAgICAgICJpdmFFdmVudCI6ICJSZWFkIiwKICAgICAgICAgICJzeXN0ZW1FdmVudCI6ICJSZWFkIgogICAgICAgIH0KICAgICAgfSwKICAgICAgInR2V2FsbHMiOiB7CiAgICAgICAgImVuYWJsZSI6IHRydWUKICAgICAgfSwKICAgICAgImV2ZW50cyI6IHsKICAgICAgICAiZW5hYmxlIjogdHJ1ZSwKICAgICAgICAic3Vic2NyaXB0aW9uIjogIlNldHRpbmciLAogICAgICAgICJldmVudE1hbmFnZXJTZXR0aW5nIjogIlNldHRpbmciCiAgICAgIH0sCiAgICAgICJpdmEiOiB7CiAgICAgICAgImFuYWx5c2lzIjogIkRlbnkiCiAgICAgIH0sCiAgICAgICJzeXN0ZW0iOiB7CiAgICAgICAgImluZm8iOiAiUmVhZCIsCiAgICAgICAgIm1tcyI6ICJEZW55IiwKICAgICAgICAgImFkU2V0dXAiIDogIlJlYWQiLAogICAgICAgICJsbXMiOiAiUmVhZCIsCiAgICAgICAgInN0b3JhZ2UiOiAiUmVhZCIsCiAgICAgICAgInRpbWUiOiAiUmVhZCIsCiAgICAgICAgImFjY291bnQiOiAiRGVueSIsCiAgICAgICAgInJlYm9vdCI6ICJEZW55IiwKICAgICAgICAic21hcnRSZXRhaWxTZXJ2aWNlIjogIkRlbnkiLAogICAgICAgICJ1cGdyYWRlIjogIkRlbnkiLAogICAgICAgICJiZXRhIjogIkRlbnkiCiAgICAgIH0KICAgIH0sCiAgICAidm1zIjogewogICAgICAidmlldyI6ICJEZW55IgogICAgfQp9Cgo=";
+#endif
 	
   try 
   {
-    Read();
+    ParseConfig();
   }
   catch(std::exception& e)
   {
@@ -27,15 +33,12 @@ LdapConfig::LdapConfig()
   
 }
 
-void LdapConfig::Read()  // read to json
+void LdapConfig::ParseConfig()  // parse to json
 {
-	std::ifstream ifs1("ldap_config.json");
-	std::string text((std::istreambuf_iterator<char>(ifs1)),
-		(std::istreambuf_iterator<char>()));
+	
 	Json::Value root;
 	Json::Reader reader;
-	output_reply = text;
-	if (reader.parse(text, root))
+	if (reader.parse(Read(), root))
 	{
 
 		if (root.isMember("host_name"))
@@ -45,7 +48,7 @@ void LdapConfig::Read()  // read to json
 		}
 		if (root.isMember("ldap_port"))
 		{
-			port = root["ldap_port"].asInt();
+			port = std::stoi(root["ldap_port"].asString());
 			//LOGGER_S(info) << "LdapConfig.cpp ldap_port!!!!!!!!!" << port;
 		}
 		if (root.isMember("address"))
@@ -53,9 +56,34 @@ void LdapConfig::Read()  // read to json
 			address = root["address"].asString();
 			//LOGGER_S(info) << "LdapConfig.cpp address!!!!!!!!!" << address;
 		}
-	}
+		if (root.isMember("permission"))
+		{
+			permission = root["permission"].asString();
+		}
+
+	}	
+
+	
+	DEFAULT_PERMISSIONS = json::object_t{
+		{ "_", permission }
+	};
+	DEFAULT_ACCESSRIGHT = json::object_t{
+		{ "accessRightName", "AD_user" },
+		{ "permissions", DEFAULT_PERMISSIONS },
+		{ "description", "" }
+	};
+
 }
 
+
+std::string LdapConfig::Read()     //read config 
+{
+	std::ifstream ifs1("ldap_config.json");
+	std::string text((std::istreambuf_iterator<char>(ifs1)),
+		(std::istreambuf_iterator<char>()));
+	
+	return text;
+}
 
 std::string LdapConfig::Write(const std::string &str_ldap_config_info)  // write to json
 {
@@ -77,8 +105,8 @@ std::string LdapConfig::Write(const std::string &str_ldap_config_info)  // write
 			}
 			if (root.isMember("ldap_port"))
 			{
-				ldapConfig.port = root["ldap_port"].asInt();
-				root["ldap_port"] = ldapConfig.port;
+				ldapConfig.port = std::stoi(root["ldap_port"].asString());
+				root["ldap_port"] = std::to_string(ldapConfig.port);
 				//LOGGER_S(info) << "Error AccountManager::UpdateLdapConfig ldap_port!!!!!!!!!" << ldapconfig.ldap_port;
 			}
                         if (root.isMember("address"))

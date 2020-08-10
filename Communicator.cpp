@@ -546,7 +546,7 @@ Server::connection::status_t Communicator::UpdateLdapConfig(const Server::reques
 	std::string level;
 	m_accountManager.GetUserAccessRight(m_str_account, level);
 
-	if (level == "admin") {
+	if (level == "admin" ) {
 		//if(true){//ACCOUNT PAGE REQUIRES    
 		bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
 		if (res) {
@@ -954,7 +954,7 @@ Server::connection::status_t Communicator::UpdateAccessRight(const Server::reque
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
+    if(level == "admin"  ||  level == "AD_user"){
     //if(true){//ACCOUNT PAGE REQUIRES    
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){

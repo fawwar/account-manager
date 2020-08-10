@@ -19,12 +19,13 @@
 #include <fstream> 
 #include "LdapConfig.h"
 
-
+/*
 extern "C" {
 # define LDAP_DEPRECATED 1
 # include <ldap.h>
 # include <lber.h>
 }
+*/
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
 
@@ -94,13 +95,57 @@ namespace gorilla {
 					{
 						//insert DB 
 						Json::Value json_user_info;
-						json_user_info["accessRightName"] = "admin";
+						json_user_info["accessRightName"] = "AD_user";
 						json_user_info["account"] = str_account;
 						json_user_info["description"] = "";
 						json_user_info["password"] = str_password;
 						Json::StyledWriter styledWriter;
 						std::string str_user_info = styledWriter.write(json_user_info);
 						Error errorCode(INTERNAL_SERVER_ERROR);
+
+						json::object_t DEFAULT_PERMISSIONS = LdapConfig::getInstance().DEFAULT_PERMISSIONS;
+						json j_features(DEFAULT_PERMISSIONS);
+						std::string permissions = j_features.dump();
+						/*LOGGER_S(info) << "permissions";
+						LOGGER_S(info) << permissions;*/
+
+						json::object_t DEFAULT_ACCESSRIGHT = LdapConfig::getInstance().DEFAULT_ACCESSRIGHT;
+						json j_features_accessRights(DEFAULT_ACCESSRIGHT);
+						std::string accessRights = j_features_accessRights.dump();
+						LOGGER_S(info) << "accessRights";
+						LOGGER_S(info) << accessRights;
+
+						auto level = std::make_shared<AccessRight>(accessRights);
+						{
+							std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+							std::string accessRightName = level->AccessRightName();
+							//std::string accessRightName = json_user_info["accessRightName"].asString();
+							LOGGER_S(info) << "accessRightName";
+							LOGGER_S(info) << accessRightName;
+							bool accessRight_exist = false;
+							for (auto& it : m_map_access_rights)
+							{
+								std::string accessRight_str = it.second->AccessRightName();
+								if (accessRight_str == "AD_user")
+								{
+									LOGGER_S(info) << "Ldap AccessRight exist! ";
+									accessRight_exist = true;
+								}
+							}
+
+							if (accessRight_exist == false) {
+								int sql_error;
+								if (level->AddAccessRight(sql_error))
+								{
+									if ((SQLError)sql_error == CONSTRAINT) {
+										errorCode = FORBIDDEN;
+										return errorCode;
+									}
+								}
+							}
+							m_map_access_rights.insert(std::pair<std::string, std::shared_ptr<AccessRight> >(accessRightName, level));
+							errorCode = SUCCESS_RESPONSE;
+						}
 
 						/* create user map */
 						auto user = std::make_shared<User>(str_user_info);
@@ -123,7 +168,14 @@ namespace gorilla {
 
 							if (user_exist == false) {
 								int sql_error;
-								user->AddUser(sql_error);
+								//user->AddUser(sql_error);
+								if (user->AddUser(sql_error))
+								{
+									if ((SQLError)sql_error == CONSTRAINT) {
+									errorCode = FORBIDDEN;
+									return errorCode;
+									}
+								}	
 							
 							}
 
@@ -223,15 +275,17 @@ namespace gorilla {
 			    out_str_reply = m_error_reply.GetError("LdapConfig Invaild", "<AccountManager::UpdateLdapConfig> FORBIDDEN");
 			    errorCode = FORBIDDEN;
 			}
-			LdapConfig &ldapConfig1 = LdapConfig::getInstance();
+			//LdapConfig &ldapConfig1 = LdapConfig::getInstance();
 			//LdapAuthenticator ldapAuthenticator1;	
 			LdapAuthenticator ldapAuthenticator;
+			ldapAuthenticator.IsLdapOpen();
+			/*
 			if (!ldapAuthenticator.IsLDAPConnected(ldapConfig1.host_name,ldapConfig1.port))
 			{
 				LOGGER_S(info) << "AccountManager ldap init falied";
 				out_str_reply = m_error_reply.GetError("LDAP_INIT_FAILED","<AccountManager::UpdateLdapConfig> FORBIDDEN");
 			}
-			
+			*/
 			return errorCode;
 		}
 
