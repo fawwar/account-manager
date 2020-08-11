@@ -19,13 +19,6 @@
 #include <fstream> 
 #include "LdapConfig.h"
 
-/*
-extern "C" {
-# define LDAP_DEPRECATED 1
-# include <ldap.h>
-# include <lber.h>
-}
-*/
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
 
@@ -70,21 +63,7 @@ namespace gorilla {
 				   return true;
 			   }
 		   */
-			/*	
-			 LdapConfig &ldapConfig1 = LdapConfig::getInstance();
-               		 LDAP* pLdapConnection = NULL;
-			 pLdapConnection = ldap_open(ldapConfig1.host_name.c_str(),ldapConfig1.port);
-               		 if(pLdapConnection == NULL)
-               		 {
-                        	LOGGER_S(info) << "ldap_init failed with 0x";
-                        	ldap_unbind(pLdapConnection);
-                	}
-                	else
-                	{
-                        	LOGGER_S(info) << "ldap_init succeeded";
-                	}
-			*/
-		
+				
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
 				if (str_account.substr(0, str_token.size()) == str_token)
@@ -112,16 +91,15 @@ namespace gorilla {
 						json::object_t DEFAULT_ACCESSRIGHT = LdapConfig::getInstance().DEFAULT_ACCESSRIGHT;
 						json j_features_accessRights(DEFAULT_ACCESSRIGHT);
 						std::string accessRights = j_features_accessRights.dump();
-						LOGGER_S(info) << "accessRights";
-						LOGGER_S(info) << accessRights;
+						//LOGGER_S(info) << "accessRights";
+						//LOGGER_S(info) << accessRights;
 
 						auto level = std::make_shared<AccessRight>(accessRights);
 						{
 							std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
 							std::string accessRightName = level->AccessRightName();
-							//std::string accessRightName = json_user_info["accessRightName"].asString();
-							LOGGER_S(info) << "accessRightName";
-							LOGGER_S(info) << accessRightName;
+							//LOGGER_S(info) << "accessRightName";
+							//LOGGER_S(info) << accessRightName;
 							bool accessRight_exist = false;
 							for (auto& it : m_map_access_rights)
 							{

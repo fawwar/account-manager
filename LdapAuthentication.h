@@ -10,8 +10,7 @@
 #include<winldap.h>
 #include<stdio.h>
 
-#else
-//openldap    linux
+#else     //openldap    linux
 
 extern "C" {
 # define LDAP_DEPRECATED 1
@@ -35,16 +34,12 @@ class IAuthenticator {
 			
 };
 
-
-
-
 class LdapConnection{
 	public:
 	    LdapConnection();
 	    ~LdapConnection();
 	    LDAP* pLdapConnection = NULL;
 };
-
 
 class LdapAuthenticator : public  IAuthenticator  {
 public:	

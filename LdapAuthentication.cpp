@@ -39,8 +39,6 @@ LdapConnection::LdapConnection()
                 LOGGER_S(info) << "ldap_init succeeded";
         }
 
-
-
 }
 
 LdapConnection::~LdapConnection()
@@ -52,7 +50,6 @@ LdapConnection::~LdapConnection()
 LdapAuthenticator::LdapAuthenticator()
 {
 	LOGGER_S(info) << "LdapAuthenticator::LdapAuthenticator()";
-
 	lRtn = ldap_set_option(
 		conn.pLdapConnection,           // Session handle
 		LDAP_OPT_PROTOCOL_VERSION, // Option
@@ -64,7 +61,7 @@ LdapAuthenticator::LdapAuthenticator()
 	else
 	{
 		LOGGER_S(info)<<"SetOption Error:" << lRtn;
-		throw std::runtime_error("ldap_setOption error ");
+		throw std::runtime_error("ldap_setOption failed ");
 	}
 	
 }
@@ -79,13 +76,68 @@ LdapAuthenticator::~LdapAuthenticator()
 void LdapAuthenticator::IsLdapOpen()
 {	 
                 //LdapConfig &ldapConfig = LdapConfig::getInstance();
-                LDAP* pLdapConnection = NULL;
-                pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);
+        LDAP* pLdapConnection = NULL;
+		
+	int opt_timeout = 2;
+	int timelimit  = 2;
+	int network_timeout = 2; 
+	/*
+	if(opt_timeout > 0 )
+	{
+	    struct timeval optTimeout;
+	    optTimeout.tv_usec = 0;
+	    optTimeout.tv_sec = opt_timeout;
+
+	    lRtn = ldap_set_option (pLdapConnection, LDAP_OPT_TIMEOUT, (void * )& optTimeout);
+	    if(lRtn != LDAP_OPT_SUCCESS)
+	    {
+		LOGGER_S(info) << "LDAP_OPT_TIMEOUT false";
+	    }
+	    else
+	    {
+		LOGGER_S(info) << "LDAP_OPT_TIMEOUT true";
+	    }		
+	}	 
+	
+	if (timelimit > 0)
+	{
+	   	    
+	    lRtn = ldap_set_option (pLdapConnection, LDAP_OPT_TIMELIMIT, (void * )&timelimit);
+	    if (lRtn != LDAP_OPT_SUCCESS)
+	    {
+		LOGGER_S(info) << "LDAP_OPT_TIMELIMIT false" ; 
+	    }
+	    else 
+	    {
+		LOGGER_S(info) << "LDAP_OPT_TIMELIMIT  true";
+	    }
+
+	}
+	*/
+	if (network_timeout > 0)
+	{
+	    struct timeval networkTimeout;
+	    networkTimeout.tv_usec = 0;
+	    networkTimeout.tv_sec = network_timeout;
+
+	    lRtn = ldap_set_option(pLdapConnection, LDAP_OPT_NETWORK_TIMEOUT, (void*)&networkTimeout);
+	    if(lRtn != LDAP_OPT_SUCCESS)
+	    {
+		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT false";
+	    }
+	    else 
+	    {
+		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT true";
+	    }
+	}
+	
+                pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);	
+			
                 if(pLdapConnection == NULL)
                 {
                         LOGGER_S(info) << "ldap_open failed ";
                         //ldap_unbind(pLdapConnection);
-			throw std::runtime_error ("ldap_open error");
+			throw std::runtime_error ("ldap_open failed");
                 }
                 else
                 {
