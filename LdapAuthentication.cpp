@@ -121,7 +121,7 @@ void LdapAuthenticator::IsLdapOpen()
 	    networkTimeout.tv_sec = network_timeout;
 
 	    lRtn = ldap_set_option(pLdapConnection, LDAP_OPT_NETWORK_TIMEOUT, (void*)&networkTimeout);
-	    if(lRtn != LDAP_OPT_SUCCESS)
+	    if(lRtn != LDAP_SUCCESS)
 	    {
 		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT false";
 	    }
