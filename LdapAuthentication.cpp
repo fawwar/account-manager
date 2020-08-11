@@ -114,13 +114,15 @@ void LdapAuthenticator::IsLdapOpen()
 
 	}
 	*/
+#ifdef WIN32
+#else
 	if (network_timeout > 0)
 	{
 	    struct timeval networkTimeout;
 	    networkTimeout.tv_usec = 0;
 	    networkTimeout.tv_sec = network_timeout;
 
-	    lRtn = ldap_set_option(pLdapConnection, LDAP_OPT_NETWORK_TIMEOUT, (void*)&networkTimeout);
+	    lRtn = ldap_set_option(pLdapConnection, LDAP_OPT_NETWORK_TIMEOUT, (void*)&networkTimeout);   // LDAP_OPT_NETWORK_TIMEOUT
 	    if(lRtn != LDAP_SUCCESS)
 	    {
 		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT false";
@@ -130,7 +132,7 @@ void LdapAuthenticator::IsLdapOpen()
 		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT true";
 	    }
 	}
-	
+#endif	
                 pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);	
 			
                 if(pLdapConnection == NULL)
