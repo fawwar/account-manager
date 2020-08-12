@@ -14,8 +14,9 @@ LdapConfig::LdapConfig()
 {
   host_name = "192.168.0.248";
   port = 389;
+  timeout = 5; //initial ldap_open timeout 
 
-#ifdef TELSTRA
+#ifdef TELSTRA    // ldap initial permission 
   permission = "ewoiaXZhciI6IHsKICAgICAgImNoYW5uZWxzIjogewogICAgICAgICJjaGFubmVsIjogW10sCiAgICAgICAgInRlbXBsYXRlIjogewogICAgICAgICAgInZpc2libGUiOiB0cnVlLAogICAgICAgICAgImFzc2lnbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJ2aWRlbyI6ICJMaXZlK1BsYXliYWNrK0FyY2hpdmUiLAogICAgICAgICAgImNvbmRpdGlvbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJjYW1lcmEiOiAiU2V0dGluZyIsCiAgICAgICAgICAiaW5mb1NldHRpbmciOiAiU2V0dGluZyIsCiAgICAgICAgICAicmVjb3JkU2V0dGluZyI6ICJTZXR0aW5nIiwKICAgICAgICAgICJpdmFFdmVudCI6ICJSZWFkIiwKICAgICAgICAgICJzeXN0ZW1FdmVudCI6ICJSZWFkIgogICAgICAgIH0KICAgICAgfSwKICAgICAgInR2V2FsbHMiOiB7CiAgICAgICAgImVuYWJsZSI6IHRydWUKICAgICAgfSwKICAgICAgImV2ZW50cyI6IHsKICAgICAgICAiZW5hYmxlIjogdHJ1ZSwKICAgICAgICAic3Vic2NyaXB0aW9uIjogIlNldHRpbmciLAogICAgICAgICJldmVudE1hbmFnZXJTZXR0aW5nIjogIlNldHRpbmciCiAgICAgIH0sCiAgICAgICJpdmEiOiB7CiAgICAgICAgImFuYWx5c2lzIjogIkRlbnkiCiAgICAgIH0sCiAgICAgICJzeXN0ZW0iOiB7CiAgICAgICAgImluZm8iOiAiUmVhZCIsCiAgICAgICAgIm1tcyI6ICJEZW55IiwKICAgICAgICAgImFkU2V0dXAiIDogIlJlYWQiLAogICAgICAgICJsbXMiOiAiUmVhZCIsCiAgICAgICAgInN0b3JhZ2UiOiAiUmVhZCIsCiAgICAgICAgInRpbWUiOiAiUmVhZCIsCiAgICAgICAgImFjY291bnQiOiAiRGVueSIsCiAgICAgICAgInJlYm9vdCI6ICJEZW55IiwKICAgICAgICAic21hcnRSZXRhaWxTZXJ2aWNlIjogIkRlbnkiLAogICAgICAgICJ1cGdyYWRlIjogIkRlbnkiLAogICAgICAgICJiZXRhIjogIkRlbnkiCiAgICAgIH0KICAgIH0sCiAgICAidm1zIjogewogICAgICAidmlldyI6ICJEZW55IgogICAgfQp9Cgo=";
 #else
  permission = "ewoiaXZhciI6IHsKICAgICAgImNoYW5uZWxzIjogewogICAgICAgICJjaGFubmVsIjogW10sCiAgICAgICAgInRlbXBsYXRlIjogewogICAgICAgICAgInZpc2libGUiOiB0cnVlLAogICAgICAgICAgImFzc2lnbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJ2aWRlbyI6ICJMaXZlK1BsYXliYWNrK0FyY2hpdmUiLAogICAgICAgICAgImNvbmRpdGlvbiI6ICJTZXR0aW5nIiwKICAgICAgICAgICJjYW1lcmEiOiAiU2V0dGluZyIsCiAgICAgICAgICAiaW5mb1NldHRpbmciOiAiU2V0dGluZyIsCiAgICAgICAgICAicmVjb3JkU2V0dGluZyI6ICJTZXR0aW5nIiwKICAgICAgICAgICJpdmFFdmVudCI6ICJSZWFkIiwKICAgICAgICAgICJzeXN0ZW1FdmVudCI6ICJSZWFkIgogICAgICAgIH0KICAgICAgfSwKICAgICAgInR2V2FsbHMiOiB7CiAgICAgICAgImVuYWJsZSI6IHRydWUKICAgICAgfSwKICAgICAgImV2ZW50cyI6IHsKICAgICAgICAiZW5hYmxlIjogdHJ1ZSwKICAgICAgICAic3Vic2NyaXB0aW9uIjogIlNldHRpbmciLAogICAgICAgICJldmVudE1hbmFnZXJTZXR0aW5nIjogIlNldHRpbmciCiAgICAgIH0sCiAgICAgICJpdmEiOiB7CiAgICAgICAgImFuYWx5c2lzIjogIkRlbnkiCiAgICAgIH0sCiAgICAgICJzeXN0ZW0iOiB7CiAgICAgICAgImluZm8iOiAiUmVhZCIsCiAgICAgICAgIm1tcyI6ICJEZW55IiwKICAgICAgICAgImFkU2V0dXAiIDogIlJlYWQiLAogICAgICAgICJsbXMiOiAiUmVhZCIsCiAgICAgICAgInN0b3JhZ2UiOiAiUmVhZCIsCiAgICAgICAgInRpbWUiOiAiUmVhZCIsCiAgICAgICAgImFjY291bnQiOiAiRGVueSIsCiAgICAgICAgInJlYm9vdCI6ICJEZW55IiwKICAgICAgICAic21hcnRSZXRhaWxTZXJ2aWNlIjogIkRlbnkiLAogICAgICAgICJ1cGdyYWRlIjogIkRlbnkiLAogICAgICAgICJiZXRhIjogIkRlbnkiCiAgICAgIH0KICAgIH0sCiAgICAidm1zIjogewogICAgICAidmlldyI6ICJEZW55IgogICAgfQp9Cgo=";
@@ -59,6 +60,10 @@ void LdapConfig::ParseConfig()  // parse to json
 		if (root.isMember("permission"))
 		{
 			permission = root["permission"].asString();
+		}
+		if (root.isMember("timeout") )
+		{
+			timeout = root["timeout"].asInt();	
 		}
 
 	}	
@@ -114,6 +119,11 @@ std::string LdapConfig::Write(const std::string &str_ldap_config_info)  // write
 				ldapConfig.address = root["address"].asString();
 				root["address"] = ldapConfig.address;
 				//LOGGER_S(info) << "Error AccountManager::UpdateLdapConfig ldap_port!!!!!!!!!" << ldapconfig.ldap_port;
+			}
+			if (root.isMember("timeout"))
+			{
+				ldapConfig.timeout = root["timeout"].asInt();
+				root["timeout"] = ldapConfig.timeout;
 			}
 		}
 	}

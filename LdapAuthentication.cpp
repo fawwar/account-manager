@@ -75,12 +75,12 @@ LdapAuthenticator::~LdapAuthenticator()
 
 void LdapAuthenticator::IsLdapOpen()
 {	 
-                //LdapConfig &ldapConfig = LdapConfig::getInstance();
+        //LdapConfig &ldapConfig = LdapConfig::getInstance();
         LDAP* pLdapConnection = NULL;
 		
-	int opt_timeout = 2;
-	int timelimit  = 2;
-	int network_timeout = 2; 
+	//int opt_timeout = 2;
+	//int timelimit  = 2;
+	//int network_timeout = 2; 
 	/*
 	if(opt_timeout > 0 )
 	{
@@ -115,12 +115,31 @@ void LdapAuthenticator::IsLdapOpen()
 	}
 	*/
 #ifdef WIN32
+	if(ldapConfig.timeout >= 2)
+	{
+	    //int timeout = 2;
+	    l_timeval ldap_connect_timeout;
+	    ldap_connect_timeout.tv_sec = ldapConfig.timeout;
+	    ldap_connect_timeout.tv_usec = 0;
+
+	    lRtn = ldap_connect(pLdapConnection, &ldap_connect_timeout);   //NULL
+	    if (lRtn == LDAP_SUCCESS)
+	    {
+		LOGGER_S(info) << "ldap_connect succeeded";
+	    }
+	    else
+	    {	
+		LOGGER_S(info) << "ldap_connect faied with 0x" << lRtn;
+		throw std::runtime_error("ldap_open failed");
+	    }  
+	}
 #else
-	if (network_timeout > 0)
+	//int network_timeout =2;
+	if (ldapConfig.timeout >= 2)
 	{
 	    struct timeval networkTimeout;
 	    networkTimeout.tv_usec = 0;
-	    networkTimeout.tv_sec = network_timeout;
+	    networkTimeout.tv_sec = ldapConfig.timeout;
 
 	    lRtn = ldap_set_option(pLdapConnection, LDAP_OPT_NETWORK_TIMEOUT, (void*)&networkTimeout);   // LDAP_OPT_NETWORK_TIMEOUT
 	    if(lRtn != LDAP_SUCCESS)
@@ -131,9 +150,8 @@ void LdapAuthenticator::IsLdapOpen()
 	    {
 		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT true";
 	    }
-	}
-#endif	
-                pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);	
+
+		pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);	
 			
                 if(pLdapConnection == NULL)
                 {
@@ -145,6 +163,11 @@ void LdapAuthenticator::IsLdapOpen()
                 {
                         LOGGER_S(info) << "ldap_open succeeded";
                 }	
+
+	 }
+		
+#endif	
+                
 }
 
 

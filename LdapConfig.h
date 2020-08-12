@@ -11,6 +11,7 @@ public:
   std::string address; 
   int port;  
   std::string host_name;
+  int timeout;
 
   std::string Read();
   std::string permission;
