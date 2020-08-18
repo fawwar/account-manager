@@ -226,7 +226,7 @@ namespace gorilla {
 			output_reply.append(" address: ");
 			output_reply.append(ldapConfig.address);
 			*/
-			std::string output_reply = ldapConfig.output_reply;    // json format
+			std::string output_reply = ldapConfig.Read();    // json format
 			/* send device list */
 			if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
 				errorCode = SUCCESS_RESPONSE;
