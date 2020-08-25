@@ -18,6 +18,7 @@
 #include "LdapAuthentication.h"
 #include <fstream> 
 #include "LdapConfig.h"
+#include "Config.h"
 
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
@@ -226,11 +227,21 @@ namespace gorilla {
 			output_reply.append(" address: ");
 			output_reply.append(ldapConfig.address);
 			*/
+			LOGGER_S(info) << "1";
 			std::string output_reply = ldapConfig.Read();    // json format
+			ldapConfig.ParseConfig();
+			LOGGER_S(info) << "2";
 			/* send device list */
-			if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
+			if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
+				LOGGER_S(info) << "host_name " << ldapConfig.host_name;
+				LOGGER_S(info) << "port " << ldapConfig.port; 
 				errorCode = SUCCESS_RESPONSE;
 				out_str_reply = output_reply; //ldapconfig info   
+			}
+			else 
+			{
+				errorCode = NAME_NOT_FOUND;
+				out_str_reply  = m_error_reply.GetError("LDAP host_name & ldap_port Not Found", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
 			}
 		
 			return errorCode;
@@ -247,6 +258,11 @@ namespace gorilla {
 			{
 			    out_str_reply = ldapConfig.Write(str_ldap_config_info);
 			    errorCode = SUCCESS_RESPONSE;
+			    LdapAuthenticator ldapAuthenticator;
+			    if(!ldapAuthenticator.IsLdapOpen())
+			    {
+				return  INTERNAL_SERVER_ERROR; 
+			    }
 			}
 			else
 			{
@@ -255,9 +271,7 @@ namespace gorilla {
 			}
 			//LdapConfig &ldapConfig1 = LdapConfig::getInstance();
 			//LdapAuthenticator ldapAuthenticator1;	
-			LdapAuthenticator ldapAuthenticator;
-			ldapAuthenticator.IsLdapOpen();
-			/*
+						/*
 			if (!ldapAuthenticator.IsLDAPConnected(ldapConfig1.host_name,ldapConfig1.port))
 			{
 				LOGGER_S(info) << "AccountManager ldap init falied";
@@ -310,19 +324,36 @@ namespace gorilla {
                 return FORBIDDEN;
             }
                 
-            
-            /* check account,password,level content is vaild */
-            if(!IsUserInfoVaild(str_user_info, out_str_reply)){
+	    /* create user map */
+	    auto user = std::make_shared<User>(str_user_info);
+	    std::lock_guard<std::mutex> autoLock(m_mux_users);
+	    std::string account = user->Account();
+	    std::string str_token = "ldap/";
+			
+	    /* check ldap account without password when add account */
+	    if (account.substr(0, str_token.size()) == str_token)
+	    {
+		if (!IsAccessRightNameVaild(str_user_info, out_str_reply))
+		{
+		    out_str_reply = m_error_reply.GetError(out_str_reply, "<AccountManager::AddUser> FORBIDDEN");
+		    return FORBIDDEN;
+		}
+	    }
+            else{
+            	/* check account,password,level content is vaild */
+            	if(!IsUserInfoVaild(str_user_info, out_str_reply)){
 
-                out_str_reply = m_error_reply.GetError(out_str_reply,"<AccountManager::AddUser> FORBIDDEN");
-                return FORBIDDEN;
-            }
+                    out_str_reply = m_error_reply.GetError(out_str_reply,"<AccountManager::AddUser> FORBIDDEN");
+                    return FORBIDDEN;
+            	}
+	    }
+
 
             /* create user map */
-            auto user = std::make_shared<User>(str_user_info);
+            //auto user = std::make_shared<User>(str_user_info);
             {            
-                std::lock_guard<std::mutex> autoLock(m_mux_users);
-                std::string account = user->Account();
+                //std::lock_guard<std::mutex> autoLock(m_mux_users);
+                //std::string account = user->Account();
 
                 int sql_error;
                 if(!user->AddUser(sql_error)){
@@ -805,7 +836,9 @@ namespace gorilla {
 
             LOGGER_S(info) << password;
            
-            if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
+            Config &config = Config::getInstance();
+	    //if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
+	    if (!boost::regex_match (password, boost::regex(config.password_regexpr))){
                 
                 LOGGER_S(debug) << "User Password Invaild";
                 out_str_reply += "Password Invaild. ";

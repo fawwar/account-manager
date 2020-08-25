@@ -73,7 +73,7 @@ LdapAuthenticator::~LdapAuthenticator()
 	
 }
 
-void LdapAuthenticator::IsLdapOpen()
+bool LdapAuthenticator::IsLdapOpen()
 {	 
         //LdapConfig &ldapConfig = LdapConfig::getInstance();
         LDAP* pLdapConnection = NULL;
@@ -122,15 +122,17 @@ void LdapAuthenticator::IsLdapOpen()
 	    ldap_connect_timeout.tv_sec = ldapConfig.timeout;
 	    ldap_connect_timeout.tv_usec = 0;
 
-	    lRtn = ldap_connect(pLdapConnection, &ldap_connect_timeout);   //NULL
+	    lRtn = ldap_connect(conn.pLdapConnection, &ldap_connect_timeout);   //NULL
 	    if (lRtn == LDAP_SUCCESS)
 	    {
-		LOGGER_S(info) << "ldap_connect succeeded";
+		LOGGER_S(info) << "lap_connect succeeded";
+		return true;
 	    }
 	    else
 	    {	
 		LOGGER_S(info) << "ldap_connect faied with 0x" << lRtn;
 		throw std::runtime_error("ldap_open failed");
+		return false;
 	    }  
 	}
 #else
@@ -156,12 +158,13 @@ void LdapAuthenticator::IsLdapOpen()
                 if(pLdapConnection == NULL)
                 {
                         LOGGER_S(info) << "ldap_open failed ";
-                        //ldap_unbind(pLdapConnection);
 			throw std::runtime_error ("ldap_open failed");
+			return false;
                 }
                 else
                 {
                         LOGGER_S(info) << "ldap_open succeeded";
+			return true;
                 }	
 
 	 }

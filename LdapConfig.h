@@ -9,11 +9,13 @@ class LdapConfig
 public:
 	
   std::string address; 
-  int port;  
+  int port=0;
+  //std::string port;  
   std::string host_name;
   int timeout;
 
   std::string Read();
+  void ParseConfig();
   std::string permission;
   static LdapConfig& getInstance();
   std::string Write(const std::string &str_ldap_config_info);
@@ -25,6 +27,5 @@ public:
 private: 
   LdapConfig();
   //void Read();
-  void ParseConfig();
 
 };

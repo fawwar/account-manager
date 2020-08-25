@@ -49,8 +49,8 @@ void LdapConfig::ParseConfig()  // parse to json
 		}
 		if (root.isMember("ldap_port"))
 		{
-			port = std::stoi(root["ldap_port"].asString());
-			//LOGGER_S(info) << "LdapConfig.cpp ldap_port!!!!!!!!!" << port;
+			port = std::atoi(root["ldap_port"].asString().c_str());
+			LOGGER_S(info) << "LdapConfig.cpp ldap_port!!!!!!!!!" << port;
 		}
 		if (root.isMember("address"))
 		{
@@ -111,6 +111,7 @@ std::string LdapConfig::Write(const std::string &str_ldap_config_info)  // write
 			if (root.isMember("ldap_port"))
 			{
 				ldapConfig.port = std::stoi(root["ldap_port"].asString());
+				//ldapConfig.port = root["ldap_port"].asInt();
 				root["ldap_port"] = std::to_string(ldapConfig.port);
 				//LOGGER_S(info) << "Error AccountManager::UpdateLdapConfig ldap_port!!!!!!!!!" << ldapconfig.ldap_port;
 			}
@@ -152,6 +153,10 @@ bool LdapConfig::IsUpdateInfoVaild(const std::string &str_ldap_config_info)
 		if (!root.isMember("address"))
 			return false;
 		if(root["address"].asString() == "")
+			return false;
+		if(!root.isMember("ldap_port"))
+			return false;
+		if(root["ldap_port"].asString() == "")
 			return false;
 		else
 			return true;
