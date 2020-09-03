@@ -55,16 +55,7 @@ namespace gorilla {
 			LOGGER_S(info) << "Verify = " << str_account << "," << str_password;
 
 			if (str_account == "admin" && str_password == ADMIN_PASSWORD) return true;
-
-			/*
-			   LdapAuthenticator* m_ldapAuthenticator = new LdapAuthenticator();
-			   if (m_ldapAuthenticator->Authenticator(str_account, str_password))
-			   {
-				   delete[] m_ldapAuthenticator;
-				   return true;
-			   }
-		   */
-				
+							
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
 				if (str_account.substr(0, str_token.size()) == str_token)
@@ -162,7 +153,7 @@ namespace gorilla {
 							errorCode = SUCCESS_RESPONSE;
 						}
 
-						return true;   //ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account);
+						return true;   					
 					}
 					else return false;
 
@@ -227,16 +218,20 @@ namespace gorilla {
 			output_reply.append(" address: ");
 			output_reply.append(ldapConfig.address);
 			*/
-			LOGGER_S(info) << "1";
 			std::string output_reply = ldapConfig.Read();    // json format
 			ldapConfig.ParseConfig();
-			LOGGER_S(info) << "2";
 			/* send device list */
 			if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
 				LOGGER_S(info) << "host_name " << ldapConfig.host_name;
 				LOGGER_S(info) << "port " << ldapConfig.port; 
 				errorCode = SUCCESS_RESPONSE;
-				out_str_reply = output_reply; //ldapconfig info   
+				out_str_reply = output_reply; //ldapconfig info  
+				LdapAuthenticator ldapAuthenticator;
+			        if(!ldapAuthenticator.IsLdapOpen())
+			        {
+				    return  INTERNAL_SERVER_ERROR; 
+			        }
+ 
 			}
 			else 
 			{
@@ -269,15 +264,6 @@ namespace gorilla {
 			    out_str_reply = m_error_reply.GetError("LdapConfig Invaild", "<AccountManager::UpdateLdapConfig> FORBIDDEN");
 			    errorCode = FORBIDDEN;
 			}
-			//LdapConfig &ldapConfig1 = LdapConfig::getInstance();
-			//LdapAuthenticator ldapAuthenticator1;	
-						/*
-			if (!ldapAuthenticator.IsLDAPConnected(ldapConfig1.host_name,ldapConfig1.port))
-			{
-				LOGGER_S(info) << "AccountManager ldap init falied";
-				out_str_reply = m_error_reply.GetError("LDAP_INIT_FAILED","<AccountManager::UpdateLdapConfig> FORBIDDEN");
-			}
-			*/
 			return errorCode;
 		}
 
@@ -442,6 +428,7 @@ namespace gorilla {
                  else{ //admin only can modify password
    
                     /* user account only change password */
+			/*
                     if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
 
                         out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
@@ -449,7 +436,7 @@ namespace gorilla {
                         
                         return FORBIDDEN;
                     }
-                     
+                     */
                     /* check password vaild */
                     
                     if (!IsPasswordVaild(str_user_info, out_str_reply)){
