@@ -1,5 +1,6 @@
 {
    "host_name" : "",
    "ldap_port" : "",
-  "address" : "@gorillascience.com"
+  "address" : "@gorillascience.com",
+  "timeout" : 5
 }
