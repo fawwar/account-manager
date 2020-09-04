@@ -15,6 +15,8 @@
 #include "json/json.h"
 #include<string>
 
+#include "LdapConfig.h"
+
 #ifdef WIN32
 static const std::string DB_PATH = "./";// "C:/opt/ivar/var/";
 #else
@@ -180,7 +182,7 @@ namespace gorilla {
 						throw std::runtime_error ("Error bindinf value in insert " );
 					}
 					else {
-						LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str(); 
+					//	LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str(); 
 					}
 					
 					
@@ -290,11 +292,11 @@ namespace gorilla {
 						
 						//LOGGER_S(debug) << "Error binding value in insert: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);		
 						sqlite3_finalize(update_stmt);
-						throw std::runtime_error("Error binding value in insert ");
+						throw std::runtime_error("Error binding value in update ");
 						
 					}
 					else {
-						LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str();	
+						//LOGGER_S(debug) << "Successfully bound string for insert: " << str_val.c_str();	
 					}
 			
 				i++;
@@ -371,7 +373,7 @@ namespace gorilla {
 
 	void AccountDB::sqliteCallbackFunc(void* ,const char* statement) {
     		
-		LOGGER_S(debug)<<"sqliteCallback " << statement;
+		//LOGGER_S(debug)<<"sqliteCallback " << statement;
 	}
 	
 void AccountDB::findAndReplaceAll( std::string & data, const std::string& toSearch, const  std::string& replaceStr)
@@ -554,12 +556,18 @@ void AccountDB::findAndReplaceAll( std::string & data, const std::string& toSear
                json::object_t DEFAULT_PERMISSIONS = Config::getInstance().DEFAULT_PERMISSIONS;
                json j_features(DEFAULT_PERMISSIONS);
                std::string permissions = j_features.dump();
+
+	       json::object_t DEFAULT_LDAP_PERMISSIONS = LdapConfig::getInstance().DEFAULT_PERMISSIONS;
+	       json j_features_ldap(DEFAULT_LDAP_PERMISSIONS);
+	       std::string permissions_ldap = j_features_ldap.dump();
                 
                pSQLCommand += sprintf(pSQLCommand, "(accessRightName char(32) not null primary key,");
                pSQLCommand += sprintf(pSQLCommand, "permissions char(32) null,");
                pSQLCommand += sprintf(pSQLCommand, "description text '""');");
                pSQLCommand += sprintf(pSQLCommand, "insert or ignore into accessRights(accessRightName,permissions,description) ");
                pSQLCommand += sprintf(pSQLCommand, "values('\"admin\"','%s','\"\"');", permissions.c_str());
+	       pSQLCommand += sprintf(pSQLCommand, "insert or ignore into accessRights(accessRightName,permissions,description) ");
+	       pSQLCommand += sprintf(pSQLCommand, "values('\"AD_user\"','%s','\"\"');", permissions_ldap.c_str());
             }
 
             char* pErrMsg = NULL;
@@ -616,4 +624,5 @@ void AccountDB::findAndReplaceAll( std::string & data, const std::string& toSear
     }
 
 }
+
 
