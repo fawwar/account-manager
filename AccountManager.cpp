@@ -202,7 +202,7 @@ namespace gorilla {
 			}// try
 			catch(const std::exception& e){
 				LOGGER() << "Abnormal termination - exception:" << e.what();
-
+				throw std::runtime_error(e.what());
 			}
 		return false; 
         }

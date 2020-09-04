@@ -74,10 +74,8 @@ LdapAuthenticator::~LdapAuthenticator()
 }
 
 bool LdapAuthenticator::IsLdapOpen()
-{	 
-        //LdapConfig &ldapConfig = LdapConfig::getInstance();
-        LDAP* pLdapConnection = NULL;
-		
+{	
+ 	//ldap* pldapconnection = NULL;
 	//int opt_timeout = 2;
 	//int timelimit  = 2;
 	//int network_timeout = 2; 
@@ -114,6 +112,7 @@ bool LdapAuthenticator::IsLdapOpen()
 
 	}
 	*/
+	ldap* pLdapConnection = NULL;
 #ifdef WIN32
 	if(ldapConfig.timeout >= 2)
 	{
