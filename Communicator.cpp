@@ -201,7 +201,6 @@ void Communicator::RequestHandlers()
 {
      request_handler_mapping_ =
      {
-#ifdef LDAP_OPTION
 		{
 			 "GET/ldapConfig",
 			 std::bind(&Communicator::GetLdapConfig, this,
@@ -212,7 +211,6 @@ void Communicator::RequestHandlers()
 			 std::bind(&Communicator::UpdateLdapConfig, this,
 			 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
 		 },   
-#endif 
             {
                 "GET/users",
                 std::bind(&Communicator::GetUsers, this,
@@ -498,7 +496,7 @@ void Communicator::SendReply(Server::connection_ptr& connection_ptr, std::string
 
     //LOGGER_S(debug) << "Server Reply End> ";
 }
-#ifdef LDAP_OPTION
+
 Server::connection::status_t Communicator::GetLdapConfig(const Server::request& request,
 	std::string &request_str, std::string &reply_str)
 {
@@ -548,7 +546,7 @@ Server::connection::status_t Communicator::UpdateLdapConfig(const Server::reques
 	std::string level;
 	m_accountManager.GetUserAccessRight(m_str_account, level);
 
-	if (level == "admin") {
+	if (level == "admin" ) {
 		//if(true){//ACCOUNT PAGE REQUIRES    
 		bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
 		if (res) {
@@ -575,7 +573,7 @@ Server::connection::status_t Communicator::UpdateLdapConfig(const Server::reques
 	LOGGER_S(debug) << "Server::connection::status_t Communicator::UpdateLdapConfig reply_str " << reply_str;
 	return (Server::connection::status_t)err;
 }
-#endif
+
 
 Server::connection::status_t Communicator::GetUsers(const Server::request& request, 
         std::string &request_str, std::string &reply_str)
@@ -702,16 +700,11 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
         m_accountManager.GetUserAccessRight(m_str_account, level);
         std::string user_name = GetName("/users/", uri_instance.path());  
        
-
-        //if(m_str_account == user_name || level == "admin"){
-        //if(true){//ALL PASS
-
         if(m_str_account == user_name || level == "admin"){
-		//LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
-		//LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
-		//LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
+		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
+		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
+		LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
         //if(true){//ALL PASS
-
             err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str,request);
         }
         else{
@@ -961,7 +954,7 @@ Server::connection::status_t Communicator::UpdateAccessRight(const Server::reque
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
     
-    if(level == "admin"){
+    if(level == "admin"  ||  level == "AD_user"){
     //if(true){//ACCOUNT PAGE REQUIRES    
         bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
         if(res){

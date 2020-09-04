@@ -63,7 +63,7 @@ namespace gorilla {
             
             void CreateTable(const std::string& str_table_name);
 
-            void SetSQLInsertTableCmd(const json& json_obj, CommandType e_cmd_type,
+	    void SetSQLInsertTableCmd(const json& json_obj, CommandType e_cmd_type,
                 char*& out_cmd);
 
             void SetSQLUpdatetTableCmd(const json& json_obj, CommandType e_cmd_type,
@@ -79,7 +79,8 @@ namespace gorilla {
 
 	    static void sqliteCallbackFunc(void * , const char* statement);
 
-	    void findAndReplaceAll( std::string & data, const std::string& toSearch, const std::string& replaceStr);	         
+	    void findAndReplaceAll( std::string & data, const std::string& toSearch, const std::string& replaceStr);
+
         };
     }
 }
