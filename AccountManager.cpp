@@ -224,24 +224,26 @@ namespace gorilla {
 			std::string output_reply = ldapConfig.Read();    // json format
 			ldapConfig.ParseConfig();
 			/* send device list */
-			if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
+			//if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
 				LOGGER_S(info) << "host_name " << ldapConfig.host_name;
 				LOGGER_S(info) << "port " << ldapConfig.port; 
 				errorCode = SUCCESS_RESPONSE;
-				out_str_reply = output_reply; //ldapconfig info  
+				out_str_reply = output_reply; //ldapconfig info
+				/*  
 				LdapAuthenticator ldapAuthenticator;
 			        if(!ldapAuthenticator.IsLdapOpen())
 			        {
 				    return  INTERNAL_SERVER_ERROR; 
 			        }
- 
+				*/
+ 			/*
 			}
 			else 
 			{
 				errorCode = NAME_NOT_FOUND;
 				out_str_reply  = m_error_reply.GetError("LDAP host_name & ldap_port Not Found", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
 			}
-		
+			*/
 			return errorCode;
 		}
 
