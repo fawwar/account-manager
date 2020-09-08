@@ -312,10 +312,10 @@ namespace gorilla {
 
                                 //LOGGER_S(debug) << "Error binding value in insert: " << rc << " : " << sqlite3_errmsg(m_pSQLDB);
 				sqlite3_finalize(update_stmt);
-                         	throw std::runtime_error("Error binding value in insert ");               
+                         	throw std::runtime_error("Error binding value in update ");               
                         }
                          else {
-                               	LOGGER_S(debug) << "Successfully bound string for insert: " << value_str;
+                               	LOGGER_S(debug) << "Successfully bound string for update: " << value_str;
                         }
 
 			
