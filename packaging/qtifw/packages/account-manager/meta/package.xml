@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>Account Manager</DisplayName>
     <Description></Description>
-    <Version>3.3.5</Version>
-    <ReleaseDate>2020-08-06</ReleaseDate>
+    <Version>3.3.6</Version>
+    <ReleaseDate>2020-09-09</ReleaseDate>
     <Default>true</Default>
 </Package>

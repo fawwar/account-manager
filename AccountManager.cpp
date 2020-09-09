@@ -14,16 +14,14 @@
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "Util.h"
-#include <fstream>
+
+#include "LdapAuthentication.h"
+#include <fstream> 
+#include "LdapConfig.h"
 #include "Config.h"
 
-#ifdef LDAP_OPTION
-#include "LdapAuthentication.h"
-#include "LdapConfig.h"
-#endif
 
 #define ADMIN_PASSWORD "73dnPFv3S8GZLMVH"
-//#define LDAP_OPTION 0 
 
 using namespace gorilla::log;
 
@@ -54,38 +52,73 @@ namespace gorilla {
 
 		bool AccountManager::VerifyAccount(const std::string& str_account, const std::string& str_password)
 		{
-			LOGGER_S(info) << "Verify = " << str_account << "," << str_password;
+			LOGGER_S(info) << "Verify = " << str_account ;
 
 			if (str_account == "admin" && str_password == ADMIN_PASSWORD) return true;
-
-			/*
-			   LdapAuthenticator* m_ldapAuthenticator = new LdapAuthenticator();
-			   if (m_ldapAuthenticator->Authenticator(str_account, str_password))
-			   {
-				   delete[] m_ldapAuthenticator;
-				   return true;
-			   }
-		   */
+							
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
-				if (str_account.substr(0, str_token.size()) == str_token )
+				if (str_account.substr(0, str_token.size()) == str_token)
 				{
-					#ifndef LDAP_OPTION
-					return false;
-					#else
 					std::string str_ldap_account = str_account.substr(str_token.size());
+					LdapConfig &ldapConfig = LdapConfig::getInstance();
+					ldapConfig.ParseConfig();
 					LdapAuthenticator ldapAuthenticator;
+					ldapAuthenticator.IsLdapOpen();
 					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
 					{
 						//insert DB 
 						Json::Value json_user_info;
-						json_user_info["accessRightName"] = "admin";
+						json_user_info["accessRightName"] = "AD_user";
 						json_user_info["account"] = str_account;
 						json_user_info["description"] = "";
 						json_user_info["password"] = str_password;
 						Json::StyledWriter styledWriter;
 						std::string str_user_info = styledWriter.write(json_user_info);
 						Error errorCode(INTERNAL_SERVER_ERROR);
+
+						json::object_t DEFAULT_PERMISSIONS = LdapConfig::getInstance().DEFAULT_PERMISSIONS;
+						json j_features(DEFAULT_PERMISSIONS);
+						std::string permissions = j_features.dump();
+						/*LOGGER_S(info) << "permissions";
+						LOGGER_S(info) << permissions;*/
+
+						json::object_t DEFAULT_ACCESSRIGHT = LdapConfig::getInstance().DEFAULT_ACCESSRIGHT;
+						json j_features_accessRights(DEFAULT_ACCESSRIGHT);
+						std::string accessRights = j_features_accessRights.dump();
+						//LOGGER_S(info) << "accessRights";
+						//LOGGER_S(info) << accessRights;
+
+						auto level = std::make_shared<AccessRight>(accessRights);
+						{
+							std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+							std::string accessRightName = level->AccessRightName();
+							//LOGGER_S(info) << "accessRightName";
+							//LOGGER_S(info) << accessRightName;
+							bool accessRight_exist = false;
+							for (auto& it : m_map_access_rights)
+							{
+								std::string accessRight_str = it.second->AccessRightName();
+								if (accessRight_str == "AD_user")
+								{
+									LOGGER_S(info) << "Ldap AccessRight exist! ";
+									accessRight_exist = true;
+								}
+							}
+
+							if (accessRight_exist == false) {
+								int sql_error;
+								if (level->AddAccessRight(sql_error))
+								{
+									if ((SQLError)sql_error == CONSTRAINT) {
+										errorCode = FORBIDDEN;
+										return errorCode;
+									}
+								}
+							}
+							m_map_access_rights.insert(std::pair<std::string, std::shared_ptr<AccessRight> >(accessRightName, level));
+							errorCode = SUCCESS_RESPONSE;
+						}
 
 						/* create user map */
 						auto user = std::make_shared<User>(str_user_info);
@@ -100,7 +133,7 @@ namespace gorilla {
 							
 								if (account_str == str_account)
 								{
-									LOGGER_S(info) << "account_str " << account_str;
+									//LOGGER_S(info) << "account_str " << account_str;
 									LOGGER_S(info) << "user exist!";
 									user_exist = true;
 								}
@@ -116,16 +149,16 @@ namespace gorilla {
 									return errorCode;
 									}
 								}	
+							
 							}
 
 							m_map_users.insert(std::pair<std::string, std::shared_ptr<User> >(account, user));
 							errorCode = SUCCESS_RESPONSE;
 						}
 
-						return true;   //ldapAuthenticator.AuthenticateActiveDirectory(str_account, str_password, str_ldap_account);
+						return true;   					
 					}
 					else return false;
-					#endif
 
 				}
 				else {
@@ -169,29 +202,48 @@ namespace gorilla {
 			}// try
 			catch(const std::exception& e){
 				LOGGER() << "Abnormal termination - exception:" << e.what();
-
+				throw std::runtime_error(e.what());
 			}
 		return false; 
         }
-#ifdef LDAP_OPTION
+
 		Error AccountManager::GetLdapConfig(std::string &out_str_reply)
 		{
 			Error errorCode(INTERNAL_SERVER_ERROR);
 
 			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
 			LdapConfig &ldapConfig = LdapConfig::getInstance();
+			/*
 			std::string output_reply = "host_name: ";
 			output_reply.append(ldapConfig.host_name);
 			output_reply.append(" ldap_port: ");
 			output_reply.append(std::to_string(ldapConfig.port));
 			output_reply.append(" address: ");
 			output_reply.append(ldapConfig.address);
+			*/
+			std::string output_reply = ldapConfig.Read();    // json format
+			ldapConfig.ParseConfig();
 			/* send device list */
-		//	if (!ldapConfig.host_name.empty() && ldapConfig.port!=0) {
+			//if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
+				LOGGER_S(info) << "host_name " << ldapConfig.host_name;
+				LOGGER_S(info) << "port " << ldapConfig.port; 
 				errorCode = SUCCESS_RESPONSE;
-				out_str_reply = output_reply; //ldapconfig info   
-		//	}
-		
+				out_str_reply = output_reply; //ldapconfig info
+				/*  
+				LdapAuthenticator ldapAuthenticator;
+			        if(!ldapAuthenticator.IsLdapOpen())
+			        {
+				    return  INTERNAL_SERVER_ERROR; 
+			        }
+				*/
+ 			/*
+			}
+			else 
+			{
+				errorCode = NAME_NOT_FOUND;
+				out_str_reply  = m_error_reply.GetError("LDAP host_name & ldap_port Not Found", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
+			}
+			*/
 			return errorCode;
 		}
 
@@ -206,15 +258,20 @@ namespace gorilla {
 			{
 			    out_str_reply = ldapConfig.Write(str_ldap_config_info);
 			    errorCode = SUCCESS_RESPONSE;
+			    LdapAuthenticator ldapAuthenticator;
+			    if(!ldapAuthenticator.IsLdapOpen())
+			    {
+				return  INTERNAL_SERVER_ERROR; 
+			    }
 			}
 			else
 			{
-			    out_str_reply = m_error_reply.GetError("Host Name BAD_REQUEST", "<AccountManager::UpdateLdapConfig> HOST_BAD_REQUEST");
-			    errorCode = BAD_REQUEST;
-			}			
+			    out_str_reply = m_error_reply.GetError("LdapConfig Invaild", "<AccountManager::UpdateLdapConfig> FORBIDDEN");
+			    errorCode = FORBIDDEN;
+			}
 			return errorCode;
 		}
-#endif 
+
         Error AccountManager::GetUsers(std::string &out_str_reply)
         {
             Error errorCode(INTERNAL_SERVER_ERROR);
@@ -258,19 +315,36 @@ namespace gorilla {
                 return FORBIDDEN;
             }
                 
-            
-            /* check account,password,level content is vaild */
-            if(!IsUserInfoVaild(str_user_info, out_str_reply)){
+	    /* create user map */
+	    auto user = std::make_shared<User>(str_user_info);
+	    std::lock_guard<std::mutex> autoLock(m_mux_users);
+	    std::string account = user->Account();
+	    std::string str_token = "ldap/";
+			
+	    /* check ldap account without password when add account */
+	    if (account.substr(0, str_token.size()) == str_token)
+	    {
+		if (!IsAccessRightNameVaild(str_user_info, out_str_reply))
+		{
+		    out_str_reply = m_error_reply.GetError(out_str_reply, "<AccountManager::AddUser> FORBIDDEN");
+		    return FORBIDDEN;
+		}
+	    }
+            else{
+            	/* check account,password,level content is vaild */
+            	if(!IsUserInfoVaild(str_user_info, out_str_reply)){
 
-                out_str_reply = m_error_reply.GetError(out_str_reply,"<AccountManager::AddUser> FORBIDDEN");
-                return FORBIDDEN;
-            }
+                    out_str_reply = m_error_reply.GetError(out_str_reply,"<AccountManager::AddUser> FORBIDDEN");
+                    return FORBIDDEN;
+            	}
+	    }
+
 
             /* create user map */
-            auto user = std::make_shared<User>(str_user_info);
+            //auto user = std::make_shared<User>(str_user_info);
             {            
-                std::lock_guard<std::mutex> autoLock(m_mux_users);
-                std::string account = user->Account();
+                //std::lock_guard<std::mutex> autoLock(m_mux_users);
+                //std::string account = user->Account();
 
                 int sql_error;
                 if(!user->AddUser(sql_error)){
@@ -323,31 +397,27 @@ namespace gorilla {
                 out_str_reply = m_error_reply.GetError("AccessRightName Is Not Exist","<AccountManager::UpdateUser> FORBIDDEN");
                 return FORBIDDEN;
             }
-            //json info = json::parse(str_user_info); 
+            json info = json::parse(str_user_info); 
             std::lock_guard<std::mutex> autoLock(m_mux_users);
             auto it = m_map_users.find(str_account.c_str());
-	    //LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info "<< str_user_info;
-	    Json::Value info;
-	    Json::Reader reader;
- 	    reader.parse(str_user_info,info);
-	    //LOGGER_S(debug) << "Error AccountManager::UpdateUser root[account]" << info["account"];  
             if (it != m_map_users.end()){
 
-                 if(str_login_level == "admin" ){
+                 if(str_login_level == "admin" && str_account != "admin"){
                  //if(true){
 			//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
 			//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
 			//LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
                      /* admin account only change password */   
-                     
+                   /*  
                      if(str_account == "admin"){
-                        if((info.isMember("account") && str_account != info["account"].asString())|| (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())){   	
-				    out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
-                                    "<AccountManager::UpdateUser> FORBIDDEN");    
-                                    return FORBIDDEN;
-                        	}
+                        if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
+                            out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName", 
+                                "<AccountManager::UpdateUser> FORBIDDEN");
+                            
+                            return FORBIDDEN;
+                        }
                      }
-                     
+                     */
                      /* check userinfo vaild */
                      /*  if(!IsUserInfoVaild(str_user_info, out_str_reply))
                         return FORBIDDEN;*/
@@ -363,12 +433,15 @@ namespace gorilla {
                  else{ //admin only can modify password
    
                     /* user account only change password */
-                    if((info.isMember("account") && str_account != info["account"].asString()) || (info.isMember("accessRightName") && str_login_level != info["accessRightName"].asString())){                 		
-                            	out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
-                            	"<AccountManager::UpdateUser> FORBIDDEN");
-                            	return FORBIDDEN;
-                    	     }
-                     
+			/*
+                    if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
+
+                        out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
+                            "<AccountManager::UpdateUser> FORBIDDEN");
+                        
+                        return FORBIDDEN;
+                    }
+                     */
                     /* check password vaild */
                     
                     if (!IsPasswordVaild(str_user_info, out_str_reply)){
@@ -379,7 +452,7 @@ namespace gorilla {
                     errorCode = SUCCESS_RESPONSE;   
                     out_str_reply = it->second->UpdateUser(str_user_info);
                  }
-			if (info.isMember("password"))
+			if (IsKeyExsist(info,"password"))
 			{        		
 				std::string str_cookie_name;
 	    			std::string str_cookie_value;
@@ -724,16 +797,16 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
             IsKeyExsist(user_info, "account", account);
 
-            LOGGER_S(info) << account;
-            Config &config = Config::getInstance();
+            //LOGGER_S(info) << account;
             
-            if (!boost::regex_match (account, boost::regex(config.account_regexpr))){
+            /*
+            if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]+$"))){
                 
                 LOGGER_S(debug) << "User Account Invaild";
                 out_str_reply += "Account Invaild. ";
                 vaild = false;
             }
-            
+            */
             
             if(account.length() == 0){
                 LOGGER_S(debug) << "User Account Invaild";
@@ -753,12 +826,12 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
             IsKeyExsist(user_info, "password", password);
 
-            LOGGER_S(info) << password;
+            //LOGGER_S(info) << password;
+           
             Config &config = Config::getInstance();
-	   
-            //if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
-            if (!boost::regex_match (password, boost::regex(config.password_regexpr))){
-    
+	    //if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
+	    if (!boost::regex_match (password, boost::regex(config.password_regexpr))){
+                
                 LOGGER_S(debug) << "User Password Invaild";
                 out_str_reply += "Password Invaild. ";
                 vaild = false;
@@ -775,10 +848,10 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
             IsKeyExsist(user_info, "accessRightName", level);
 
-            LOGGER_S(info) << level;
-            
+            //LOGGER_S(info) << level;
+           
             if (!boost::regex_match (level, boost::regex("^[\x21-\x7F]*$"))){
-   
+                
                 LOGGER_S(debug) << "User AccessRightName Invaild";
                 out_str_reply += "AccessRightName Invaild. ";
                 vaild = false;

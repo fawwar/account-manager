@@ -95,7 +95,7 @@ namespace gorilla {
 
         void User::SetUserInfo(const std::string& str_user_info)
         {
-            LOGGER_S(info) << "SetUserInfo= " << str_user_info;
+            //LOGGER_S(info) << "SetUserInfo= " << str_user_info;
             json user_info = json::parse(str_user_info);
 
             IsKeyExsist(user_info, "account", m_str_account);
