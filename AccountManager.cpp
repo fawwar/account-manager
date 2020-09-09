@@ -52,7 +52,7 @@ namespace gorilla {
 
 		bool AccountManager::VerifyAccount(const std::string& str_account, const std::string& str_password)
 		{
-			LOGGER_S(info) << "Verify = " << str_account << "," << str_password;
+			LOGGER_S(info) << "Verify = " << str_account ;
 
 			if (str_account == "admin" && str_password == ADMIN_PASSWORD) return true;
 							
@@ -133,7 +133,7 @@ namespace gorilla {
 							
 								if (account_str == str_account)
 								{
-									LOGGER_S(info) << "account_str " << account_str;
+									//LOGGER_S(info) << "account_str " << account_str;
 									LOGGER_S(info) << "user exist!";
 									user_exist = true;
 								}
@@ -224,24 +224,26 @@ namespace gorilla {
 			std::string output_reply = ldapConfig.Read();    // json format
 			ldapConfig.ParseConfig();
 			/* send device list */
-			if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
+			//if ( ldapConfig.host_name != ""  && ldapConfig.port!=0) {
 				LOGGER_S(info) << "host_name " << ldapConfig.host_name;
 				LOGGER_S(info) << "port " << ldapConfig.port; 
 				errorCode = SUCCESS_RESPONSE;
-				out_str_reply = output_reply; //ldapconfig info  
+				out_str_reply = output_reply; //ldapconfig info
+				/*  
 				LdapAuthenticator ldapAuthenticator;
 			        if(!ldapAuthenticator.IsLdapOpen())
 			        {
 				    return  INTERNAL_SERVER_ERROR; 
 			        }
- 
+				*/
+ 			/*
 			}
 			else 
 			{
 				errorCode = NAME_NOT_FOUND;
 				out_str_reply  = m_error_reply.GetError("LDAP host_name & ldap_port Not Found", "<AccountManager::GetLdapConfig> NAME_NOT_FOUND");
 			}
-		
+			*/
 			return errorCode;
 		}
 
@@ -402,9 +404,9 @@ namespace gorilla {
 
                  if(str_login_level == "admin" && str_account != "admin"){
                  //if(true){
-			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
-			LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
-			LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
+			//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_login_level !" << str_login_level;
+			//LOGGER_S(debug)<<"Error AccountManager::UpdateUser str_account !" << str_account;
+			//LOGGER_S(debug) << "Error AccountManager::UpdateUser str_user_info !" << str_user_info;
                      /* admin account only change password */   
                    /*  
                      if(str_account == "admin"){
@@ -795,7 +797,7 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
             IsKeyExsist(user_info, "account", account);
 
-            LOGGER_S(info) << account;
+            //LOGGER_S(info) << account;
             
             /*
             if (!boost::regex_match (account, boost::regex("^[\x21-\x7F]+$"))){
@@ -824,7 +826,7 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
             IsKeyExsist(user_info, "password", password);
 
-            LOGGER_S(info) << password;
+            //LOGGER_S(info) << password;
            
             Config &config = Config::getInstance();
 	    //if (!boost::regex_match (password, boost::regex("^[\x20-\x7F]+$"))){
@@ -846,7 +848,7 @@ namespace gorilla {
             json user_info = json::parse(str_user_info);
             IsKeyExsist(user_info, "accessRightName", level);
 
-            LOGGER_S(info) << level;
+            //LOGGER_S(info) << level;
            
             if (!boost::regex_match (level, boost::regex("^[\x21-\x7F]*$"))){
                 

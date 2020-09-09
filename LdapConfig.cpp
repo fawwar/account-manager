@@ -50,7 +50,7 @@ void LdapConfig::ParseConfig()  // parse to json
 		if (root.isMember("ldap_port"))
 		{
 			port = std::atoi(root["ldap_port"].asString().c_str());
-			LOGGER_S(info) << "LdapConfig.cpp ldap_port!!!!!!!!!" << port;
+			//LOGGER_S(info) << "LdapConfig.cpp ldap_port!!!!!!!!!" << port;
 		}
 		if (root.isMember("address"))
 		{

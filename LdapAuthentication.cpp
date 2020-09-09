@@ -145,11 +145,11 @@ bool LdapAuthenticator::IsLdapOpen()
 	    lRtn = ldap_set_option(pLdapConnection, LDAP_OPT_NETWORK_TIMEOUT, (void*)&networkTimeout);   // LDAP_OPT_NETWORK_TIMEOUT
 	    if(lRtn != LDAP_SUCCESS)
 	    {
-		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT false";
+		//LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT false";
 	    }
 	    else 
 	    {
-		LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT true";
+		//LOGGER_S(info) << "LDAP_OPT_NETWORK_TIMEOUT true";
 	    }
 
 		pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);	

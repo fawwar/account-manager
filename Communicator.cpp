@@ -471,7 +471,8 @@ void Communicator::GetAuthorization(const Server::request& request,
                         out_str_account = decode_authority.substr(0, found_pos);
                         out_str_password = decode_authority.substr(found_pos + 1);
 
-                        LOGGER_S(info) << "Account:Pass > " << out_str_account <<":" << out_str_password;    
+                        //LOGGER_S(info) << "Account:Pass > " << out_str_account <<":" << out_str_password;    
+			LOGGER_S(info) << "Account:Pass > " << out_str_account;
                     }  
                 }
                 
@@ -583,7 +584,7 @@ Server::connection::status_t Communicator::GetUsers(const Server::request& reque
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetUsers = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "GetUsers = " << m_str_account ;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
@@ -618,7 +619,8 @@ Server::connection::status_t Communicator::AddUser(const Server::request& reques
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "AddUsers = " << m_str_account << "," << m_str_password;  
+    //LOGGER_S(debug) << "AddUsers = " << m_str_account << "," << m_str_password;  
+    LOGGER_S(debug) << "AddUsers = " << m_str_account;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
@@ -652,7 +654,8 @@ Server::connection::status_t Communicator::GetUser(const Server::request& reques
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetUser = " << m_str_account << "," << m_str_password;  
+    //LOGGER_S(debug) << "GetUser = " << m_str_account << "," << m_str_password;  
+    LOGGER_S(debug) << "GetUser = " << m_str_account;
 
     bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
     if(res){
@@ -691,7 +694,8 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "UpdateUser = " << m_str_account << "," << m_str_password; 
+    //LOGGER_S(debug) << "UpdateUser = " << m_str_account << "," << m_str_password; 
+    LOGGER_S(debug) << "UpdateUser = " << m_str_account;
 
     bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
     if(res){
@@ -701,9 +705,9 @@ Server::connection::status_t Communicator::UpdateUser(const Server::request& req
         std::string user_name = GetName("/users/", uri_instance.path());  
        
         if(m_str_account == user_name || level == "admin"){
-		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
-		LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
-		LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
+		//LOGGER()<<"Server::connection::status_t Communicator::UpdateUser m_str_account !" <<m_str_account;
+		//LOGGER()<<"Server::connection::status_t Communicator::UpdateUser user_name !" <<user_name;
+		//LOGGER()<<"Server::connection::status_t COmmunicator::UpdateUser level !" << level;
         //if(true){//ALL PASS
             err = m_accountManager.UpdateUser(user_name, level, request_str, reply_str,request);
         }
@@ -732,7 +736,8 @@ Server::connection::status_t Communicator::DeleteUser(const Server::request& req
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "DeleteUser = " << m_str_account << "," << m_str_password;  
+    //LOGGER_S(debug) << "DeleteUser = " << m_str_account << "," << m_str_password;  
+    LOGGER_S(debug) << "DeleteUser = " << m_str_account << m_str_account;
     bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
     if(res){
 
@@ -781,7 +786,8 @@ Server::connection::status_t Communicator::GetUserPermissions(const Server::requ
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetUserPermissions = " << m_str_account << "," << m_str_password;  
+    //LOGGER_S(debug) << "GetUserPermissions = " << m_str_account << "," << m_str_password;  
+    LOGGER_S(debug) << "GetUserPermissions = " << m_str_account;
 
     bool res = m_accountManager.VerifyAccount(m_str_account, m_str_password);
     if(res){
@@ -827,7 +833,8 @@ Server::connection::status_t Communicator::GetAccessRights(const Server::request
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetAccessRights = " << m_str_account << "," << m_str_password;
+    //LOGGER_S(debug) << "GetAccessRights = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "GetAccessRights = " << m_str_account;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
@@ -869,7 +876,8 @@ Server::connection::status_t Communicator::AddAccessRight(const Server::request&
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "AddAccessRight = " << m_str_account << "," << m_str_password; 
+    //LOGGER_S(debug) << "AddAccessRight = " << m_str_account << "," << m_str_password; 
+    LOGGER_S(debug) << "AddAccessRight = " << m_str_account;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
@@ -909,7 +917,8 @@ Server::connection::status_t Communicator::GetAccessRight(const Server::request&
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "GetAccessRight = " << m_str_account << "," << m_str_password;
+    //LOGGER_S(debug) << "GetAccessRight = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "GetAccessRight = " << m_str_account;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
@@ -949,7 +958,8 @@ Server::connection::status_t Communicator::UpdateAccessRight(const Server::reque
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
+    //LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
@@ -990,7 +1000,8 @@ Server::connection::status_t Communicator::DeleteAccessRight(const Server::reque
     const boost::network::uri::uri uri_instance(
         std::string("http://127.0.0.1" + request.destination));
 
-    LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
+    //LOGGER_S(debug) << "UpdateAccessRight = " << m_str_account << "," << m_str_password;
+    LOGGER_S(debug) << "DeleteAccessRight = " <<  m_str_account;
 
     std::string level;
     m_accountManager.GetUserAccessRight(m_str_account, level);
