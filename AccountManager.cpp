@@ -251,18 +251,26 @@ namespace gorilla {
 		{
 			Error errorCode(INTERNAL_SERVER_ERROR);
 			std::lock_guard<std::mutex> autoLock(m_mux_ldapconfig);
-
+			
+			 			
 			LOGGER_S(info) << "Error AccountManager::str_ldap_config_info" << str_ldap_config_info;			
 			LdapConfig &ldapConfig = LdapConfig::getInstance();
+			//ldapConfig.ParseConfig();
 			if (ldapConfig.IsUpdateInfoVaild(str_ldap_config_info))
 			{
-			    out_str_reply = ldapConfig.Write(str_ldap_config_info);
-			    errorCode = SUCCESS_RESPONSE;
+				Json::Reader reader;
+				Json::Value root;
+				reader.parse(str_ldap_config_info, root);
+			   
 			    LdapAuthenticator ldapAuthenticator;
-			    if(!ldapAuthenticator.IsLdapOpen())
+			    if(!ldapAuthenticator.UpdateIsOpen(root["host_name"].asString(), std::stoi(root["ldap_port"].asString())))
 			    {
 				return  INTERNAL_SERVER_ERROR; 
 			    }
+			    else {
+					out_str_reply = ldapConfig.Write(str_ldap_config_info);
+					errorCode = SUCCESS_RESPONSE;
+		 	    }
 			}
 			else
 			{
