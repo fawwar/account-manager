@@ -64,7 +64,7 @@ namespace gorilla {
 					LdapConfig &ldapConfig = LdapConfig::getInstance();
 					ldapConfig.ParseConfig();
 					LdapAuthenticator ldapAuthenticator;
-					ldapAuthenticator.IsLdapOpen();
+					ldapAuthenticator.IsLdapOpen(ldapConfig.host_name,ldapConfig.port);
 					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
 					{
 						//insert DB 
@@ -256,12 +256,19 @@ namespace gorilla {
 			LdapConfig &ldapConfig = LdapConfig::getInstance();
 			if (ldapConfig.IsUpdateInfoVaild(str_ldap_config_info))
 			{
-			    out_str_reply = ldapConfig.Write(str_ldap_config_info);
-			    errorCode = SUCCESS_RESPONSE;
+			    Json::Reader reader;
+			    Json::Value root;
+		 	    reader.parse(str_ldap_config_info, root);
+				
 			    LdapAuthenticator ldapAuthenticator;
-			    if(!ldapAuthenticator.IsLdapOpen())
+			    if (!ldapAuthenticator.IsLdapOpen(root["host_name"].asString(), std::stoi(root["ldap_port"].asString())))
 			    {
 				return  INTERNAL_SERVER_ERROR; 
+			    }
+			    else
+			    {
+			    	out_str_reply = ldapConfig.Write(str_ldap_config_info);
+			    	errorCode = SUCCESS_RESPONSE;
 			    }
 			}
 			else

@@ -73,7 +73,7 @@ LdapAuthenticator::~LdapAuthenticator()
 	
 }
 
-bool LdapAuthenticator::IsLdapOpen()
+bool LdapAuthenticator::IsLdapOpen(const std::string& host_name, const int& port)
 {	
  	//ldap* pldapconnection = NULL;
 	//int opt_timeout = 2;
@@ -112,7 +112,8 @@ bool LdapAuthenticator::IsLdapOpen()
 
 	}
 	*/
-	ldap* pLdapConnection = NULL;
+	//ldap* pLdapConnection = NULL;
+	LDAP *pLdapConnection = ldap_init((char*)host_name.c_str(),port);
 #ifdef WIN32
 	if(ldapConfig.timeout >= 2)
 	{
@@ -122,7 +123,7 @@ bool LdapAuthenticator::IsLdapOpen()
 	    ldap_connect_timeout.tv_usec = 0;
 
 	    //lRtn = ldap_connect(conn.pLdapConnection, &ldap_connect_timeout);   //NULL
-	    lRtn = ldap_simple_bind_s(conn.pLdapConnection, NULL, NULL);
+	    lRtn = ldap_simple_bind_s(pLdapConnection, NULL, NULL);
 	    LOGGER_S(info) << "ldap_simple_bind_s " << lRtn;
 	    if (lRtn != LDAP_SUCCESS)
 	    {
@@ -156,7 +157,7 @@ bool LdapAuthenticator::IsLdapOpen()
 
 		//pLdapConnection = ldap_open((char*)ldapConfig.host_name.c_str(),ldapConfig.port);
 		
-		lRtn = ldap_simple_bind_s(conn.pLdapConnection, NULL, NULL);
+		lRtn = ldap_simple_bind_s(pLdapConnection, NULL, NULL);
 		LOGGER_S(info) << "ldap_simple_bind_s: " << lRtn; 	
 			
                 if(lRtn != LDAP_SUCCESS )
