@@ -64,7 +64,7 @@ namespace gorilla {
 					LdapConfig &ldapConfig = LdapConfig::getInstance();
 					ldapConfig.ParseConfig();
 					LdapAuthenticator ldapAuthenticator;
-					ldapAuthenticator.IsLdapOpen();
+					ldapAuthenticator.IsLdapOpen(ldapConfig.host_name, ldapConfig.port);
 					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
 					{
 						//insert DB 
@@ -263,7 +263,7 @@ namespace gorilla {
 				reader.parse(str_ldap_config_info, root);
 			   
 			    LdapAuthenticator ldapAuthenticator;
-			    if(!ldapAuthenticator.UpdateIsOpen(root["host_name"].asString(), std::stoi(root["ldap_port"].asString())))
+			    if(!ldapAuthenticator.IsLdapOpen(root["host_name"].asString(), std::stoi(root["ldap_port"].asString())))
 			    {
 				return  INTERNAL_SERVER_ERROR; 
 			    }
@@ -451,12 +451,12 @@ namespace gorilla {
                     }
                      */
                     /* check password vaild */
-                    
+                   /* 
                     if (!IsPasswordVaild(str_user_info, out_str_reply)){
                         out_str_reply = m_error_reply.GetError("User Password Invaild","<AccountManager::UpdateUser> FORBIDDEN"); 
                         return FORBIDDEN;
                     }
-                    
+                    */
                     errorCode = SUCCESS_RESPONSE;   
                     out_str_reply = it->second->UpdateUser(str_user_info);
                  }

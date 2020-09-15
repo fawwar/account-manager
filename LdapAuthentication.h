@@ -46,8 +46,7 @@ public:
 	LdapAuthenticator();
 	~LdapAuthenticator();
 	
-	bool IsLdapOpen();
-	bool UpdateIsOpen(const std::string& host_name, const int& port);
+	bool IsLdapOpen(const std::string& host_name, const int& port);
 	bool AuthenticateActiveDirectory (const std::string& str_ldap_account, const std::string& str_password );
 	LdapConnection conn;
 
