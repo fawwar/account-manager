@@ -451,12 +451,12 @@ namespace gorilla {
                     }
                      */
                     /* check password vaild */
-                   /* 
+                    
                     if (!IsPasswordVaild(str_user_info, out_str_reply)){
                         out_str_reply = m_error_reply.GetError("User Password Invaild","<AccountManager::UpdateUser> FORBIDDEN"); 
                         return FORBIDDEN;
                     }
-                    */
+                    
                     errorCode = SUCCESS_RESPONSE;   
                     out_str_reply = it->second->UpdateUser(str_user_info);
                  }
