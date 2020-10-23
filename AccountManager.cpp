@@ -46,6 +46,30 @@ namespace gorilla {
                 out_str_access_right = it->second->AccessRight();
                 return true;
             }
+            if(str_account.substr(0, 2) == "__"){
+              size_t nextToken = str_account.find('_', 2);
+              if(nextToken == std::string::npos) return false;
+              std::string sourceSN = str_account.substr(2, nextToken - 2);
+              size_t nextToken2 = str_account.find('_', nextToken + 1);
+              if(nextToken2 == std::string::npos) return false;
+              std::string privSN = str_account.substr(nextToken + 1, nextToken2 - (nextToken + 1));
+              if(privSN == "1"){
+                out_str_access_right = "admin";
+                return true;
+              } else if(privSN == "2"){
+                out_str_access_right = "SuperUser";
+                return true;
+              } else if(privSN == "3"){
+                out_str_access_right = "User";
+                return true;
+              } else if(privSN == "4"){
+                out_str_access_right = "Viewer";
+                return true;
+              } else if(privSN == "5"){
+                out_str_access_right = "SuperViewer";
+                return true;
+              }
+            }
 
             return false;
         }
@@ -56,6 +80,42 @@ namespace gorilla {
 
 			if (str_account == "admin" && str_password == ADMIN_PASSWORD) return true;
 							
+      if(str_account.substr(0, 2) == "__"){
+        size_t nextToken = str_account.find('_', 2);
+        if(nextToken == std::string::npos) return false;
+        std::string sourceSN = str_account.substr(2, nextToken - 2);
+        size_t nextToken2 = str_account.find('_', nextToken + 1);
+        if(nextToken2 == std::string::npos) return false;
+        std::string privSN = str_account.substr(nextToken + 1, nextToken2 - (nextToken + 1));
+        std::string account = str_account.substr(nextToken2 + 1);
+        //do curl verify
+				Json::Value userinfo;
+				userinfo["sourceSN"] = sourceSN;
+				userinfo["account"] = account;
+			  userinfo["password"] = str_password;
+        userinfo["privSN"] = privSN;
+				//Json::StyledWriter styledWriter;
+				//std::string str_userinfo = styledWriter.write(userinfo);
+        std::string str_userinfo = userinfo.toStyledString();
+       	CURL* handle = curl_easy_init();
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(handle, CURLOPT_POST, 1L);
+				curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
+       	curl_easy_setopt(handle, CURLOPT_URL, "http://127.0.0.1:8001/session/auth");
+     		curl_easy_setopt(handle, CURLOPT_TIMEOUT, 5L); //5 seconds
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, str_userinfo.c_str());
+     		CURLcode resCode = curl_easy_perform(handle);
+        long response_code = 0;
+        if(resCode == CURLE_OK){
+          curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &response_code);
+        }
+        LOGGER_S(info) << "code:" << resCode << "," << response_code;
+     		curl_easy_cleanup(handle);
+        curl_slist_free_all(headers);
+        if(response_code == 200) return true;
+        return false;
+      }
 			std::string str_token = "ldap/";   // ldap account begining 
 			try {
 				if (str_account.substr(0, str_token.size()) == str_token)
@@ -570,7 +630,6 @@ namespace gorilla {
             std::unique_lock<std::mutex> uniquelock(m_mux_users);
             auto it_user = m_map_users.find(str_account.c_str());
             if (it_user != m_map_users.end()){
-
                 std::string level_name = it_user->second->AccessRight();
                 uniquelock.unlock();
 
@@ -581,13 +640,22 @@ namespace gorilla {
 
                     out_str_reply = it_level->second->Permissions(lst_fields);
                     errorCode = SUCCESS_RESPONSE;           
-                } 
+                }
+                return errorCode;
+            } else {
+              std::string level_name;
+              if(GetUserAccessRight(str_account, level_name)){
+                std::lock_guard<std::mutex> autoLock(m_mux_access_rights);
+                auto it_level = m_map_access_rights.find(level_name);
+                if (it_level != m_map_access_rights.end()){
+                    out_str_reply = it_level->second->Permissions(lst_fields);
+                    errorCode = SUCCESS_RESPONSE;           
+                }
+                return errorCode;
+              }
             }
-            else{
-
-                errorCode = NAME_NOT_FOUND; 
-                out_str_reply = m_error_reply.GetError("User Name Not Found","<AccountManager::GetUserPermissions> NAME_NOT_FOUND");
-            }
+            errorCode = NAME_NOT_FOUND; 
+            out_str_reply = m_error_reply.GetError("User Name Not Found","<AccountManager::GetUserPermissions> NAME_NOT_FOUND");
 
             return errorCode;
         }
