@@ -442,21 +442,22 @@ namespace gorilla {
    
                     /* user account only change password */
 			
-                    if(IsKeyExsist(info, "account") || IsKeyExsist(info, "accessRightName")){
-
-                        //out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
-                        //    "<AccountManager::UpdateUser> FORBIDDEN");
+                    if(  IsKeyExsist(info, "accessRightName")){
+                        // IsKeyExists(info, "account") || 
+                        out_str_reply = m_error_reply.GetError("User No Permissions To Chang Account Or AccessRightName",
+                            "<AccountManager::UpdateUser> FORBIDDEN");
                         
-                        //return FORBIDDEN;
+                        return FORBIDDEN;
                     }
                     
                     /* check password vaild */
-                    else{
+		
+                   // else{
                     	if (!IsPasswordVaild(str_user_info, out_str_reply)){
                             out_str_reply = m_error_reply.GetError("User Password Invaild","<AccountManager::UpdateUser> FORBIDDEN"); 
                             return FORBIDDEN;
                         }
-		   }
+		  // }
                     
                     errorCode = SUCCESS_RESPONSE;   
                     out_str_reply = it->second->UpdateUser(str_user_info);
