@@ -27,5 +27,6 @@ public:
 private: 
   LdapConfig();
   //void Read();
+  const std::string m_strConfigFilePath;
 
 };
