@@ -102,7 +102,7 @@ xcopy /y ..\packaging\servicewrapper\* .\outputs
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)..\import\gorilla\http\lib;$(SolutionDir)..\external\win-x86_64\boost\lib;$(SolutionDir)..\external\win-x86_64\openssl\lib;$(SolutionDir)..\external\win-x86_64\curl\lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libboost_zlib-vc140-mt-x64-1_67.lib;libboost_iostreams-vc140-mt-x64-1_67.lib;HttpFramework.lib;libeay32.lib;ssleay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Wldap32.lib;libboost_zlib-vc140-mt-x64-1_67.lib;libboost_iostreams-vc140-mt-x64-1_67.lib;HttpFramework.lib;libeay32.lib;ssleay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
