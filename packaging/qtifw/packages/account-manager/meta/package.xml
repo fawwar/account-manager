@@ -5,4 +5,5 @@
     <Version>3.3.7</Version>
     <ReleaseDate>2021-01-05</ReleaseDate>
     <Default>true</Default>
+    <ForcedInstallation>true</ForcedInstallation>
 </Package>
