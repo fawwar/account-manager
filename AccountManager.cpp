@@ -65,7 +65,7 @@ namespace gorilla {
 					ldapConfig.ParseConfig();
 					LdapAuthenticator ldapAuthenticator;
 					ldapAuthenticator.IsLdapOpen(ldapConfig.host_name, ldapConfig.port);
-					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ))
+					if (ldapAuthenticator.AuthenticateActiveDirectory(str_ldap_account, str_password ) && !str_password.empty())
 					{
 						//insert DB 
 						Json::Value json_user_info;
