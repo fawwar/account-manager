@@ -863,7 +863,7 @@ namespace gorilla {
 
             //LOGGER_S(info) << level;
            
-            if (!boost::regex_match (level, boost::regex("^[\x21-\x7F]*$"))){
+            if (!boost::regex_match (level, boost::regex("^[\x21-\x7F]*$")) || (level!= "." || level!= "..")){
                 
                 LOGGER_S(debug) << "User AccessRightName Invaild";
                 out_str_reply += "AccessRightName Invaild. ";
