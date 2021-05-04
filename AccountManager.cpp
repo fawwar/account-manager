@@ -821,7 +821,7 @@ namespace gorilla {
             }
             */
             
-            if(account.length() == 0){
+            if(account.length() == 0 || (account != "." || account != "..")){
                 LOGGER_S(debug) << "User Account Invaild";
                 out_str_reply += "Account Invaild. ";
                 vaild = false;
