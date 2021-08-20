@@ -51,7 +51,7 @@ LDFLAGS  += -lboost_program_options -lboost_regex -lboost_system -lboost_thread
 
 CXXFLAGS += -DBOOST_NETWORK_ENABLE_HTTPS
 LDFLAGS  += -lcrypto -lssl
-LDFLAGS  += -lldapcpp -lldap
+LDFLAGS  += -lldapcpp -lldap -lsasl2
 LDFLAGS  += -llber
 
 CXXFLAGS += -std=c++11
