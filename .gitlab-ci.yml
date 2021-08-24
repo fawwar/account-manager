@@ -11,8 +11,8 @@ stages:
 
 linux-test-build:
   tags:
-    - ubuntu
-  image: vincenthsu/ivar-build:latest
+    - ubuntu-18
+  image: dev18-ci
   stage: build
   except:
     - tags
@@ -26,8 +26,8 @@ linux-test-build:
 
 linux-release-build:
   tags:
-    - ubuntu
-  image: vincenthsu/ivar-build:latest
+    - ubuntu-18
+  image: dev18-ci
   stage: build
   only:
     - tags
