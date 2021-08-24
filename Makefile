@@ -19,7 +19,7 @@ LDFLAGS  += -L$(BOOSTDIR)/lib
 LDFLAGS  += -L$(OPENLDAPDIR)/lib
 LDFLAGS  += -L$(CURLDIR)/lib
 #LDFALGS  += -L$(OPENLDAP_2.4.49DIR)/libraries
-LDFLAGS  += -L$(SASLDIR)/lib
+LDFLAGS  += -L$(SASL2DIR)/lib
 
 CXXFLAGS += -DBOOST_NETWORK_NO_LIB
 SRCS     +=  $(wildcard $(LIBDIR)/gorilla/log/*.cpp)
