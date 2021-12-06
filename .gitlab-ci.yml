@@ -17,8 +17,6 @@ linux-test-build:
   except:
     - tags
   script:
-    - git fetch origin
-    - git pull origin
     - git fetch --tags
     - git tag -l -n
     - TagName = $(grep -oP '(?<=Version>).*(?=</Version)' packaging/qtifw/packages/account-manager/meta/package.xml)
