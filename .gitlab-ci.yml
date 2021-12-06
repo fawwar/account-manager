@@ -19,8 +19,8 @@ linux-test-build:
   script:
     - git fetch --tags
     - git tag -l -n
-    - TagName = $(grep -oP '(?<=Version>).*(?=</Version)' ./packaging/qtifw/packages/account-manager/meta/package.xml)
-    - devTagName = "v_$Tag_Name"
+    - TagName=$(grep -oP '(?<=Version>).*(?=</Version)' ./packaging/qtifw/packages/account-manager/meta/package.xml)
+    - devTagName="v_$Tag_Name"
     - git tag ${devTagName}
     - git push origin -f ${devTagName}
     - bash ./scripts/build.sh $PROJECT
