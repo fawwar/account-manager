@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>Account Manager</DisplayName>
     <Description></Description>
-    <Version>3.3.9</Version>
+    <Version>v3.3.8</Version>
     <ReleaseDate>2021-01-05</ReleaseDate>
     <Default>true</Default>
     <ForcedInstallation>true</ForcedInstallation>
