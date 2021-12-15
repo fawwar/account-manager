@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.5.1)
 
 if( PROJECT MATCHES "bi" OR PROJECT MATCHES "telstra")
     set(PROJECT "telstra")
-	message("Project name: ${PROJECT}")
+
 endif()
-message("Project name test: ${PROJECT}")
+message("Project name : ${PROJECT}")
 
 # Disable zero check for visual studio
 set(CMAKE_SUPPRESS_REGENERATION true)
