@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Package>
-    <DisplayName>Account Manager</DisplayName>
-    <Description></Description>
-    <Version>v3.3.8</Version>
-    <ReleaseDate>2021-01-05</ReleaseDate>
-    <Default>true</Default>
-    <ForcedInstallation>true</ForcedInstallation>
-</Package>
