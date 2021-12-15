@@ -119,10 +119,7 @@ def setProject(argv):
         if str(argv[1]) == 'bi' or str(argv[1]) == 'telstra':
             print (str(argv[1]))
             PROJECT = str(argv[1])
-        else:
-            print ('PROJECT ERROR')
-            raise SystemExit(0)   
-            
+                   
     print('Project ',PROJECT)
     return PROJECT
 
