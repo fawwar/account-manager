@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility\base64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility\debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility\ini_file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility\string_format.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility\string_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\log\logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\log\logger_config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\hash\hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\hash\lcrng.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\hash\md5.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\hash\sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\sqlite3\sqlite3.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\syslog\syslog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\jsoncpp\jsoncpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\AccessRightInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\AccountDB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\AccountManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\AdapterHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\Communicator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\Error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\LdapAuthentication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\LdapConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\UserInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\link.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E02698B1-3655-3388-98DB-FBD20383ADDC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

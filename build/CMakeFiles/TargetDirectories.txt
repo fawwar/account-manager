@@ -1,0 +1,3 @@
+C:/Users/dennywang/Documents/Project/20210524/account-manager/build/CMakeFiles/account-manager.dir
+C:/Users/dennywang/Documents/Project/20210524/account-manager/build/CMakeFiles/INSTALL.dir
+C:/Users/dennywang/Documents/Project/20210524/account-manager/build/CMakeFiles/ALL_BUILD.dir

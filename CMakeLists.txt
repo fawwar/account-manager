@@ -1,14 +1,12 @@
 project(account-manager)
 cmake_minimum_required(VERSION 3.5.1)
 
-if(NOT DEFINED PROJECT)
-    set(PROJECT "")
-    set(CONFIGS_ROOT ${CMAKE_SOURCE_DIR}/configs/common/)
-else()
-    set(CONFIGS_ROOT ${CMAKE_SOURCE_DIR}/configs/${PROJECT}/)
-endif()
-message("Project name: ${PROJECT}")
 
+if( PROJECT MATCHES "bi" OR PROJECT MATCHES "telstra")
+    set(PROJECT "telstra")
+	message("Project name: ${PROJECT}")
+endif()
+message("Project name test: ${PROJECT}")
 
 # Disable zero check for visual studio
 set(CMAKE_SUPPRESS_REGENERATION true)
@@ -292,11 +290,29 @@ if(WIN32)
     #   DESTINATION ./cmd)
 endif()
 
+set(CONFIG_PATH "${CMAKE_SOURCE_DIR}/configs")
 # Configurations
-install(DIRECTORY
-    ${CONFIGS_ROOT}/
-        DESTINATION .
-        USE_SOURCE_PERMISSIONS)
+install(FILES
+    ${CONFIG_PATH}/common/dh2048.pem
+	${CONFIG_PATH}/common/ldap_config.json
+	${CONFIG_PATH}/common/server.pem
+	${CONFIG_PATH}/common/settings.ini
+    DESTINATION .)
+
+#install(DIRECTORY
+#        ${CONFIG_PATH}/default
+#        DESTINATION .)
+if(PROJECT)
+	set(CONFIG_PATH "${CONFIG_PATH}/${PROJECT}")
+	message("Config Path ${CONFIG_PATH}")
+	install(FILES
+		${CONFIG_PATH}/config.json
+		DESTINATION .)
+else()
+	install(FILES
+		${CONFIG_PATH}/common/config.json
+		DESTINATION .)
+endif()
 
 if(WIN32)
     install(DIRECTORY

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{94588B58-F72C-316B-97A2-D864BF673937}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\dennywang\Documents\Project\20210524\account-manager\prebuilts\boost\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\http\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\prebuilts\curl\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\prebuilts\win-x86_64\openssl\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\log;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\hash;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\sqlite3;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\syslog;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\cppnetlib\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\jsoncpp;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\json-develop;C:\Users\dennywang\Documents\Project\20210524\account-manager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\dennywang\Documents\Project\20210524\account-manager\prebuilts\boost\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\http\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\prebuilts\curl\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\prebuilts\win-x86_64\openssl\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\utility;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\gorilla\log;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\hash;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\sqlite3;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\syslog;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\cppnetlib\include;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\jsoncpp;C:\Users\dennywang\Documents\Project\20210524\account-manager\externals\json-develop;C:\Users\dennywang\Documents\Project\20210524\account-manager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\dennywang\Documents\Project\20210524\account-manager\build\account-manager.vcxproj">
+      <Project>{6DDA0618-DBD4-3F27-8BA4-86F509BCE926}</Project>
+      <Name>account-manager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
