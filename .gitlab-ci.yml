@@ -17,8 +17,7 @@ linux-test-build:
   except:
     - tags
   script:
-    - bash ./scripts/build.sh $PROJECT
-    - bash ./scripts/packaging.sh
+    - python3 ./scripts/packaging.py $PROJECT
     - mkdir -p smbtmp
     - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
     - mkdir -p smbtmp/$PROJECT/linux-x86_64
@@ -34,8 +33,7 @@ linux-release-build:
   except:
     - branches
   script:
-    - bash ./scripts/build.sh $PROJECT
-    - bash ./scripts/packaging.sh
+    - python3 ./scripts/packaging.py $PROJECT      
     - mkdir -p smbtmp
     - mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
     - mkdir -p smbtmp/$PROJECT/linux-x86_64
@@ -50,8 +48,8 @@ windows-test-build:
   before_script:
     - chcp 65001
   script:
-    - call .\scripts\build.bat %PROJECT%
-    - call .\scripts\packaging.bat
+    - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    - tools\py\python.exe .\scripts\packaging.py %PROJECT%      
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
     - copy account-manager.zip X:\%PROJECT%\win-x86_64
@@ -68,8 +66,8 @@ windows-release-build:
   before_script:
     - chcp 65001
   script:
-    - call .\scripts\build.bat %PROJECT%
-    - call .\scripts\packaging.bat
+    - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    - tools\py\python.exe .\scripts\packaging.py %PROJECT%      
     - if exist "X:\" ( net use "X:" /delete /y )
     - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
     - copy account-manager.zip X:\%PROJECT%\win-x86_64

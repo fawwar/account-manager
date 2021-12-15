@@ -86,38 +86,6 @@ def createPackage():
         print('create account-manager.tar.gz')
         run('tar zcf account-manager.tar.gz account-manager')
 
-def setTag(versionStr, xmlPath):
-    print ('setTag: ',versionStr)
-    # os.system('git status')
-    os.system('git pull origin')
-    # os.system('git fetch --tags')
-    os.system('git add %s', xmlPath)
-    message = 'Add version ' + versionStr 
-    # os.system('git commit -m '{message}'')
-    os.system('git push')
-    os.system('git tag %s' %versionStr)
-    os.system('git push origin -f %s' %versionStr)
-
-def setPackageXml(versionStr):
-    global rootPath
-    if os.name == 'nt':
-        xmlPath = Path(rootPath.joinpath('packaging/qtifw/packages/account-manager/meta/package.xml'))
-        print ('xmlPath', xmlPath)
-    else :
-        xmlPath = Path(rootPath.joinPath('packaging/qtifw/packages/account-manager/meta/package.xml'))
-    if os.path.isfile(xmlPath):
-        tree = ET.parse(xmlPath)
-        root = tree.getroot()
-        # print('Version ',root.find('Version').text)
-        for ver in root.iter('Version'):
-            ver.text = str(versionStr)
-            print (ver.text)
-    else:
-        print('package.xml file not exist!')
-    tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
-    setTag(versionStr, xmlPath)
-
-
 def setVersion():
 
     versionStr = '0.0.0'
