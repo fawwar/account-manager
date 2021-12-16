@@ -17,13 +17,8 @@ linux-test-build:
   except:
     - tags
   script:
-    - export version='cat VERSION.txt'
-    - echo "VERSION $version"
     - python3 ./scripts/packaging.py $PROJECT
-    - mkdir -p smbtmp
-    - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
-    - mkdir -p smbtmp/$PROJECT/linux-x86_64
-    - cp account-manager.tar.gz smbtmp/$PROJECT/linux-x86_64 && umount smbtmp && rm -rf smbtmp
+    - python3 ./scripts/distribution.py
 
 linux-release-build:
   tags:
