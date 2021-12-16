@@ -14,6 +14,7 @@ set(CMAKE_VERBOSE_MAKEFILE true)
 
 # Disable auto rpath and set -Wl,-rpath,. later
 set(CMAKE_SKIP_BUILD_RPATH true)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 if(WIN32)
     set(PLATFORM "win-x86_64")
@@ -247,6 +248,17 @@ set(SRCS ${SRCS} ${SRCS_PROJ})
 
 ##
 # Exectable file
+include(generate_product_version)
+generate_product_version(
+    VersionFilesOutputVariable
+    NAME "account-manager"
+    ICON "${CMAKE_SOURCE_DIR}/cmake/account-manager.ico"
+    VERSION_MAJOR $ENV{VERSION_MAJOR}
+    VERSION_MINOR $ENV{VERSION_MINOR}
+    VERSION_PATCH $ENV{VERSION_PATCH}
+    VERSION_REVISION $ENV{VERSION_REVISION}
+
+)
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_link_libraries(${PROJECT_NAME} ${LIBS})
