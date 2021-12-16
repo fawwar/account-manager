@@ -17,7 +17,7 @@ linux-test-build:
   except:
     - tags
   script:
-    - version = 'cat VERSION.txt'
+    - export version='cat VERSION.txt'
     - echo "VERSION $value"
     - python3 ./scripts/packaging.py $PROJECT
     - mkdir -p smbtmp
