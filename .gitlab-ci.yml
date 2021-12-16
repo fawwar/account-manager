@@ -18,7 +18,7 @@ linux-test-build:
     - tags
   script:
     - export version='cat VERSION.txt'
-    - echo "VERSION $value"
+    - echo "VERSION $version"
     - python3 ./scripts/packaging.py $PROJECT
     - mkdir -p smbtmp
     - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
