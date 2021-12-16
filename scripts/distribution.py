@@ -37,15 +37,17 @@ def mkdir():
         #smbtmpPath.mkdir(mode=0o755, exist_ok=True)
     else:
         print('linux-x86_64')
-        mkPath = rootPath.joinpath('smptmp/linux-x86_64')
-        mkPath.mkdir(mode=0o755, exist_ok=True)
-        verPath = mkPath.joinpath(str(versionStr))
+        smptmpPath = rootPath.joinpath('smptmp')
+        smptmpPath.mkdir(mode=0o755, exist_ok=True)
+        linuxPath = smptmpPath.joinpath('linux-x86_64')
+        linuxPath.mkdir(mode=0o755, exist_ok=True)
+        verPath = linuxPath.joinpath(str(versionStr))
         verPath.mkdir(mode=0o755, exist_ok=True)
 
-        os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/comm-server smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
-        shutil.rmtree(verPath, ignore_errors=True)
-        shutil.copytree('account-manager.tar.gz', verPath)
-        os.system('umont smbtmp && rm -rf smptmp')
+        #os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/comm-server smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+        #shutil.rmtree(verPath, ignore_errors=True)
+        #shutil.copytree('account-manager.tar.gz', verPath)
+        #os.system('umont smbtmp && rm -rf smptmp')
 
 def main(argv):
     mkdir()
