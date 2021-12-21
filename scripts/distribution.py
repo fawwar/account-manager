@@ -38,7 +38,7 @@ def mkdir():
             winCMD = 'net use /y "X:"' + networkPath + '/u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD'
             os.system(winCMD)
             projPath = os.path.join(networkPath ,PROJECT, 'win-x86_64')
-            os.mkdirs(projPath, mode=0o755, exist_ok=True)
+            os.makedirs(projPath, mode=0o755, exist_ok=True)
             shutil.copy2('account-manager.zip', projPath)
             os.system('net use "X:" /delete /y')
         
