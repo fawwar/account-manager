@@ -33,7 +33,7 @@ def mkdir():
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            #os.system('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            os.system('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             verPath = smbtmpPath.joinpath(VERSION)
             verPath.mkdir(mode=0o755, exist_ok=True)
             #os.makedirs(verPath)
@@ -46,7 +46,7 @@ def mkdir():
             
         else:
             print ('Test build')
-            #os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = smbtmpPath.joinpath(PROJECT)
             projPath.mkdir(mode=0o755, exist_ok=True)
             #os.makedirs(projPath)
