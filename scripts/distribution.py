@@ -29,7 +29,7 @@ def mkdir():
         print('linux-x86_64')
         smbtmpPath = os.path.join(rootPath, 'smbtmp')
         os.makedirs(smbtmpPath, mode=0o755, exist_ok=True)
-        os.system('umount smbtmp')
+        #os.system('umount smbtmp')
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
@@ -52,7 +52,7 @@ def mkdir():
         shutil.rmtree(smbtmpPath)
         #os.system('rm -rf smbtmp/')
                
-def setProject(argv):
+def getProject(argv):
     global PROJECT
     PROJECT = 'std'
     if len(argv) > 1 :
@@ -80,7 +80,7 @@ def regExpr(s):
         raise SystemExit()
 
 def main(argv):
-    setProject(sys.argv) 
+    getProject(sys.argv) 
     mkdir()
 
 if __name__ == "__main__":
