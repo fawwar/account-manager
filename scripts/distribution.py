@@ -46,6 +46,7 @@ def mkdir():
             
         else:
             print ('Test build')
+            os.chdir(rootPath)
             os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = smbtmpPath.joinpath(PROJECT)
             projPath.mkdir(mode=0o755, exist_ok=True)
@@ -58,14 +59,9 @@ def mkdir():
         print('umount smptmp')
         os.system('umount smptmp')
         print('remove smbtmpPath')
-        #shutil.rmtree(smbtmpPath)
-        os.system('rm -rf smbtmp/')
-        
-        #os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/comm-server smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
-        #shutil.rmtree(verPath, ignore_errors=True)
-        #shutil.copytree('account-manager.tar.gz', verPath)
-        #os.system('umont smbtmp && rm -rf smptmp')
-
+        shutil.rmtree(smbtmpPath)
+        #os.system('rm -rf smbtmp/')
+               
 def setProject(argv):
     global PROJECT
     PROJECT = 'std'
