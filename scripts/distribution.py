@@ -29,7 +29,7 @@ def mkdir():
         print('linux-x86_64')
         smbtmpPath = os.path.join(rootPath, 'smbtmp')
         os.makedirs(smbtmpPath, mode=0o755, exist_ok=True)
-        os.system('umount smptmp')
+        os.system('umount smbtmp')
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
@@ -46,8 +46,8 @@ def mkdir():
 
         print('copy file')    
         shutil.copy(rootPath.joinpath('account-manager.tar.gz'),projPath)
-        print('umount smptmp')
-        os.system('umount smptmp')
+        print('umount smbtmp')
+        os.system('umount smbtmp')
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
         #os.system('rm -rf smbtmp/')
