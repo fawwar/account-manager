@@ -18,13 +18,6 @@ if not scriptPath.is_absolute():
     scriptPath = Path(os.getcwd()).joinpath(scriptPath)
 rootPath = scriptPath.parent.parent
 
-def mount(path_to_smb, path_to_local_dir):
-    retcode = subprocess.call(["mount", "-t", "cifs", path_to_smb, path_to_local_dir])
-
-def unmount(path_to_local_dir):
-    """Unmounts the local SMB directory"""
-    retcode = subprocess.call(["umount", path_to_local_dir])
-
 def mkdir():
     if os.name == 'nt':
         print('win-x86_64')
@@ -34,39 +27,39 @@ def mkdir():
         
     else:
         print('linux-x86_64')
-        print('smptmpPath start')
-        smptmpPath = rootPath.joinpath('smptmp')
-        #smptmpPath.makedirs(mode=0o755, exist_ok=True)
-        os.makedirs(smptmpPath)
-        print('smptmpPath end')
+        print('smbtmpPath start')
+        smbtmpPath = rootPath.joinpath('smbtmp')
+        smbtmpPath.mkdir(mode=0o755, exist_ok=True)
+        #os.makedirs(smbtmpPath)
+        print('smbtmpPath end')
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
             os.system('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
-            verPath = smptmpPath.joinpath(VERSION)
-            #verPath.makedirs(mode=0o755, exist_ok=True)
-            os.makedirs(verPath)
+            verPath = smbtmpPath.joinpath(VERSION)
+            verPath.mkdir(mode=0o755, exist_ok=True)
+            #os.makedirs(verPath)
             projPath = verPath.joinpath(PROJECT)
-            #projPath.makedirs(mode=0o755, exist_ok=True)
-            os.makedirs(projPath)
+            projPath.mkdir(mode=0o755, exist_ok=True)
+            #os.makedirs(projPath)
             linuxPath = projPath.joinpath('linux-x86_64')
-            #linuxPath.makedirs(mode=0o755, exist_ok=True)
-            os.makedirs(linuxPath)
+            linuxPath.mkdir(mode=0o755, exist_ok=True)
+            #os.makedirs(linuxPath,mode=0o755,exist_ok=True)
             
         else:
             print ('Test build')
             os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
-            projPath = smptmpPath.joinpath(PROJECT)
-            #projPath.makedirs(mode=0o755, exist_ok=True)
-            os.makedirs(projPath)
+            projPath = smbtmpPath.joinpath(PROJECT)
+            projPath.mkdir(mode=0o755, exist_ok=True)
+            #os.makedirs(projPath)
             linuxPath = projPath.joinpath('linux-x86_64')
-            #linuxPath.makedirs(mode=0o755, exist_ok=True)
+            linuxPath.makedirs(mode=0o755, exist_ok=True)
             os.makedirs(linuxPath)
         print('copy file')    
         shutil.copy(rootPath.joinpath('account-manager.tar.gz'),linuxPath)
-        print('remove smptmpPath')
-        shutil.rmtree(smptmpPath)
-        print('umount smptmp')
+        print('remove smbtmpPath')
+        shutil.rmtree(smbtmpPath)
+        print('umount smbtmp')
         os.system('umount smbtmp')
         #os.system('rm -rf smbtmp/')
         
