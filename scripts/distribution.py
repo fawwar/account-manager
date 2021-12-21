@@ -34,30 +34,39 @@ def mkdir():
         
     else:
         print('linux-x86_64')
+        print('smptmpPath start')
         smptmpPath = rootPath.joinpath('smptmp')
-        smptmpPath.mkdir(mode=0o755, exist_ok=True)
-        
+        #smptmpPath.makedirs(mode=0o755, exist_ok=True)
+        os.makedirs(smptmpPath)
+        print('smptmpPath end')
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
             os.system('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             verPath = smptmpPath.joinpath(VERSION)
-            verPath.mkdir(mode=0o755, exist_ok=True)
+            #verPath.makedirs(mode=0o755, exist_ok=True)
+            os.makedirs(verPath)
             projPath = verPath.joinpath(PROJECT)
-            projPath.mkdir(mode=0o755, exist_ok=True)
+            #projPath.makedirs(mode=0o755, exist_ok=True)
+            os.makedirs(projPath)
             linuxPath = projPath.joinpath('linux-x86_64')
-            linuxPath.mkdir(mode=0o755, exist_ok=True)
+            #linuxPath.makedirs(mode=0o755, exist_ok=True)
+            os.makedirs(linuxPath)
             
         else:
             print ('Test build')
             os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = smptmpPath.joinpath(PROJECT)
-            projPath.mkdir(mode=0o755, exist_ok=True)
+            #projPath.makedirs(mode=0o755, exist_ok=True)
+            os.makedirs(projPath)
             linuxPath = projPath.joinpath('linux-x86_64')
-            linuxPath.mkdir(mode=0o755, exist_ok=True)
-            
+            #linuxPath.makedirs(mode=0o755, exist_ok=True)
+            os.makedirs(linuxPath)
+        print('copy file')    
         shutil.copy(rootPath.joinpath('account-manager.tar.gz'),linuxPath)
+        print('remove smptmpPath')
         shutil.rmtree(smptmpPath)
+        print('umount smptmp')
         os.system('umount smbtmp')
         #os.system('rm -rf smbtmp/')
         
