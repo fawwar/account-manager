@@ -24,26 +24,27 @@ def mkdir():
         #path = os.path.join('smbtmp','win-x86_64', versionStr)
         #path = rootPath.joinPath(path)
         #os.mkdir(path)
+        os.chdir(rootPath)
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            os.chdir(rootPath)
-            networkPath = '\\%SMB_URL%\IOT-Release\account-manager'
-            projPath = os.path.join(networkPath, VERSION, PROJECT, 'win-x86_64')
+            
+            projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
             print('Test build')
-            os.chdir(rootPath)
-            networkPath = '\\%SMB_URL%\\IOT-Release\\ci\\account-manager'
-            if (os.path.isfile('X:\\')):
+            
+            projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+        
+        if (os.path.isfile('X:\\')):
                 print('X:\\ file exist')
                 os.system('net use "X:" /delete /y')
-            
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
-            os.system(winCMD)
-            projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-            #os.makedirs(projPath, mode=0o755, exist_ok=True)
-            shutil.copy2('account-manager.zip', projPath)
-            os.system('net use "X:" /delete /y')
+        os.system(winCMD)
+        shutil.copy('account-manager.zip', projPath)
+        print('copy file ', projPath)
+        os.system('net use "X:" /delete /y')
+        print('net use "X:" /delete /y')
         
     else:
         print('linux-x86_64')
@@ -64,7 +65,7 @@ def mkdir():
             projPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
             os.makedirs(projPath, mode=0o755, exist_ok=True)
 
-        print('copy file')    
+        print('copy file ',projPath)    
         shutil.copy(rootPath.joinpath('account-manager.tar.gz'),projPath)
         print('umount smbtmp')
         os.system('umount smbtmp')
