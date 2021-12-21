@@ -27,11 +27,9 @@ def mkdir():
         
     else:
         print('linux-x86_64')
-        print('smbtmpPath start')
         smbtmpPath = rootPath.joinpath('smbtmp')
         smbtmpPath.mkdir(mode=0o755, exist_ok=True)
         #os.makedirs(smbtmpPath)
-        print('smbtmpPath end')
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
@@ -57,10 +55,10 @@ def mkdir():
             #os.makedirs(linuxPath)
         print('copy file')    
         shutil.copy(rootPath.joinpath('account-manager.tar.gz'),linuxPath)
+        print('umount smptmp')
+        os.system('umount smptmp')
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
-        print('umount smbtmp')
-        os.system('umount smbtmp')
         #os.system('rm -rf smbtmp/')
         
         #os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/comm-server smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
