@@ -21,9 +21,9 @@ rootPath = scriptPath.parent.parent
 def mkdir():
     if os.name == 'nt':
         print('win-x86_64')
-        path = os.path.join('smbtmp','win-x86_64', versionStr)
-        path = rootPath.joinPath(path)
-        os.mkdir(path)
+        #path = os.path.join('smbtmp','win-x86_64', versionStr)
+        #path = rootPath.joinPath(path)
+        #os.mkdir(path)
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
