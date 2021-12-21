@@ -46,11 +46,8 @@ windows-test-build:
     - chcp 65001
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-    - tools\py\python.exe .\scripts\packaging.py %PROJECT%      
-    - if exist "X:\" ( net use "X:" /delete /y )
-    - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy account-manager.zip X:\%PROJECT%\win-x86_64
-    - net use "X:" /delete /y
+    - tools\py\python.exe .\scripts\packaging.py %PROJECT%
+    - tools\py\python.exe .\scripts\distribution.py %PROJECT%      
 
 windows-release-build:
   tags:

@@ -24,6 +24,22 @@ def mkdir():
         path = os.path.join('smbtmp','win-x86_64', versionStr)
         path = rootPath.joinPath(path)
         os.mkdir(path)
+        if os.getenv('CI_COMMIT_TAG'):
+            print('Release build')
+            regExpr(os.environ['CI_COMMIT_TAG'])
+            os.chdir(rootPath)
+        else:
+            print('Test build')
+            os.chdir(rootPath)
+            if (os.path.isfile('X:\\')):
+                print('X:\\ file exist')
+                os.system('net use "X:" /delete /y')
+            networkPath = '\\%SMB_URL%\\IOT-Release\\ci\\account-manager'
+            winCMD = 'net use /y "X:"' + networkPath + '/u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD'
+            os.system(winCMD)
+            projPath = os.path.join(networkPath ,PROJECT, 'win-x86_64')
+            shutil.copy2('account-manager.zip', projPath)
+            os.system('net use "X:" /delete /y')
         
     else:
         print('linux-x86_64')
