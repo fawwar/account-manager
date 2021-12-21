@@ -28,16 +28,19 @@ def mkdir():
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
             os.chdir(rootPath)
+            networkPath = '\\%SMB_URL%\IOT-Release\account-manager'
+            projPath = os.path.join(networkPath, VERSION, PROJECT, 'win-x86_64')
         else:
             print('Test build')
             os.chdir(rootPath)
+            networkPath = '\\%SMB_URL%\\IOT-Release\\ci\\account-manager'
             if (os.path.isfile('X:\\')):
                 print('X:\\ file exist')
                 os.system('net use "X:" /delete /y')
-            networkPath = '\\%SMB_URL%\\IOT-Release\\ci\\account-manager'
-            winCMD = 'net use /y "X:"' + networkPath + '/u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD'
+            
+            winCMD = 'net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%'
             os.system(winCMD)
-            projPath = os.path.join(networkPath ,PROJECT, 'win-x86_64')
+            projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
             os.makedirs(projPath, mode=0o755, exist_ok=True)
             shutil.copy2('account-manager.zip', projPath)
             os.system('net use "X:" /delete /y')
