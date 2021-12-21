@@ -38,10 +38,10 @@ def mkdir():
                 print('X:\\ file exist')
                 os.system('net use "X:" /delete /y')
             
-            winCMD = 'net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%'
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
             os.system(winCMD)
             projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-            os.makedirs(projPath, mode=0o755, exist_ok=True)
+            #os.makedirs(projPath, mode=0o755, exist_ok=True)
             shutil.copy2('account-manager.zip', projPath)
             os.system('net use "X:" /delete /y')
         
