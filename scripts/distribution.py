@@ -31,8 +31,6 @@ def run(command, cb= sys.stdout.buffer.write):
     if rc != 0:
         raise SystemExit(rc)
 
-
-
 def mkdir():
     if os.name == 'nt':
         print('win-x86_64')
@@ -49,38 +47,34 @@ def mkdir():
         
         if (os.path.isfile('X:\\')):
                 print('X:\\ file exist')
-                os.system('net use "X:" /delete /y')
-        os.system(winCMD)
-        if not (os.path.exists(projPath)):
+                run('net use "X:" /delete /y')
+        run(winCMD)
+        if not (os.path.isdir(projPath)):
             os.makedirs(projPath, mode=0o755, exist_ok=True)
         shutil.copy2(rootPath.joinpath('account-manager.zip'), projPath)
         print('copy file ', projPath)
-        os.system('net use "X:" /delete /y')
-        print('net use "X:" /delete /y')
+        run('net use "X:" /delete /y')
         
     else:
         print('linux-x86_64')
         smbtmpPath = os.path.join(rootPath, 'smbtmp')
         os.makedirs(smbtmpPath, mode=0o755, exist_ok=True)
-        #os.system('umount smbtmp')
         os.chdir(rootPath)
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            os.system('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
-            #os.makedirs(projPath, mode=0o755, exist_ok=True)
+            
         else:
             print ('Test build')
-            os.system('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
-            #os.makedirs(projPath, mode=0o755, exist_ok=True)
         
         os.makedirs(projPath, mode=0o755, exist_ok=True)
         print('copy file ',projPath)    
         shutil.copy(rootPath.joinpath('account-manager.tar.gz'),projPath)
-        print('umount smbtmp')
-        os.system('umount smbtmp')
+        run('umount smbtmp')
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
         #os.system('rm -rf smbtmp/')
