@@ -18,7 +18,7 @@ linux-test-build:
     - tags
   script:
     - python3 ./scripts/packaging.py $PROJECT
-    - python3 ./scripts/distribution.py $PROJECT     
+    - python3 ./scripts/delivery.py $PROJECT     
 linux-release-build:
   tags:
     - ubuntu-18
@@ -30,7 +30,7 @@ linux-release-build:
     - branches
   script:
     - python3 ./scripts/packaging.py $PROJECT
-    - python3 ./scripts/distribution.py $PROJECT      
+    - python3 ./scripts/delivery.py $PROJECT      
 
 windows-test-build:
   tags:
@@ -43,7 +43,7 @@ windows-test-build:
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - tools\py\python.exe .\scripts\packaging.py %PROJECT%
-    - tools\py\python.exe .\scripts\distribution.py %PROJECT%      
+    - tools\py\python.exe .\scripts\delivery.py %PROJECT%      
 
 windows-release-build:
   tags:
@@ -58,7 +58,7 @@ windows-release-build:
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - tools\py\python.exe .\scripts\packaging.py %PROJECT%
-    - tools\py\python.exe .\scripts\distribution.py %PROJECT%
+    - tools\py\python.exe .\scripts\delivery.py %PROJECT%
 
 windows-cleanup:
   tags:
