@@ -51,7 +51,9 @@ def mkdir():
                 print('X:\\ file exist')
                 os.system('net use "X:" /delete /y')
         os.system(winCMD)
-        shutil.copy('account-manager.zip', projPath)
+        if (os.path.isfile(projPath)):
+            os.makedirs(projPath, mode=0o755, exist_ok=True)
+        shutil.copy2(rootPath.joinpath('account-manager.zip'), projPath)
         print('copy file ', projPath)
         os.system('net use "X:" /delete /y')
         print('net use "X:" /delete /y')
