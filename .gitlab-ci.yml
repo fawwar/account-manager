@@ -29,12 +29,8 @@ linux-release-build:
   except:
     - branches
   script:
-    - python3 ./scripts/packaging.py $PROJECT      
-    - bash ./scripts/packaging.sh
-    - mkdir -p smbtmp
-    - mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
-    - mkdir -p smbtmp/$PROJECT/linux-x86_64
-    - cp account-manager.tar.gz smbtmp/$PROJECT/linux-x86_64 && umount smbtmp && rm -rf smbtmp
+    - python3 ./scripts/packaging.py $PROJECT
+    - python3 ./scripts/distrubution.py $PROJECT      
 
 windows-test-build:
   tags:
@@ -61,11 +57,8 @@ windows-release-build:
     - chcp 65001
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarasall.bat" amd64
-    - tools\py\python.exe .\scripts\packaging.py %PROJECT%  
-    - if exist "X:\" ( net use "X:" /delete /y )
-    - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy account-manager.zip X:\%PROJECT%\win-x86_64
-    - net use "X:" /delete /y
+    - tools\py\python.exe .\scripts\packaging.py %PROJECT%
+    - tools\py\python.exe .\scripts\distribution.py %PROJECT%
 
 windows-cleanup:
   tags:
