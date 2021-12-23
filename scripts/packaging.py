@@ -98,10 +98,9 @@ def setPackageXml():
             root = tree.getroot()
             for it in root.iter('ReleaseDate'):
                 it.text = str(releaseDate)
+            tree.write(xmlPath,xml_declaration=True, encoding ="UTF-8", method ="xml" )
         else:
             print ('package.xml file not exist')
-
-    tree.write(xmlPath,xml_declaration=True, encoding ="UTF-8", method ="xml" )
 
 def setVersion():
     versionStr = '0.0.0'
