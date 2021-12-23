@@ -86,8 +86,24 @@ def createPackage():
         print('create account-manager.tar.gz')
         run('tar zcf account-manager.tar.gz account-manager')
 
-def setVersion():
+def setPackageXml():
+    global rootPath
+    now = datetime.now()
+    releaseDate = now.strftime('%Y-%m-%d')
+    xmlPath = os.path.join(rootPath, 'account-manager/meta/package.xml')
+    
+    if os.getenv('CI_COMMIT_TAG'):
+        if os.path.isfile(xmlPath):
+            tree = ET.parse(xmlPath)
+            root = tree.getroot()
+            for it in root.iter('ReleaseDate'):
+                it.text = str(releaseDate)
+        else:
+            print ('package.xml file not exist')
 
+    tree.write(xmlPath,xml_declaration=True, encoding ="UTF-8", method ="xml" )
+
+def setVersion():
     versionStr = '0.0.0'
     versionPath = rootPath.joinpath('VERSION.txt')
     if 'CI_COMMIT_TAG' in os.environ:
@@ -142,6 +158,7 @@ def main(argv):
     build()
     # done, copy outputs
     copyOutputs()
+    setPackageXml()
     # archive zip
     os.chdir(rootPath)
     createPackage()
