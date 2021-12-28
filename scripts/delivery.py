@@ -53,7 +53,7 @@ def mkdir():
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            # setPackageXml()
+            setPackageXml()
             projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
             winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
@@ -79,7 +79,7 @@ def mkdir():
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            # setPackageXml()
+            setPackageXml()
             run('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
             
