@@ -18,6 +18,15 @@ if not scriptPath.is_absolute():
     scriptPath = Path(os.getcwd()).joinpath(scriptPath)
 rootPath = scriptPath.parent.parent
 
+def stdout(command):
+    print ('run ' + command)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    while True:
+        line = process.stdout.readline()
+        if not line:
+            break
+        else:
+            print ('output: ', line.rstrip())
 def run(command, cb= sys.stdout.buffer.write):
     print ('run '+ command)
     process = subprocess.Popen(command, stdout= subprocess.PIPE, shell=True)
@@ -107,6 +116,7 @@ def regExpr(s):
         raise SystemExit()
 
 def main(argv):
+    stdout('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/v3.3.8-stdtest"')
     getProject(sys.argv) 
     mkdir()
 
