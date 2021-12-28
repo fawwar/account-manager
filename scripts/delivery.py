@@ -21,12 +21,18 @@ rootPath = scriptPath.parent.parent
 def stdout(command):
     print ('run ' + command)
     process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    d = {}
     while True:
         line = process.stdout.readline()
         if not line:
             break
         else:
-            print ('output: ', line.rstrip())
+            output_str = str(line.strip().decode('utf-8'))
+            #print ('output_str ', output_str)
+            d.update( dict(s.split(' | ')for s in [output_str]))
+    print (d)
+    return d
+
 def run(command, cb= sys.stdout.buffer.write):
     print ('run '+ command)
     process = subprocess.Popen(command, stdout= subprocess.PIPE, shell=True)
@@ -47,6 +53,7 @@ def mkdir():
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
+            # setPackageXml()
             projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
             winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
@@ -72,6 +79,7 @@ def mkdir():
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
+            # setPackageXml()
             run('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
             
@@ -87,7 +95,22 @@ def mkdir():
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
         #os.system('rm -rf smbtmp/')
-               
+
+def setPackageXml():
+    print('setPackageXml')
+    tagDict = stdout('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/v3.3.8-stdtest"')
+    xmlPath = os.path.join('packaging/qtifw/packages/account-manager/meta/', 'package.xml') #'packaging/qtifw/packages/account-manager/meta/package.xml'
+    if os.path.isfile(xmlPath):
+        tree = ET.parse(xmlPath)
+        root = tree.getroot()
+        for releaseDate in root.iter('ReleaseDate'):
+            #releaseDate.text = str(Date)
+            releaseDate.text = tagDict[os.environ['CI_COMMIT_TAG']]
+            print ('ReleaseDate ',releaseDate)
+    else:
+        print ('package.xml file not existed')
+    tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
+
 def getProject(argv):
     global PROJECT
     PROJECT = 'std'
@@ -116,7 +139,6 @@ def regExpr(s):
         raise SystemExit()
 
 def main(argv):
-    stdout('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/v3.3.8-stdtest"')
     getProject(sys.argv) 
     mkdir()
 
