@@ -19,21 +19,6 @@ if not scriptPath.is_absolute():
     scriptPath = Path(os.getcwd()).joinpath(scriptPath)
 rootPath = scriptPath.parent.parent
 
-def stdout(command):
-    print ('run ' + command)
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-    d = {}
-    while True:
-        line = process.stdout.readline()
-        if not line:
-            break
-        else:
-            output_str = str(line.strip().decode('utf-8'))
-            #print ('output_str ', output_str)
-            d.update( dict(s.split(' | ')for s in [output_str]))
-    print (d)
-    return d
-
 def run(command, cb= sys.stdout.buffer.write):
     print ('run '+ command)
     process = subprocess.Popen(command, stdout= subprocess.PIPE, shell=True)
@@ -99,15 +84,19 @@ def mkdir():
 
 def setPackageXml():
     print('setPackageXml')
-    tagDict = stdout('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/v3.3.8-stdtest"')
+    status, output = subprocess.getstatusoutput('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/"')
+    result = output.split('\n')
+    tagDict = dict(a.split(' | ') for a in result)
     xmlPath = os.path.join(rootPath, 'account-manager/meta/package.xml')     
     if os.path.isfile(xmlPath):
         tree = ET.parse(xmlPath)
         root = tree.getroot()
         for releaseDate in root.iter('ReleaseDate'):
-            #releaseDate.text = str(Date)
             releaseDate.text = tagDict[os.environ['CI_COMMIT_TAG']]
-            print ('ReleaseDate ',releaseDate)
+            print ('ReleaseDate ',releaseDate.text)
+        for version in root.iter('Version'):
+            version.text = VERSION
+            print('Version ', version.text)
     else:
         print ('package.xml file not existed')
     tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
