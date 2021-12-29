@@ -87,16 +87,17 @@ def setPackageXml():
     status, output = subprocess.getstatusoutput('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/"')
     result = output.split('\n')
     tagDict = dict(a.split(' | ') for a in result)
+    print ('    tagDict ',tagDict)
     xmlPath = os.path.join(rootPath, 'account-manager/meta/package.xml')     
     if os.path.isfile(xmlPath):
         tree = ET.parse(xmlPath)
         root = tree.getroot()
         for releaseDate in root.iter('ReleaseDate'):
             releaseDate.text = tagDict[os.environ['CI_COMMIT_TAG']]
-            print ('ReleaseDate ',releaseDate.text)
+            print ('    ReleaseDate ',releaseDate.text)
         for version in root.iter('Version'):
             version.text = VERSION
-            print('Version ', version.text)
+            print('     Version ', version.text)
     else:
         print ('package.xml file not existed')
     tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
@@ -121,8 +122,9 @@ def regExpr(s):
         else:
             PROJECT = match.group(2)[1:]
         VERSION = match.group(1)
-        print('VERSION', VERSION)
-        print('PROJECT', PROJECT)
+        print('setProject')
+        print('     VERSION ', VERSION)
+        print('     PROJECT ', PROJECT)
         
     else:
         print('Version Format Error')
