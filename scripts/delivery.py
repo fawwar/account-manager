@@ -100,7 +100,7 @@ def mkdir():
 def setPackageXml():
     print('setPackageXml')
     tagDict = stdout('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/v3.3.8-stdtest"')
-    xmlPath = os.path.join('packaging/qtifw/packages/account-manager/meta/', 'package.xml') #'packaging/qtifw/packages/account-manager/meta/package.xml'
+    xmlPath = os.path.join(rootPath, 'account-manager/meta/package.xml')     
     if os.path.isfile(xmlPath):
         tree = ET.parse(xmlPath)
         root = tree.getroot()
