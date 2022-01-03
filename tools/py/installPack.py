@@ -8,7 +8,8 @@ from pathlib import Path
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
     scriptPath = Path(os.getcwd()).joinpath(scriptPath)
-   
+rootPath = scriptPath.parent
+
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
@@ -28,7 +29,7 @@ if __name__ == '__main__':
     #install('pandas')
     #uninstall('numpy')
 
-    f = open (scriptPath.joinpath('PackageList.txt'))
+    f = open (rootPath.joinpath('PackageList.txt'))
     for line in f.readlines():
         print (line)
         install(line)
