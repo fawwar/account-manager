@@ -2,6 +2,7 @@ import subprocess
 import sys
 import pip
 import pkg_resources
+import os
 from pathlib import Path
 
 scriptPath = Path(__file__)
