@@ -84,8 +84,8 @@ def mkdir():
 
 def setPackageXml():
     print('setPackageXml')
-    os.system('git tag -l | xargs git tag -d')
-    os.system('git fetch --tags')
+    run('git tag -d')
+    run('git fetch --tags')
     status, output = subprocess.getstatusoutput('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/"')
     result = output.split('\n')
     tagDict = dict(a.split(' | ') for a in result)
@@ -99,7 +99,7 @@ def setPackageXml():
             print('     Version ', version.text)
         for releaseDate in root.iter('ReleaseDate'):
             releaseDate.text = tagDict[os.environ['CI_COMMIT_TAG']]
-            print ('    ReleaseDate ',releaseDate.text)
+            print('     ReleaseDate ',releaseDate.text)
     else:
         print ('package.xml file not existed')
     tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
