@@ -5,7 +5,7 @@ import pkg_resources
 
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
-    scriptPath = Path(os.getcwd()).joinpath(scriptPath
+    scriptPath = Path(os.getcwd()).joinpath(scriptPath)
    
 def install(package):
     if hasattr(pip, 'main'):
