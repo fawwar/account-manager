@@ -2,6 +2,7 @@ import subprocess
 import sys
 import pip
 import pkg_resources
+from pathlib import Path
 
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
