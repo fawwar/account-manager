@@ -6,11 +6,7 @@ import pkg_resources
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
     scriptPath = Path(os.getcwd()).joinpath(scriptPath
-
-'''
-def install(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-'''    
+   
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
