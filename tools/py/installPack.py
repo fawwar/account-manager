@@ -3,6 +3,10 @@ import sys
 import pip
 import pkg_resources
 
+scriptPath = Path(__file__)
+if not scriptPath.is_absolute():
+    scriptPath = Path(os.getcwd()).joinpath(scriptPath
+
 '''
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -25,8 +29,8 @@ if __name__ == '__main__':
     #install('numpy')
     #install('pandas')
     #uninstall('numpy')
-    
-    f = open ('PackageList.txt')
+
+    f = open (scriptPath.joinpath('PackageList.txt'))
     for line in f.readlines():
         print (line)
         install(line)
