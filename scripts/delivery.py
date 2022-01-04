@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import datetime
 import re
 import xml.etree.ElementTree as ET
-import numpy
+import numpy as np
 
 PROJECT=""
 VERSION=""
@@ -68,12 +68,12 @@ def mkdir():
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
             setPackageXml()
-            run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +'smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
             
         else:
             print ('Test build')
-            run('mount -t cifs //$SMB_URL/IOT-Release/ci/'+ SERVICE +'smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/ci/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
         
         os.makedirs(projPath, mode=0o755, exist_ok=True)
@@ -135,6 +135,8 @@ def regExpr(s):
         raise SystemExit()
 
 def main(argv):
+    A = np.array([3,4,5])
+    print (type(A))
     getProject(sys.argv) 
     mkdir()
 
