@@ -29,7 +29,7 @@ if __name__ == '__main__':
     #install('pandas')
     #uninstall('numpy')
 
-    f = open (rootPath.joinpath('PackageList.txt'))
+    f = open (rootPath.joinpath('requirements.txt'))
     for line in f.readlines():
         print (line)
         install(line)
