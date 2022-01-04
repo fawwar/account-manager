@@ -14,6 +14,7 @@ import numpy
 
 PROJECT=""
 VERSION=""
+SERVICE='account-manager'
 
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
@@ -42,11 +43,11 @@ def mkdir():
             regExpr(os.environ['CI_COMMIT_TAG'])
             setPackageXml()
             projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
             print('Test build')
             projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\account-manager" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         
         if (os.path.isfile('X:\\')):
                 print('X:\\ file exist')
@@ -54,7 +55,7 @@ def mkdir():
         run(winCMD)
         if not (os.path.isdir(projPath)):
             os.makedirs(projPath, mode=0o755, exist_ok=True)
-        shutil.copy2(rootPath.joinpath('account-manager.zip'), projPath)
+        shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
         print('copy file ', projPath)
         run('net use "X:" /delete /y')
         
@@ -67,17 +68,17 @@ def mkdir():
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
             setPackageXml()
-            run('mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +'smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
             
         else:
             print ('Test build')
-            run('mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/ci/'+ SERVICE +'smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
         
         os.makedirs(projPath, mode=0o755, exist_ok=True)
         print('copy file ',projPath)    
-        shutil.copy(rootPath.joinpath('account-manager.tar.gz'),projPath)
+        shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),projPath)
         run('umount smbtmp')
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
@@ -91,7 +92,7 @@ def setPackageXml():
     result = output.split('\n')
     tagDict = dict(a.split(' | ') for a in result)
     print ('    tagDict ',tagDict)
-    xmlPath = os.path.join(rootPath, 'account-manager/meta/package.xml')     
+    xmlPath = os.path.join(rootPath, SERVICE+'/meta/package.xml')     
     if os.path.isfile(xmlPath):
         tree = ET.parse(xmlPath)
         root = tree.getroot()
