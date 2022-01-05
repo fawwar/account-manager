@@ -136,9 +136,7 @@ def regExpr(s):
 
 def main(argv):
     
-    for item, value in os.environ.items():
-        print('{}: {}'.format(item, value))
-
+    print (os.environ['CI_PROJECT_NAME'])
     getProject(sys.argv) 
     mkdir()
 
