@@ -31,7 +31,7 @@ linux-release-build:
     - tags
   except:
     - branches
-  before_scripts:
+  before_script:
     - python3 ./tools/py/get-pip.py
     - python3 ./tools/py/installPack.py    
   script:
