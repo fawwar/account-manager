@@ -135,8 +135,10 @@ def regExpr(s):
         raise SystemExit()
 
 def main(argv):
-    A = np.array([3,4,5])
-    print (type(A))
+    
+    for item, value in os.environ.items():
+        print('{}: {}'.format(item, value))
+
     getProject(sys.argv) 
     mkdir()
 

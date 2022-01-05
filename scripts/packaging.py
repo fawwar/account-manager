@@ -157,7 +157,7 @@ def main(argv):
     build()
     # done, copy outputs
     copyOutputs()
-    setPackageXml()
+    #setPackageXml()
     # archive zip
     os.chdir(rootPath)
     createPackage()
