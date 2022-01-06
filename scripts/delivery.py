@@ -110,8 +110,8 @@ def getProject(argv):
     global PROJECT
     PROJECT = 'std'
     if len(argv) > 1 :
-        if str(argv[2]) == 'bi' or str(argv[2]) == 'telstra':
-            PROJECT = str(argv[2])
+        if str(argv[1]) == 'bi' or str(argv[1]) == 'telstra':
+            PROJECT = str(argv[1])
                    
     print('Project ',PROJECT)
 
