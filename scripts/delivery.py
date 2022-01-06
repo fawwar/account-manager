@@ -14,7 +14,7 @@ import numpy as np
 
 PROJECT=""
 VERSION=""
-SERVICE='account-manager'
+SERVICE=''
 
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
@@ -110,8 +110,8 @@ def getProject(argv):
     global PROJECT
     PROJECT = 'std'
     if len(argv) > 1 :
-        if str(argv[1]) == 'bi' or str(argv[1]) == 'telstra':
-            PROJECT = str(argv[1])
+        if str(argv[2]) == 'bi' or str(argv[2]) == 'telstra':
+            PROJECT = str(argv[2])
                    
     print('Project ',PROJECT)
 
@@ -135,8 +135,13 @@ def regExpr(s):
         raise SystemExit()
 
 def main(argv):
-    
+    global SERVICE
     print (os.environ['CI_PROJECT_NAME'])
+    if 'CI_PROJECT_NAME' in os.environ:
+        SERVICE = os.environ['CI_PROJECT_NAME']
+    else :
+        print ('SERVICE_NAME Not Found')
+        raise SystemExit()
     getProject(sys.argv) 
     mkdir()
 
