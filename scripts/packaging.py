@@ -8,32 +8,22 @@ import shutil
 import zipfile
 from pathlib import Path
 from datetime import datetime
-import xml.etree.ElementTree as ET 
+import re
+import xml.etree.ElementTree as ET
+import numpy as np
 
-encoding = os.device_encoding(1)
-# workaround in some env like gitlab runner or docker
-if encoding is None:
-    encoding = os.device_encoding(0)
-if encoding is None:
-    encoding = 'utf-8'
-elif encoding == 'cp65001':
-    encoding = 'utf-8'
+PROJECT=""
+VERSION=""
+SERVICE=''
 
 scriptPath = Path(__file__)
 if not scriptPath.is_absolute():
     scriptPath = Path(os.getcwd()).joinpath(scriptPath)
 rootPath = scriptPath.parent.parent
 
-#def run(command, cb=lambda x: print(x, end='')):
-def run(command, cb=sys.stdout.buffer.write, env=dict()):
-    #shlex.split(command)
-    global encoding
-    newEnv = dict(os.environ)
-    newEnv.update(env)
-    print('run ' + command)
-    if len(env) > 0:
-        print(env)
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, env=newEnv)
+def run(command, cb= sys.stdout.buffer.write):
+    print ('run '+ command)
+    process = subprocess.Popen(command, stdout= subprocess.PIPE, shell=True)
     while True:
         output = process.stdout.readline()
         if output == b'' and process.poll() is not None:
@@ -44,126 +34,116 @@ def run(command, cb=sys.stdout.buffer.write, env=dict()):
     if rc != 0:
         raise SystemExit(rc)
 
-def runCMake(PROJECT ,env):
+def packaging():
     if os.name == 'nt':
-        if PROJECT:
-            run('"C:\\Program Files\\CMake\\bin\\cmake.exe" -G "Visual Studio 14 2015 Win64" -DPROJECT=telstra  -DCMAKE_BUILD_TYPE=Release -DCMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD=ON ..', env=env)
+        print('win-x86_64')
+        os.chdir(rootPath)
+        if os.getenv('CI_COMMIT_TAG'):
+            print('Release build')
+            regExpr(os.environ['CI_COMMIT_TAG'])
+            setPackageXml()
+            projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
-            run('"C:\\Program Files\\CMake\\bin\\cmake.exe" -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD=ON ..', env=env)
+            print('Test build')
+            projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+        
+        if (os.path.isfile('X:\\')):
+                print('X:\\ file exist')
+                run('net use "X:" /delete /y')
+        run(winCMD)
+        if not (os.path.isdir(projPath)):
+            os.makedirs(projPath, mode=0o755, exist_ok=True)
+        shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
+        print('copy file ', projPath)
+        run('net use "X:" /delete /y')
+        
     else:
-        if PROJECT:
-            run('cmake -DCMAKE_BUILD_TYPE=Release .. -DPROJECT=telstra', env=env)
+        print('linux-x86_64')
+        smbtmpPath = os.path.join(rootPath, 'smbtmp')
+        os.makedirs(smbtmpPath, mode=0o755, exist_ok=True)
+        os.chdir(rootPath)
+        if os.getenv('CI_COMMIT_TAG'):
+            print ('Release build')
+            regExpr(os.environ['CI_COMMIT_TAG'])
+            setPackageXml()
+            run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
+            
         else:
-            run('cmake -DCMAKE_BUILD_TYPE=Release .. ', env=env)
-def build():      
-    if os.name == 'nt':
-        run('MSBuild account-manager.sln /p:Configuration=Release /p:Platform=x64')
-    else:
-        run('make install')
-
-def copyOutputs():
-    global rootPath
-    print('copy outputs')
-    dest = rootPath.joinpath('account-manager')
-    shutil.rmtree(dest, ignore_errors=True)
-    shutil.copytree(rootPath.joinpath('packaging/qtifw/packages/account-manager'), dest)
-    dest.joinpath('data').mkdir(mode=0o755, parents=True, exist_ok=True)
-    shutil.copytree(rootPath.joinpath('outputs'), dest.joinpath('data/account-manager'))
-
-def createPackage():
-    global rootPath
-    if os.name == 'nt':
-        print('create account-manager.zip')
-        p = Path(rootPath.joinpath('account-manager')).glob('**/*')
-        files = [x for x in p if x.is_file()]
-        zf = zipfile.ZipFile(rootPath.joinpath('account-manager.zip'), mode='w')
-        try:
-            for x in files:
-                zf.write(x.relative_to(rootPath))
-        finally:
-            zf.close()
-    else:
-        print('create account-manager.tar.gz')
-        run('tar zcf account-manager.tar.gz account-manager')
+            print ('Test build')
+            run('mount -t cifs //$SMB_URL/IOT-Release/ci/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            projPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
+        
+        os.makedirs(projPath, mode=0o755, exist_ok=True)
+        print('copy file ',projPath)    
+        shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),projPath)
+        run('umount smbtmp')
+        print('remove smbtmpPath')
+        shutil.rmtree(smbtmpPath)
+        #os.system('rm -rf smbtmp/')
 
 def setPackageXml():
-    global rootPath
-    now = datetime.now()
-    releaseDate = now.strftime('%Y-%m-%d')
-    xmlPath = os.path.join(rootPath, 'account-manager/meta/package.xml')
-    
-    if os.getenv('CI_COMMIT_TAG'):
-        if os.path.isfile(xmlPath):
-            tree = ET.parse(xmlPath)
-            root = tree.getroot()
-            for it in root.iter('ReleaseDate'):
-                it.text = str(releaseDate)
-            tree.write(xmlPath,xml_declaration=True, encoding ="UTF-8", method ="xml" )
-        else:
-            print ('package.xml file not exist')
-
-def setVersion():
-    versionStr = '0.0.0'
-    versionPath = rootPath.joinpath('VERSION.txt')
-    if 'CI_COMMIT_TAG' in os.environ:
-        versionStr = os.environ['CI_COMMIT_TAG']
-        # need to modify VERSION.txt 
-    elif os.path.exists(versionPath):
-        versionStr = Path(versionPath).read_text().replace('\n', '')
-   
-    versionInfo = versionStr.split('.')
-    if len(versionInfo) < 3:
-        print ('Version info is wrong ' + versionStr )
+    print('setPackageXml')
+    run('git tag -d')
+    run('git fetch --tags')
+    status, output = subprocess.getstatusoutput('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/"')
+    result = output.split('\n')
+    tagDict = dict(a.split(' | ') for a in result)
+    print ('    tagDict ',tagDict)
+    xmlPath = os.path.join(rootPath, SERVICE+'/meta/package.xml')     
+    if os.path.isfile(xmlPath):
+        tree = ET.parse(xmlPath)
+        root = tree.getroot()
+        for version in root.iter('Version'):
+            version.text = VERSION
+            print('     Version ', version.text)
+        for releaseDate in root.iter('ReleaseDate'):
+            releaseDate.text = tagDict[os.environ['CI_COMMIT_TAG']]
+            print('     ReleaseDate ',releaseDate.text)
     else:
-        # remove non-digit
-        for i in range(len(versionInfo)):
-            x=filter(str.isdigit, versionInfo[i])
-            versionInfo[i] = "".join(x)
-    if len(versionInfo) == 3:
-        if 'CI_JOB_ID' in os.environ:
-            versionInfo.append(os.environ['CI_JOB_ID'])
-            #setPackageXml(versionStr)
-        else:
-            versionInfo.append(datetime.now().strftime('%Y%m%d')[3:])
-        
-    return versionInfo
+        print ('package.xml file not existed')
+    tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
 
-def setProject(argv):
-    PROJECT = ''
+def getProject(argv):
+    global PROJECT
+    PROJECT = 'std'
     if len(argv) > 1 :
         if str(argv[1]) == 'bi' or str(argv[1]) == 'telstra':
-            print (str(argv[1]))
             PROJECT = str(argv[1])
                    
     print('Project ',PROJECT)
-    return PROJECT
+
+def regExpr(s):
+    global PROJECT
+    global VERSION
+    pattern = '(\d+\.\d+\.\d+)([-\x00-\x7F]{0,})' 
+    match = re.search(pattern,s)
+    if match != None:
+        if not match.group(2)[1:]:
+            PROJECT = 'std'
+        else:
+            PROJECT = match.group(2)[1:]
+        VERSION = match.group(1)
+        print('setProject')
+        print('     VERSION ', VERSION)
+        print('     PROJECT ', PROJECT)
+        
+    else:
+        print('Version Format Error')
+        raise SystemExit()
 
 def main(argv):
-   
-    PROJECT = setProject(sys.argv)
-    versionInfo = setVersion()
-
-    # change to build path
-    buildPath = rootPath.joinpath('build')
-    buildPath.mkdir(mode=0o755, exist_ok=True)
-    # cmake and build
-    os.chdir(buildPath)
-    runCMake(PROJECT, env={
-        'VERSION_MAJOR': versionInfo[0],
-        'VERSION_MINOR': versionInfo[1],
-        'VERSION_PATCH': versionInfo[2],
-        'VERSION_REVISION': versionInfo[3]
-    })
-    build()
-    # done, copy outputs
-    copyOutputs()
-    #setPackageXml()
-    # archive zip
-    os.chdir(rootPath)
-    createPackage()
+    global SERVICE
+    print (os.environ['CI_PROJECT_NAME'])
+    if 'CI_PROJECT_NAME' in os.environ:
+        SERVICE = os.environ['CI_PROJECT_NAME']
+    else :
+        print ('SERVICE_NAME Not Found')
+        raise SystemExit()
+    getProject(sys.argv) 
+    packaging()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
-
