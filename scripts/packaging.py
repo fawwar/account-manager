@@ -41,7 +41,6 @@ def packaging():
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            setPackageXml()
             projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
             winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
@@ -67,7 +66,6 @@ def packaging():
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            setPackageXml()
             run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
             
@@ -83,29 +81,6 @@ def packaging():
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
         #os.system('rm -rf smbtmp/')
-
-def setPackageXml():
-    print('setPackageXml')
-    run('git tag -d')
-    run('git fetch --tags')
-    status, output = subprocess.getstatusoutput('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/"')
-    result = output.split('\n')
-    tagDict = dict(a.split(' | ') for a in result)
-    print ('    tagDict ',tagDict)
-    xmlPath = os.path.join(rootPath, SERVICE+'/meta/package.xml')     
-    if os.path.isfile(xmlPath):
-        tree = ET.parse(xmlPath)
-        root = tree.getroot()
-        for version in root.iter('Version'):
-            version.text = VERSION
-            print('     Version ', version.text)
-        for releaseDate in root.iter('ReleaseDate'):
-            releaseDate.text = tagDict[os.environ['CI_COMMIT_TAG']]
-            print('     ReleaseDate ',releaseDate.text)
-    else:
-        print ('package.xml file not existed')
-    tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
-
 def getProject(argv):
     global PROJECT
     PROJECT = 'std'
