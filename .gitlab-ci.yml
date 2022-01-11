@@ -21,7 +21,8 @@ linux-test-build:
     - python3 ./tools/py/installPack.py
   script:
     - python3 ./scripts/build.py $PROJECT
-    - python3 ./scripts/packaging.py $PROJECT     
+    - python3 ./scripts/packaging.py $PROJECT
+
 linux-release-build:
   tags:
     - ubuntu-18
@@ -38,10 +39,10 @@ linux-release-build:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py $PROJECT
   artifacts:
-    when: on_success      
+    when: on_success
     paths:      
       - account-manager.tar.gz
-    expired_in: 1 week    
+    expire_in: 1 week    
 
 windows-test-build:
   tags:
@@ -71,7 +72,7 @@ windows-release-build:
     - tools\py\python.exe .\scripts\build.py %PROJECT%
     - tools\py\python.exe .\scripts\packaging.py %PROJECT%
   artifacts:
-    when: on_success
+    when: on_success      
     paths:
       - account-manager.zip
     expire_in: 1 week    
