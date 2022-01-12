@@ -43,12 +43,12 @@ def packaging():
             regExpr(os.environ['CI_COMMIT_TAG'])
             projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
             winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
-            packagingCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%' 
-            run(packagingCMD)
+            #packagingCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%' 
+            #run(packagingCMD)
         else:
             print('Test build')
             projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         
         if (os.path.isfile('X:\\')):
             print('X:\\ file exist')
