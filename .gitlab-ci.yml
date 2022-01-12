@@ -84,6 +84,7 @@ windows-release-build:
   artifacts:      
     paths:
       - account-manager.zip
+      - account-manager/  
     expire_in: 1 week    
 
 windows-cleanup:
