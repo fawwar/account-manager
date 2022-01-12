@@ -46,7 +46,7 @@ def packaging():
         else:
             print('Test build')
             projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
             #winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT_Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         
         if (os.path.isfile('X:\\')):
