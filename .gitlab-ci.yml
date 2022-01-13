@@ -22,11 +22,7 @@ linux-test-build:
   script:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py $PROJECT
-  include:
-    - project: vird01/comm-server
-      ref: master  
-      file: ./scripts/packaging.py  
-  
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/comm-server.git  
   artifacts:
     paths:
       - account-manager.tar.gz
