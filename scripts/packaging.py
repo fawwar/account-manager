@@ -72,7 +72,7 @@ def packaging():
             
         else:
             print ('Test build')
-            run('mount -t cifs //$SMB_URL/IOT-Release/ci/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/ci/Packaging/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
         
         os.makedirs(projPath, mode=0o755, exist_ok=True)
