@@ -22,7 +22,7 @@ linux-test-build:
   script:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py $PROJECT
-    - git clone --branch pybuild-release  https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/comm-server.git
+    - git clone --branch pybuild_release  https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/comm-server.git
     - cd comm-server
     - python3 ./scripts/build.py
     - python3 ./scripts/packaging.py
