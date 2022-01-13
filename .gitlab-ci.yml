@@ -22,6 +22,11 @@ linux-test-build:
   script:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py $PROJECT
+    - git clone https://git.gorilla-technology.com/vird01/comm-server.git
+    - cd comm-server
+    - python3 ./scripts/build.py
+    - python3 ./scripts/packaging.py  
+  
   artifacts:
     paths:
       - account-manager.tar.gz
