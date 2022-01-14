@@ -34,8 +34,6 @@ def run(command, cb= sys.stdout.buffer.write):
     if rc != 0:
         raise SystemExit(rc)
 
-def packaging():
-
 
 def main(argv):
     global SERVICE
