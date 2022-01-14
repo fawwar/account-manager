@@ -42,7 +42,7 @@ def packaging():
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
             projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
         else:
             print('Test build')
             projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
@@ -67,7 +67,7 @@ def packaging():
         if os.getenv('CI_COMMIT_TAG'):
             print ('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
-            run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
+            run('mount -t cifs //$SMB_URL/IOT-Release/ci/Packaging'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
             projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
             
         else:
