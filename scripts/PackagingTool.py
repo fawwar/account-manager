@@ -33,20 +33,13 @@ def run(command, cb= sys.stdout.buffer.write):
     rc = process.poll()
     if rc != 0:
         raise SystemExit(rc)
+
 def packaging():
+    
     if os.name == 'nt':
         print('win-x86_64')
-        run('tools\py\python.exe .\scripts\build.py')
+        run('tools\\py\\python.exe .\\%s\\scripts\\build.py'%SERVICE)
         os.chdir(rootPath)
-        '''
-        if os.getenv('CI_COMMIT_TAG'):
-            print('Release build')
-            regExpr(os.environ['CI_COMMIT_TAG'])
-            projPath = os.path.join('X:\\', VERSION, PROJECT, 'win-x86_64')
-            winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
-
-        else:
-        '''
         print('Test build')
         projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
         winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
@@ -67,22 +60,14 @@ def packaging():
         smbtmpPath = os.path.join(rootPath, 'smbtmp')
         os.makedirs(smbtmpPath, mode=0o755, exist_ok=True)
         os.chdir(rootPath)
-        '''
-        if os.getenv('CI_COMMIT_TAG'):
-            print ('Release build')
-            regExpr(os.environ['CI_COMMIT_TAG'])
-            run('mount -t cifs //$SMB_URL/IOT-Release/ci/Packaging'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
-            projPath = os.path.join(smbtmpPath, VERSION, PROJECT, 'linux-x86_64')
-
-        else:
-        '''
         print ('Test build')
         run('mount -t cifs //$SMB_URL/IOT-Release/ci/Packaging/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
         projPath = os.path.join(smbtmpPath, 'linux-x86_64')
 
         os.makedirs(projPath, mode=0o755, exist_ok=True)
+        print('rootPath ',rootPath)
         print('copy file ',projPath)
-        shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),projPath)
+        shutil.copy(rootPath.joinpath(SERVICE,SERVICE+'.tar.gz'),projPath)
         run('umount smbtmp')
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)
