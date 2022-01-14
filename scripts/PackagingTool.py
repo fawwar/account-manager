@@ -61,8 +61,8 @@ def main(argv):
     else:
         print ('Clone %s %s Error' %(SERVICE ,BRANCH))
         raise SystemExit()
-    run ('cd %s/'%SERVICE)
-    run ('python3 build.py')
+    run ('python3 %s/scripts/build.py'%SERVICE)
+    #run ('python3 build.py')
     # packaging function
 
     #getProject(sys.argv)
