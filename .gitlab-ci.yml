@@ -61,7 +61,8 @@ windows-test-build:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       #- tools\py\python.exe .\scripts\build.py %PROJECT%
       #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
-    - tools\py\python.exe .\scripts\PackagingTool.py
+    - git clone -b pybuild_release https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/comm-server.git
+      #- tools\py\python.exe .\scripts\PackagingTool.py
       
   
 windows-release-build:
