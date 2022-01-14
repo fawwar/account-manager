@@ -26,11 +26,7 @@ linux-test-build:
       #- cd $SERVICE/
       #- python3 ./scripts/build.py
       #- python3 ./scripts/packaging.py
-  artifacts:
-    paths:
-      - account-manager.tar.gz
-      - account-manager/
-    expire_in: 1 week    
+     
 
 linux-release-build:
   tags:
