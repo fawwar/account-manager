@@ -89,7 +89,7 @@ def main(argv):
         print ('SERVICE_NAME Not Found')
         raise SystemExit()
         
-    status, output = subprocess.getstatusoutput('git clone --b '+ BRANCH +' https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
+    status, output = subprocess.getstatusoutput('git clone -b '+ BRANCH +' https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
     if status == 0:
         print ('status', status)
         print ('output', output)
