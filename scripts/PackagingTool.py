@@ -50,7 +50,7 @@ def packaging():
         run(winCMD)
         if not (os.path.isdir(projPath)):
             os.makedirs(projPath, mode=0o755, exist_ok=True)
-        shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
+        shutil.copy2(rootPath.joinpath(SERVICE, SERVICE+'.zip'), projPath)
         print('copy file ', projPath)
         run('net use "X:" /delete /y')
 
@@ -67,7 +67,7 @@ def packaging():
         os.makedirs(projPath, mode=0o755, exist_ok=True)
         print('rootPath ',rootPath)
         print('copy file ',projPath)
-        shutil.copy(rootPath.joinpath(SERVICE,SERVICE+'.tar.gz'),projPath)
+        shutil.copy(rootPath.joinpath(SERVICE, SERVICE+'.tar.gz'),projPath)
         run('umount smbtmp')
         print('remove smbtmpPath')
         shutil.rmtree(smbtmpPath)

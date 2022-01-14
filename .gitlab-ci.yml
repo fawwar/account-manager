@@ -59,14 +59,11 @@ windows-test-build:
     - chcp 65001
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-    - tools\py\python.exe .\scripts\build.py %PROJECT%
-    - tools\py\python.exe .\scripts\packaging.py %PROJECT%
-  artifacts:
-    paths:
-      - account-manager.zip
-      - account-manager/  
-    expire_in: 1 week
-
+      #- tools\py\python.exe .\scripts\build.py %PROJECT%
+      #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
+    - tools\py\python.exe .\scripts\PackagingTool.py
+      
+  
 windows-release-build:
   tags:
     - windows
