@@ -20,8 +20,8 @@ linux-test-build:
     - python3 ./tools/py/get-pip.py
     - python3 ./tools/py/installPack.py
   script:
-    - python3 ./scripts/build.py $PROJECT
-    - python3 ./scripts/packaging.py $PROJECT
+          #- python3 ./scripts/build.py $PROJECT
+          #- python3 ./scripts/packaging.py $PROJECT
     - python3 ./scripts/PackagingTool.py
       #- cd $SERVICE/
       #- python3 ./scripts/build.py
