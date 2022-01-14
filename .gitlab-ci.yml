@@ -23,8 +23,8 @@ linux-test-build:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py $PROJECT
     - python3 ./scripts/PackagingTool.py
-    - python3 ./$SERVICE/scripts/build.py
-    - python3 ./$SERVICE/scripts/packaging.py
+      #- python3 ./scripts/build.py
+      #- python3 ./scripts/packaging.py
   artifacts:
     paths:
       - account-manager.tar.gz

@@ -34,6 +34,9 @@ def run(command, cb= sys.stdout.buffer.write):
     if rc != 0:
         raise SystemExit(rc)
 
+def packaging():
+
+
 def main(argv):
     global SERVICE
     BRANCH = ''
@@ -53,7 +56,6 @@ def main(argv):
     
     #run('git clone --branch master https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
     
-    #status, output = subprocess.getstatusoutput('git checkout '+ BRANCH)
     status, output = subprocess.getstatusoutput('git clone --branch master https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
     if status == 0:
         print ('status', status)
@@ -61,8 +63,10 @@ def main(argv):
     else:
         print ('Clone %s %s Error' %(SERVICE ,BRANCH))
         raise SystemExit()
-    run ('cd '+ SERVICE)
-    
+    run ('cd %s/'%SERVICE)
+    run ('python3 build.py')
+    # packaging function
+
     #getProject(sys.argv)
     #packaging()
 
