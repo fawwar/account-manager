@@ -63,7 +63,7 @@ windows-test-build:
       #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
     - netsh winhttp show proxy
     - ssh-keyscan git.gorilla-technology.com
-    - git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'  
+    - git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' 
     - git clone -b pybuild_release git@git.gorilla-technology.com:vird01/comm-server.git
       #- tools\py\python.exe .\scripts\PackagingTool.py
       
