@@ -62,7 +62,7 @@ windows-test-build:
       #- tools\py\python.exe .\scripts\build.py %PROJECT%
       #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
     - netsh winhttp show proxy
-    - ssh-agent bash -c ssh-add "key-address" 
+    - ssh-keyscan git.gorilla-technology.com >> ~/.ssh/known_hosts  
     - git clone -b pybuild_release git@git.gorilla-technology.com:vird01/comm-server.git
       #- tools\py\python.exe .\scripts\PackagingTool.py
       
