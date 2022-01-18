@@ -62,6 +62,7 @@ windows-test-build:
       #- tools\py\python.exe .\scripts\build.py %PROJECT%
       #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
     - netsh winhttp show proxy
+    - cd ~/.ssh  
     - ssh-keyscan git.gorilla-technology.com
     - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ServerAliveInterval=240 -o GSSAPIAuthentication=no'
       #- ssh -o StrictHostKeyChecking=no
