@@ -65,7 +65,7 @@ windows-test-build:
     - ssh-keyscan git.gorilla-technology.com
     - cd ~/.ssh  
       #- set GIT_SSH_COMMAND= "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"   
-    - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=NULL -o StrictHostKeyChecking=no hostname -o NoHostAuthenticationForLocalhost=yes'
+    - git submodule foreach git config core.sshCommand 'ssh -o PubkeyAuthentication=yes -o PasswordAuthentication=yes -o GSSAPIKeyExchange=no -o GSSAPICleanupCredentials=no'
       #- ssh -o StrictHostKeyChecking=no
     - ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
     - git clone -b master git@git.gorilla-technology.com:vird01/comm-server.git
