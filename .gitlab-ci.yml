@@ -64,7 +64,7 @@ windows-test-build:
     - netsh winhttp show proxy 
     - ssh-keyscan git.gorilla-technology.com
       #- set GIT_SSH_COMMAND= "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"   
-    - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no hostname'
+    - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no hostname -o NoHostAuthenticationForLocalhost=yes'
       #- ssh -o StrictHostKeyChecking=no
     - ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
     - git clone -b master git@git.gorilla-technology.com:vird01/comm-server.git
