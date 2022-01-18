@@ -64,7 +64,8 @@ windows-test-build:
     - netsh winhttp show proxy
     - ssh-keyscan git.gorilla-technology.com
       #- git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'  
-    - ssh -T git@git.gorilla-technology.com
+    - ssh -o StrictHostKeyChecking=no
+    - ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
     - git clone -b pybuild_release git@git.gorilla-technology.com:vird01/comm-server.git
       #- tools\py\python.exe .\scripts\PackagingTool.py
       
