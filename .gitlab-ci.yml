@@ -61,9 +61,9 @@ windows-test-build:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       #- tools\py\python.exe .\scripts\build.py %PROJECT%
       #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
-    - netsh winhttp show proxy
-    - cd ~/.ssh  
+    - netsh winhttp show proxy 
     - ssh-keyscan git.gorilla-technology.com
+    - GIT_SSH_COMMAND= "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push  
     - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ServerAliveInterval=240 -o GSSAPIAuthentication=no'
       #- ssh -o StrictHostKeyChecking=no
     - ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
