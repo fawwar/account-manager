@@ -42,6 +42,7 @@ def packaging():
         os.chdir(rootPath)
         print('Test build')
         projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
+        run('net use "X:" /delete /y')
         winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
            
         if (os.path.isfile('X:\\')):
