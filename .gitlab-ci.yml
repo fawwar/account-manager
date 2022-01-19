@@ -67,7 +67,7 @@ windows-test-build:
     - dir ..\comm-server\scripts\
       #- git checkout pybuild_release  
       #- cd ..\comm-server\
-      #- tools\py\python.exe .\scripts\PackagingTool.py  
+    - tools\py\python.exe .\scripts\PackagingTool.py  
       #- cd ~/.ssh  
       #- set GIT_SSH_COMMAND= "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"   
     - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=NULL -o StrictHostKeyChecking=no -o PubkeyAuthentication=yes -o PasswordAuthentication=yes -o GSSAPIKeyExchange=no -o GSSAPICleanupCredentials=no'
