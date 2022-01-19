@@ -41,6 +41,8 @@ def packaging():
         if (os.path.isfile('X:\\')):
             print('X:\\ file exist')
             run('net use "X:" /delete /y')
+        # compatibility
+        #qtAssignPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
 
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
@@ -55,7 +57,7 @@ def packaging():
             if not (os.path.isdir(qtAssignPath)):
                 os.makedirs(qtAssignPath, mode=0o755, exist_ok=True)
             shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), qtAssignPath)
-            print('copy file ', qtAssginPath)
+            print('copy file ', qtAssignPath)
             run('net use "X:" /delete /y')
 
         else:
@@ -82,10 +84,10 @@ def packaging():
             projPath = os.path.join(smbtmpPath, PROJECT, VERSION, 'linux-x86_64')
 
             #compatibility
-            qtAssginPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
+            qtAssignPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
             os.mkdir(qtAssignPath,  mode=0o755, exist_ok=True)
             print('copy file', qtAssignPath)
-            shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),qtAssginPath)
+            shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),qtAssignPath)
             
         else:
             print ('Test build')
