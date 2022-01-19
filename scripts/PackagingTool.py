@@ -50,8 +50,8 @@ def packaging():
         run(winCMD)
         if not (os.path.isdir(projPath)):
             os.makedirs(projPath, mode=0o755, exist_ok=True)
-        shutil.copy2(rootPath.parent.joinpath(SERVICE, SERVICE+'.zip'), projPath)
         print('copy file ', projPath)
+        shutil.copy2(rootPath.parent.joinpath(SERVICE, SERVICE+'.zip'), projPath)
         run('net use "X:" /delete /y')
 
     else:
