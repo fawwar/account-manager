@@ -20,12 +20,11 @@ linux-test-build:
     - python3 ./tools/py/get-pip.py
     - python3 ./tools/py/installPack.py
   script:
-          #- python3 ./scripts/build.py $PROJECT
-          #- python3 ./scripts/packaging.py $PROJECT
-    - python3 ./scripts/PackagingTool.py
-      #- cd $SERVICE/
-      #- python3 ./scripts/build.py
-      #- python3 ./scripts/packaging.py
+    #- python3 ./scripts/build.py $PROJECT
+    #- python3 ./scripts/packaging.py $PROJECT
+          #- python3 ./scripts/PackagingTool.py
+    - python3 ./scripts/build.py $PROJECT
+    - python3 ./scripts/packaging.py
      
 
 linux-release-build:
@@ -58,23 +57,18 @@ windows-test-build:
   before_script:
     - chcp 65001
   script:
-    - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-      #- tools\py\python.exe .\scripts\build.py %PROJECT%
-      #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
+    - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64  
+    - tools\py\python.exe .\scripts\build.py %PROJECT%
+    - tools\py\python.exe .\scripts\packaging.py %PROJECT%
+    - tools\py\python.exe .\scripts\PackagingTool.py  
       #- netsh winhttp show proxy 
       #- ssh-keyscan git.gorilla-technology.com
-      #- dir   
-    - dir ..\comm-server\scripts\
-      #- git checkout pybuild_release  
-      #- cd ..\comm-server\
-    - tools\py\python.exe .\scripts\PackagingTool.py  
       #- cd ~/.ssh  
       #- set GIT_SSH_COMMAND= "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"   
-    - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=NULL -o StrictHostKeyChecking=no -o PubkeyAuthentication=yes -o PasswordAuthentication=yes -o GSSAPIKeyExchange=no -o GSSAPICleanupCredentials=no'
+      #- git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=NULL -o StrictHostKeyChecking=no -o PubkeyAuthentication=yes -o PasswordAuthentication=yes -o GSSAPIKeyExchange=no -o GSSAPICleanupCredentials=no'
       #- ssh -o StrictHostKeyChecking=no  
-    - ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
+      #- ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
       #- git clone -b master git@git.gorilla-technology.com:vird01/comm-server.git
-      #- tools\py\python.exe .\scripts\PackagingTool.py
       
   
 windows-release-build:
