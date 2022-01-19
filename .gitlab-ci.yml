@@ -60,7 +60,7 @@ windows-test-build:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64  
     - tools\py\python.exe .\scripts\build.py %PROJECT%
     - tools\py\python.exe .\scripts\packaging.py %PROJECT%
-    - tools\py\python.exe .\scripts\PackagingTool.py  
+      #- tools\py\python.exe .\scripts\PackagingTool.py  
       #- netsh winhttp show proxy 
       #- ssh-keyscan git.gorilla-technology.com
       #- cd ~/.ssh  
