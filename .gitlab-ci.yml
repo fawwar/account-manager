@@ -64,7 +64,7 @@ windows-test-build:
       #- netsh winhttp show proxy 
       #- ssh-keyscan git.gorilla-technology.com
       #- dir   
-      - dir ..\comm-server\scripts\
+    - dir ..\comm-server\scripts\
       #- cd ..\comm-server\
       #- tools\py\python.exe .\scripts\PackagingTool.py  
       #- cd ~/.ssh  
