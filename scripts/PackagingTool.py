@@ -87,10 +87,17 @@ def main(argv):
         print ('    SERVICE: ', SERVICE)
     else :
         print ('SERVICE_NAME Not Found')
-        raise SystemExit()
+        raise SystemExit(-1)
 
     if os.name == 'nt':
         print('Windows packaging')
+        status, output = subprocess.getstatusoutput('git checkout '+ BRANCH)
+        if status == 0:
+            print ('stats ', status)
+            print ('output ', output)
+        else:
+            print ('Checkout/Clone %s $s Error' %(SERVICE, BRANCH))
+            raise SystemExit(status)
     else:
         print('Linux packaging')
         status, output = subprocess.getstatusoutput('git clone -b '+ BRANCH +' https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
@@ -98,7 +105,7 @@ def main(argv):
             print ('status', status)
             print ('output', output)
         else:
-            print ('Clone %s %s Error' %(SERVICE ,BRANCH))
+            print ('Clone %s %s Error' %(SERVICE, BRANCH))
             raise SystemExit(status)
 
     # check build.py exist 

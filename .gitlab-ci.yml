@@ -65,7 +65,7 @@ windows-test-build:
       #- ssh-keyscan git.gorilla-technology.com
       #- dir   
     - dir ..\comm-server\scripts\
-    - git checkout pybuild_release  
+      #- git checkout pybuild_release  
       #- cd ..\comm-server\
       #- tools\py\python.exe .\scripts\PackagingTool.py  
       #- cd ~/.ssh  
