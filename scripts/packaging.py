@@ -43,6 +43,7 @@ def packaging():
             run('net use "X:" /delete /y')
         # compatibility
         #qtAssignPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
+        run('net use "X:" /delete /y')
 
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
