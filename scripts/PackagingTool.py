@@ -38,7 +38,7 @@ def packaging():
     
     if os.name == 'nt':
         print('win-x86_64')
-        run('tools\\py\\python.exe .\\%s\\scripts\\build.py'%SERVICE)
+        run('tools\\py\\python.exe ..\\%s\\scripts\\build.py'%SERVICE)
         os.chdir(rootPath)
         print('Test build')
         projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
@@ -88,14 +88,18 @@ def main(argv):
     else :
         print ('SERVICE_NAME Not Found')
         raise SystemExit()
-        
-    status, output = subprocess.getstatusoutput('git clone -b '+ BRANCH +' https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
-    if status == 0:
-        print ('status', status)
-        print ('output', output)
+
+    if os.name == 'nt':
+        print('Windows packaging')
     else:
-        print ('Clone %s %s Error' %(SERVICE ,BRANCH))
-        raise SystemExit(status)
+        print('Linux packaging')
+        status, output = subprocess.getstatusoutput('git clone -b '+ BRANCH +' https://gitlab-ci-token:${CI_JOB_TOKEN}@git.gorilla-technology.com/vird01/'+ SERVICE +'.git')
+        if status == 0:
+            print ('status', status)
+            print ('output', output)
+        else:
+            print ('Clone %s %s Error' %(SERVICE ,BRANCH))
+            raise SystemExit(status)
 
     # check build.py exist 
     #run ('python3 %s/scripts/build.py'%SERVICE)
