@@ -63,14 +63,14 @@ windows-test-build:
       #- tools\py\python.exe .\scripts\packaging.py %PROJECT%
     - netsh winhttp show proxy 
     - ssh-keyscan git.gorilla-technology.com
-    - cd ../account-manager/
     - dir   
+    - dir ..\comm-server\  
       #- cd ~/.ssh  
       #- set GIT_SSH_COMMAND= "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"   
     - git submodule foreach git config core.sshCommand 'ssh -o UserKnownHostsFile=NULL -o StrictHostKeyChecking=no -o PubkeyAuthentication=yes -o PasswordAuthentication=yes -o GSSAPIKeyExchange=no -o GSSAPICleanupCredentials=no'
       #- ssh -o StrictHostKeyChecking=no  
     - ssh-keyscan -t rsa git.gorilla-technology.com >> %userprofile%/.ssh/known_hosts
-    - git clone -b master git@git.gorilla-technology.com:vird01/comm-server.git
+      #- git clone -b master git@git.gorilla-technology.com:vird01/comm-server.git
       #- tools\py\python.exe .\scripts\PackagingTool.py
       
   
