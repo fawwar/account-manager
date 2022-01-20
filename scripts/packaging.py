@@ -85,7 +85,7 @@ def packaging():
             #compatibility
             #tmpPath = os.path.join(rootPath, 'tmp')
             #run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +' tmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
-            qtAssignPath = os.path.join(smptmpPath, PROJECT, 'linux-x86_64')
+            qtAssignPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
             os.makedirs(qtAssignPath,  mode=0o755, exist_ok=True)
             print('copy file', qtAssignPath)
             shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),qtAssignPath)
