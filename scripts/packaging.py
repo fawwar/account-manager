@@ -43,8 +43,6 @@ def packaging():
             run('net use "X:" /delete /y')
         # compatibility
         #qtAssignPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-        run('net use "X:" /delete /y')
-
         if os.getenv('CI_COMMIT_TAG'):
             print('Release build')
             regExpr(os.environ['CI_COMMIT_TAG'])
@@ -86,7 +84,7 @@ def packaging():
 
             #compatibility
             qtAssignPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
-            os.mkdir(qtAssignPath,  mode=0o755, exist_ok=True)
+            os.makedirs(qtAssignPath,  mode=0o755, exist_ok=True)
             print('copy file', qtAssignPath)
             shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),qtAssignPath)
             
