@@ -12,7 +12,7 @@ stages:
 linux-test-build:
   tags:
     - ubuntu
-  image: vincenthsu/ivar-build:latest
+  image: dev16-ci
   stage: build
   except:
     - tags
@@ -26,7 +26,7 @@ linux-test-build:
 linux-release-build:
   tags:
     - ubuntu
-  image: vincenthsu/ivar-build:latest
+  image: dev16-ci
   stage: build
   only:
     - tags
