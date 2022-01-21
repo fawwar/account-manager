@@ -16,13 +16,12 @@ linux-test-build:
   stage: build
   except:
     - tags
+  before_script:
+    - python3 ./tools/py/get-pip.py
+    - python3 ./tools/py/installPack.py
   script:
-    - bash ./scripts/build.sh $PROJECT
-    - bash ./scripts/packaging.sh
-    - mkdir -p smbtmp
-    - mount -t cifs //$SMB_URL/IOT-Release/ci/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
-    - mkdir -p smbtmp/$PROJECT/linux-x86_64
-    - cp account-manager.tar.gz smbtmp/$PROJECT/linux-x86_64 && umount smbtmp && rm -rf smbtmp
+    - python3 ./scripts/build.py $PROJECT
+    - python3 ./scripts/packaging.py
 
 linux-release-build:
   tags:
@@ -33,13 +32,18 @@ linux-release-build:
     - tags
   except:
     - branches
+  before_script:
+    - python3 ./tools/py/get-pip.py
+    - python3 ./tools/py/installPack.py
   script:
-    - bash ./scripts/build.sh $PROJECT
-    - bash ./scripts/packaging.sh
-    - mkdir -p smbtmp
-    - mount -t cifs //$SMB_URL/IOT-Release/account-manager smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD
-    - mkdir -p smbtmp/$PROJECT/linux-x86_64
-    - cp account-manager.tar.gz smbtmp/$PROJECT/linux-x86_64 && umount smbtmp && rm -rf smbtmp
+    - python3 ./scripts/build.py $PROJECT
+    - python3 ./scripts/packaging.py 
+  artifacts:
+    paths:
+      - account-manager.tar.gz
+      - account-manager/
+    expire_in: 1 week
+
 
 windows-test-build:
   tags:
@@ -50,12 +54,9 @@ windows-test-build:
   before_script:
     - chcp 65001
   script:
-    - call .\scripts\build.bat %PROJECT%
-    - call .\scripts\packaging.bat
-    - if exist "X:\" ( net use "X:" /delete /y )
-    - net use /y "X:" "\\%SMB_URL%\IOT-Release\ci\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy account-manager.zip X:\%PROJECT%\win-x86_64
-    - net use "X:" /delete /y
+    - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    - tools\py\python.exe .\scripts\build.py %PROJECT%
+    - tools\py\python.exe .\scripts\packaging.py
 
 windows-release-build:
   tags:
@@ -68,12 +69,14 @@ windows-release-build:
   before_script:
     - chcp 65001
   script:
-    - call .\scripts\build.bat %PROJECT%
-    - call .\scripts\packaging.bat
-    - if exist "X:\" ( net use "X:" /delete /y )
-    - net use /y "X:" "\\%SMB_URL%\IOT-Release\account-manager" /u:"GORILLASCIENCE\%SMB_USERNAME%" %SMB_PASSWORD%
-    - copy account-manager.zip X:\%PROJECT%\win-x86_64
-    - net use "X:" /delete /y
+    - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    - tools\py\python.exe .\scripts\build.py %PROJECT%
+    - tools\py\python.exe .\scripts\packaging.py
+  artifacts:
+    paths:
+      - account-manager.zip
+    expire_in: 1 week
+
 
 windows-cleanup:
   tags:
