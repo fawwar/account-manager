@@ -11,7 +11,7 @@ stages:
 
 linux-test-build:
   tags:
-    - ubuntu
+    - dev16-ci
   image: dev16-ci
   stage: build
   except:
@@ -25,7 +25,7 @@ linux-test-build:
 
 linux-release-build:
   tags:
-    - ubuntu
+    - dev16-ci
   image: dev16-ci
   stage: build
   only:
