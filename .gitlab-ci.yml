@@ -17,8 +17,8 @@ linux-test-build:
   except:
     - tags
   script:
-    - tools/py/python.exe ./scripts/build.py $PROJECT
-    - tools/py/python.exe ./scripts/packaging.py
+    - python3 ./scripts/build.py $PROJECT
+    - python3 ./scripts/packaging.py
 
 linux-release-build:
   tags:
@@ -30,8 +30,8 @@ linux-release-build:
   except:
     - branches
   script:
-    - tools\py\python.exe ./scripts/build.py $PROJECT
-    - tools\py\python.exe ./scripts/packaging.py 
+    - python3 ./scripts/build.py $PROJECT
+    - python3 ./scripts/packaging.py 
   artifacts:
     paths:
       - account-manager.tar.gz
