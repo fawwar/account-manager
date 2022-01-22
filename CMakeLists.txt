@@ -179,8 +179,14 @@ if(UNIX)
 	set(OPENLDAP_LIBRARIES_DIR "${PREBUILTS_ROOT}/openldap/${PLATFORM}/lib")
 	include_directories(${OPENLDAP_INCLUDE_DIR})
 	link_directories(${OPENLDAP_LIBRARIES_DIR})
+    set(OPENLDAP_2_4_9_ROOT_DIR "${PREBUILTS_ROOT}/openldap/${PLATFORM}/openldap-2.4.49/openldapc")
+    set(OPENLDAP_2_4_9_INCLUDE_DIR "${OPENLDAP_2_4_9_ROOT_DIR}")
+    set(OPENLDAP_2_4_9_LIBRARIES_DIR "${OPENLDAP_2_4_9_ROOT_DIR}/libraries")
+    include_directories(${OPENLDAP_2_4_9__INCLUDE_DIR})
+    link_directories(${OPENLDAP_2_4_9_LIBRARIES_DIR})
 	set(LIBS ${LIBS} lber ldap ldap_r ldapcpp rewrite)
 endif()
+
 
 #sasl2
 #if(UNIX)
