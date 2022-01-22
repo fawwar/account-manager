@@ -183,14 +183,14 @@ if(UNIX)
 endif()
 
 #sasl2
-if(UNIX)
-    set(SASL2_ROOT "${PREBUILTS_ROOT}/sasl2")
-	set(SASL2_INCLUDE_DIR "${PREBUILTS_ROOT}/sasl2/include")
-	set(SASL2_LIBRARIES_DIR "${PREBUILTS_ROOT}/sasl2/${PLATFORM}/lib")
-	include_directories(${SASL2_INCLUDE_DIR})
-	link_directories(${SASL2_LIBRARIES_DIR})
-	set(LIBS ${LIBS} sasl2)
-endif()
+#if(UNIX)
+#    set(SASL2_ROOT "${PREBUILTS_ROOT}/sasl2")
+#	set(SASL2_INCLUDE_DIR "${PREBUILTS_ROOT}/sasl2/include")
+#	set(SASL2_LIBRARIES_DIR "${PREBUILTS_ROOT}/sasl2/${PLATFORM}/lib")
+#	include_directories(${SASL2_INCLUDE_DIR})
+#	link_directories(${SASL2_LIBRARIES_DIR})
+#	set(LIBS ${LIBS} sasl2)
+#endif()
 
 ##### Externals
 
