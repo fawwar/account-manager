@@ -17,7 +17,7 @@ linux-test-build:
   except:
     - tags
   before_script:
-    - pythpn3 ./tools/py/get-pip.py
+    - python3 ./tools/py/get-pip.py
     - python3 ./tools/py/installPack.py
   script:
     - python3 ./scripts/build.py $PROJECT
