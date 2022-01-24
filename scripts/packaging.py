@@ -10,7 +10,6 @@ from pathlib import Path
 from datetime import datetime
 import re
 import xml.etree.ElementTree as ET
-import numpy as np
 
 PROJECT=""
 VERSION=""

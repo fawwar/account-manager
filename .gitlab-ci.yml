@@ -16,9 +16,6 @@ linux-test-build:
   stage: build
   except:
     - tags
-  before_script:
-    - python3 ./tools/py/get-pip.py
-    - python3 ./tools/py/installPack.py
   script:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py
@@ -32,9 +29,6 @@ linux-release-build:
     - tags
   except:
     - branches
-  before_script:
-    - python3 ./tools/py/get-pip.py
-    - python3 ./tools/py/installPack.py
   script:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py 
