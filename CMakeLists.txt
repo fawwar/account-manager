@@ -153,8 +153,8 @@ if(WIN32)
     set(CURL_ROOT "${PREBUILTS_ROOT}/curl")
     set(CURL_INCLUDE_DIR "${CURL_ROOT}/include")
     set(CURL_LIBRARY  "${CURL_ROOT}/${PLATFORM}/lib")
-    set(OPENSSL_ROOT_DIR "${PREBUILTS_ROOT}/${PLATFORM}/openssl")
-    SET(OPENSSL_LIBRARIES_DIR "${OPENSSL_ROOT_DIR}/lib")
+    set(OPENSSL_ROOT_DIR "${PREBUILTS_ROOT}/openssl")
+    SET(OPENSSL_LIBRARIES_DIR "${OPENSSL_ROOT_DIR}/${PLATFORM}/lib")
     SET(OPENSSL_INCLUDE_DIR "${OPENSSL_ROOT_DIR}/include")
 
     include_directories(${CURL_INCLUDE_DIR})
@@ -301,7 +301,7 @@ install(TARGETS ${PROJECT_NAME}
 if(WIN32)
     install(DIRECTORY
         ${PREBUILTS_ROOT}/curl/${PLATFORM}/bin/
-        ${PREBUILTS_ROOT}/${PLATFORM}/openssl/bin/
+        ${PREBUILTS_ROOT}/openssl/${PLATFORM}/bin/
         DESTINATION .)
     #install(DIRECTORY
     #    ${PREBUILTS_ROOT}/${PLATFORM}/cmd/
