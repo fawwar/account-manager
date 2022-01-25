@@ -301,7 +301,7 @@ install(TARGETS ${PROJECT_NAME}
 if(WIN32)
     install(DIRECTORY
         ${PREBUILTS_ROOT}/curl/${PLATFORM}/bin/
-        ${PREBUILTS_ROOT}/openssl/${PLATFORM}/bin/
+        ${PREBUILTS_ROOT}/${PLATFORM}/openssl/bin/
         DESTINATION .)
     #install(DIRECTORY
     #    ${PREBUILTS_ROOT}/${PLATFORM}/cmd/
