@@ -113,8 +113,8 @@ def packaging():
             run('net use "X:" /delete /y')
         else:
             run('umount smbtmp')
-	    print('remove smbtmpPath')
-	    shutil.rmtree(smbtmpPath)
+            print('remove smbtmpPath')
+            shutil.rmtree(smbtmpPath)
 
 def getProject(argv):
     global PROJECT
