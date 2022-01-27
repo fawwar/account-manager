@@ -89,10 +89,7 @@ def packaging():
                 os.makedirs(qtAssignPath,  mode=0o755, exist_ok=True)
                 print('copy file', qtAssignPath)
                 shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),qtAssignPath)
-                #run('umount tmp')
-                #print('remove tmpPath')
-                #shutil.rmtree(tmpPath)
-
+                
             else:
                 print ('Test build')
                 run('mount -t cifs //$SMB_URL/IOT-Release/ci/Packaging/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
@@ -142,7 +139,7 @@ def regExpr(s):
         
     else:
         print('Version Format Error')
-        raise SystemExit()
+        raise SystemExit(-1)
 
 def main(argv):
     global SERVICE
