@@ -111,9 +111,9 @@ def packaging():
 
     finally:
         if os.name == 'nt':
-	    run('net use "X:" /delete /y')
+            run('net use "X:" /delete /y')
         else:
-	    run('umount smbtmp')
+            run('umount smbtmp')
 
 def getProject(argv):
     global PROJECT
