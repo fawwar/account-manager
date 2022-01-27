@@ -69,7 +69,7 @@ def packaging():
                 os.makedirs(projPath, mode=0o755, exist_ok=True)
             shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
             print('copy file ', projPath)
-            run('net use "X:" /delete /y')
+            #run('net use "X:" /delete /y')
 
         else:
             print('linux-x86_64')
@@ -101,11 +101,10 @@ def packaging():
             os.makedirs(projPath, mode=0o755, exist_ok=True)
             print('copy file ',projPath)
             shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),projPath)
-            run('umount smbtmp')
-            print('remove smbtmpPath')
-            shutil.rmtree(smbtmpPath)
-            #os.system('rm -rf smbtmp/')t('linux-x86_64')
-    
+            #run('umount smbtmp')
+            #print('remove smbtmpPath')
+            #shutil.rmtree(smbtmpPath)
+               
     except Exception as e:
         print("Error:  %s" % str(e))
 
@@ -114,6 +113,8 @@ def packaging():
             run('net use "X:" /delete /y')
         else:
             run('umount smbtmp')
+	    print('remove smbtmpPath')
+	    shutil.rmtree(smbtmpPath)
 
 def getProject(argv):
     global PROJECT
