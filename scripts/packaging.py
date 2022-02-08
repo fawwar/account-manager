@@ -102,7 +102,7 @@ def packaging():
                
     except Exception as e:
         print("Error:  %s" % str(e))
-	raise SystemExit(-1)
+        raise SystemExit(-1)
     finally:
         if os.name == 'nt':
             run('net use "X:" /delete /y')
