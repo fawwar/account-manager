@@ -57,7 +57,7 @@ def packaging():
                     os.makedirs(qtAssignPath, mode=0o755, exist_ok=True)
                 shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), qtAssignPath)
                 print('copy file ', qtAssignPath)
-               
+                run('net use "X:" /delete /y')
 
             else:
                 print('Test build')
