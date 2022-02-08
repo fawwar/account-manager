@@ -46,15 +46,11 @@ def run(command, cb=sys.stdout.buffer.write, env=dict()):
 
 def runCMake(PROJECT ,env):
     if os.name == 'nt':
-        if PROJECT:
-            run('"C:\\Program Files\\CMake\\bin\\cmake.exe" -G "Visual Studio 14 2015 Win64" -DPROJECT=telstra  -DCMAKE_BUILD_TYPE=Release -DCMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD=ON ..', env=env)
-        else:
-            run('"C:\\Program Files\\CMake\\bin\\cmake.exe" -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD=ON ..', env=env)
+        run('"C:\\Program Files\\CMake\\bin\\cmake.exe" -G "Visual Studio 14 2015 Win64" -DPROJECT=' + PROJECT +'  -DCMAKE_BUILD_TYPE=Release -DCMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD=ON ..', env=env)
+      
     else:
-        if PROJECT:
-            run('cmake -DCMAKE_BUILD_TYPE=Release .. -DPROJECT=telstra', env=env)
-        else:
-            run('cmake -DCMAKE_BUILD_TYPE=Release .. ', env=env)
+        run('cmake -DCMAKE_BUILD_TYPE=Release .. -DPROJECT=' + PROJECT, env=env)
+        
 def build():      
     if os.name == 'nt':
         run('MSBuild account-manager.sln /p:Configuration=Release /p:Platform=x64')
@@ -112,6 +108,7 @@ def setPackageXml(versionStr):
             print('     ReleaseDate ',date.text)
     else:
         print ('package.xml file not existed')
+        raise SystemExit(-1)
     tree.write(xmlPath, xml_declaration=True, encoding ="UTF-8", method ="xml")
 
 def setVersion():
@@ -126,12 +123,13 @@ def setVersion():
     versionInfo = versionStr.split('.')
     if len(versionInfo) < 3:
         print ('Version info is wrong ' + versionStr )
+        raise SystemExit(-1)
     else:
         # remove non-digit
         for i in range(len(versionInfo)):
             x=filter(str.isdigit, versionInfo[i])
             versionInfo[i] = "".join(x)
-    if len(versionInfo) == 3:
+    
         if 'CI_JOB_ID' in os.environ:
             versionInfo.append(os.environ['CI_JOB_ID'])
             #setPackageXml(versionStr)
@@ -142,17 +140,17 @@ def setVersion():
 
 def setProject(argv):
     PROJECT = ''
-    if len(argv) > 1 :
-        if str(argv[1]) == 'bi' or str(argv[1]) == 'telstra':
-            print (str(argv[1]))
-            PROJECT = str(argv[1])
+    if len(argv) == 1 :
+        if str(argv[0]) == 'bi' or str(argv[0]) == 'telstra':
+            print (str(argv[0]))
+            PROJECT = str(argv[0])
                    
     print('Project ',PROJECT)
     return PROJECT
 
 def main(argv):
    
-    PROJECT = setProject(sys.argv)
+    PROJECT = setProject(argv)
     versionInfo, versionStr  = setVersion()
 
     # change to build path

@@ -51,13 +51,13 @@ def packaging():
 
                 # compatibility
                 qtAssignPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-                WinCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
-                run(WinCMD)
+                WinQtCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+                run(WinQtCMD)
                 if not (os.path.isdir(qtAssignPath)):
                     os.makedirs(qtAssignPath, mode=0o755, exist_ok=True)
                 shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), qtAssignPath)
                 print('copy file ', qtAssignPath)
-                run('net use "X:" /delete /y')
+               
 
             else:
                 print('Test build')
@@ -83,8 +83,6 @@ def packaging():
                 projPath = os.path.join(smbtmpPath,'build' , PROJECT, VERSION, 'linux-x86_64')
 
                 #compatibility
-                #tmpPath = os.path.join(rootPath, 'tmp')
-                #run('mount -t cifs //$SMB_URL/IOT-Release/'+ SERVICE +' tmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
                 qtAssignPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
                 os.makedirs(qtAssignPath,  mode=0o755, exist_ok=True)
                 print('copy file', qtAssignPath)
@@ -104,7 +102,7 @@ def packaging():
                
     except Exception as e:
         print("Error:  %s" % str(e))
-
+	raise SystemExit(-1)
     finally:
         if os.name == 'nt':
             run('net use "X:" /delete /y')
@@ -116,9 +114,9 @@ def packaging():
 def getProject(argv):
     global PROJECT
     PROJECT = 'std'
-    if len(argv) > 1 :
-        if str(argv[1]) == 'bi' or str(argv[1]) == 'telstra':
-            PROJECT = str(argv[1])
+    if len(argv) == 1 :
+        if str(argv[0]) == 'bi' or str(argv[0]) == 'telstra':
+            PROJECT = str(argv[0])
                    
     print('Project ',PROJECT)
 
@@ -149,7 +147,7 @@ def main(argv):
     else :
         print ('SERVICE_NAME Not Found')
         raise SystemExit(-1)
-    getProject(sys.argv) 
+    getProject(argv) 
     packaging()
 
 if __name__ == "__main__":

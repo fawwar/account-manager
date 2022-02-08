@@ -265,7 +265,7 @@ generate_product_version(
     VERSION_REVISION $ENV{VERSION_REVISION}
 
 )
-add_executable(${PROJECT_NAME} ${SRCS})
+add_executable(${PROJECT_NAME} ${SRCS} ${VersionFilesOutputVariable})
 
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
