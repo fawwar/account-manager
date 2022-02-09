@@ -46,30 +46,33 @@ def packaging():
             if os.getenv('CI_COMMIT_TAG'):
                 print('Release build')
                 regExpr(os.environ['CI_COMMIT_TAG'])
-                projPath = os.path.join('X:\\','build' , PROJECT, VERSION, 'win-x86_64')
                 winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
+
+                run(winCMD)
+                projPath = os.path.join('X:\\','build' , PROJECT, VERSION, 'win-x86_64')
+                if not (os.path.isdir(projPath)):
+                    os.makedirs(projPath, mode=0o755, exist_ok=True)
+                shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
+                print('copy file ', projPath)
 
                 # compatibility
                 qtAssignPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
-                #WinQtCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
-                #run(WinQtCMD)
                 if not (os.path.isdir(qtAssignPath)):
                     os.makedirs(qtAssignPath, mode=0o755, exist_ok=True)
                 shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), qtAssignPath)
                 print('copy file ', qtAssignPath)
-                #run('net use "X:" /delete /y')
-
+                
             else:
                 print('Test build')
                 projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
                 winCMD = 'net use /y "X:" "\\\\%SMB_URL%\\IOT-Release\\ci\\Packaging\\'+ SERVICE +'" /u:"GORILLASCIENCE\\%SMB_USERNAME%" %SMB_PASSWORD%'
 
-            run(winCMD)
-            if not (os.path.isdir(projPath)):
-                os.makedirs(projPath, mode=0o755, exist_ok=True)
-            shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
-            print('copy file ', projPath)
-            #run('net use "X:" /delete /y')
+                run(winCMD)
+                if not (os.path.isdir(projPath)):
+                    os.makedirs(projPath, mode=0o755, exist_ok=True)
+                shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), projPath)
+                print('copy file ', projPath)
+                #run('net use "X:" /delete /y')
 
         else:
             print('linux-x86_64')
