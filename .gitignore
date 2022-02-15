@@ -3,7 +3,7 @@
 *.com
 *.class
 # *.dll
-*.exe
+#*.exe
 *.o
 # *.so
 __pycache__
@@ -20,7 +20,7 @@ __pycache__
 *.jar
 *.rar
 *.tar
-*.zip
+#*.zip
 
 # Logs and databases #
 ######################
