@@ -56,12 +56,13 @@ def packaging():
                 print('copy file ', projPath)
 
                 # compatibility
+                '''
                 qtAssignPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
                 if not (os.path.isdir(qtAssignPath)):
                     os.makedirs(qtAssignPath, mode=0o755, exist_ok=True)
                 shutil.copy2(rootPath.joinpath(SERVICE+'.zip'), qtAssignPath)
                 print('copy file ', qtAssignPath)
-                
+                '''
             else:
                 print('Test build')
                 projPath = os.path.join('X:\\' ,PROJECT, 'win-x86_64')
@@ -86,11 +87,12 @@ def packaging():
                 projPath = os.path.join(smbtmpPath,'build' , PROJECT, VERSION, 'linux-x86_64')
 
                 #compatibility
+                '''
                 qtAssignPath = os.path.join(smbtmpPath, PROJECT, 'linux-x86_64')
                 os.makedirs(qtAssignPath,  mode=0o755, exist_ok=True)
                 print('copy file', qtAssignPath)
                 shutil.copy(rootPath.joinpath(SERVICE+'.tar.gz'),qtAssignPath)
-                
+                '''
             else:
                 print ('Test build')
                 run('mount -t cifs //$SMB_URL/IOT-Release/ci/Packaging/'+ SERVICE +' smbtmp -o user=$SMB_USERNAME,iocharset=utf8,password=$SMB_PASSWORD')
