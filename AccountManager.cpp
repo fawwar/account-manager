@@ -72,7 +72,7 @@ namespace gorilla {
 						json_user_info["accessRightName"] = "AD_user";
 						json_user_info["account"] = str_account;
 						json_user_info["description"] = "";
-						json_user_info["password"] = str_password;
+						//json_user_info["password"] = str_password;
 						Json::StyledWriter styledWriter;
 						std::string str_user_info = styledWriter.write(json_user_info);
 						Error errorCode(INTERNAL_SERVER_ERROR);
