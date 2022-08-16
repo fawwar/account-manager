@@ -10,7 +10,7 @@
 #include "AccessRightInfo.h"
 
 #include "hash.h"
-#include "./import/json-develop/json_tools.hpp"
+#include "json-develop/json_tools.hpp"
 #include "gorilla/log/logger.h"
 #include "gorilla/log/logger_config.h"
 #include "Util.h"
