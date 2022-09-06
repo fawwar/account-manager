@@ -145,6 +145,8 @@ def regExpr(s):
         raise SystemExit(-1)
 
 def main(argv):
+    for item, value in os.environ.items():
+        print('{}: {}'.format(item, value))
     global SERVICE
     print (os.environ['CI_PROJECT_NAME'])
     if 'CI_PROJECT_NAME' in os.environ:
