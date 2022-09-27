@@ -11,27 +11,33 @@ stages:
 
 linux-test-build:
   tags:
-    - dev16-ci
-  image: dev16-ci
+    - ubuntu-18
+  image: dev18-ci
   stage: build
   except:
     - tags
+  before_script:
+    - python3 ./tools/py/get-pip.py
+    - python3 ./tools/py/installPack.py
   script:
     - python3 ./scripts/build.py $PROJECT
     - python3 ./scripts/packaging.py
 
 linux-release-build:
   tags:
-    - dev16-ci
-  image: dev16-ci
+    - ubuntu-18
+  image: dev18-ci
   stage: build
   only:
     - tags
   except:
     - branches
+  before_script:
+    - python3 ./tools/py/get-pip.py
+    - python3 ./tools/py/installPack.py    
   script:
     - python3 ./scripts/build.py $PROJECT
-    - python3 ./scripts/packaging.py 
+    - python3 ./scripts/packaging.py $PROJECT
   artifacts:
     paths:
       - account-manager.tar.gz
@@ -50,7 +56,7 @@ windows-test-build:
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - tools\py\python.exe .\scripts\build.py %PROJECT%
-    - tools\py\python.exe .\scripts\packaging.py
+    - tools\py\python.exe .\scripts\packaging.py %PROJECT%
 
 windows-release-build:
   tags:
@@ -65,7 +71,7 @@ windows-release-build:
   script:
     - CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
     - tools\py\python.exe .\scripts\build.py %PROJECT%
-    - tools\py\python.exe .\scripts\packaging.py
+    - tools\py\python.exe .\scripts\packaging.py $PROJECT%
   artifacts:
     paths:
       - account-manager.zip

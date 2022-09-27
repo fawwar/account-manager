@@ -102,8 +102,8 @@ else()
     message("Not supported cmake version")
 endif()
 
-set(EXTERNALS_ROOT ${CMAKE_SOURCE_DIR}/import)
-set(PREBUILTS_ROOT ${CMAKE_SOURCE_DIR}/external)
+set(EXTERNALS_ROOT ${CMAKE_SOURCE_DIR}/externals)
+set(PREBUILTS_ROOT ${CMAKE_SOURCE_DIR}/prebuilts)
 
 ##
 # Dpendencies
@@ -179,24 +179,18 @@ if(UNIX)
 	set(OPENLDAP_LIBRARIES_DIR "${PREBUILTS_ROOT}/openldap/${PLATFORM}/lib")
 	include_directories(${OPENLDAP_INCLUDE_DIR})
 	link_directories(${OPENLDAP_LIBRARIES_DIR})
-    set(OPENLDAP_2_4_9_ROOT_DIR "${PREBUILTS_ROOT}/openldap/${PLATFORM}/openldap-2.4.49/openldapc")
-    set(OPENLDAP_2_4_9_INCLUDE_DIR "${OPENLDAP_2_4_9_ROOT_DIR}")
-    set(OPENLDAP_2_4_9_LIBRARIES_DIR "${OPENLDAP_2_4_9_ROOT_DIR}/libraries")
-    include_directories(${OPENLDAP_2_4_9__INCLUDE_DIR})
-    link_directories(${OPENLDAP_2_4_9_LIBRARIES_DIR})
 	set(LIBS ${LIBS} lber ldap ldap_r ldapcpp rewrite)
 endif()
 
-
 #sasl2
-#if(UNIX)
-#    set(SASL2_ROOT "${PREBUILTS_ROOT}/sasl2")
-#	set(SASL2_INCLUDE_DIR "${PREBUILTS_ROOT}/sasl2/include")
-#	set(SASL2_LIBRARIES_DIR "${PREBUILTS_ROOT}/sasl2/${PLATFORM}/lib")
-#	include_directories(${SASL2_INCLUDE_DIR})
-#	link_directories(${SASL2_LIBRARIES_DIR})
-#	set(LIBS ${LIBS} sasl2)
-#endif()
+if(UNIX)
+    set(SASL2_ROOT "${PREBUILTS_ROOT}/sasl2")
+	set(SASL2_INCLUDE_DIR "${PREBUILTS_ROOT}/sasl2/include")
+	set(SASL2_LIBRARIES_DIR "${PREBUILTS_ROOT}/sasl2/${PLATFORM}/lib")
+	include_directories(${SASL2_INCLUDE_DIR})
+	link_directories(${SASL2_LIBRARIES_DIR})
+	set(LIBS ${LIBS} sasl2)
+endif()
 
 ##### Externals
 
@@ -265,7 +259,7 @@ generate_product_version(
     VERSION_REVISION $ENV{VERSION_REVISION}
 
 )
-add_executable(${PROJECT_NAME} ${SRCS} ${VersionFilesOutputVariable})
+add_executable(${PROJECT_NAME} ${SRCS})
 
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 

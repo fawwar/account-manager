@@ -1,14 +1,18 @@
-#!/bin/bash
-
 CUR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_PATH="$CUR_PATH/.."
-PROJECT_NAME="account-manager"
-PROJECT=$1
+BUILD_PATH=$CUR_PATH/../build
 
+PROJECT="$1"
+
+mkdir -p $BUILD_PATH
+cd $BUILD_PATH
 if [ "$PROJECT" == "telstra" ]; then
-  make TELSTRA=1 || { echo "make failed"; exit 1; }
+  cmake -DCMAKE_BUILD_TYPE=Release -DPROJECT=$PROJECT .. || { echo "cmake failed"; exit 1; }
 elif [ "$PROJECT" == "bi" ]; then
-  make TELSTRA=1 || { echo "make failed"; exit 1; }
+  cmake -DCMAKE_BUILD_TYPE=Release -DPROJECT=$PROJECT .. || { echo "cmake failed"; exit 1; }
 else
-  make || { echo "make failed"; exit 1; }
+  cmake -DCMAKE_BUILD_TYPE=Release .. || { echo "cmake failed"; exit 1; }
 fi
+
+make -j$(nproc) -l$(nproc) || { echo "make failed"; exit 1; }
+make install
+
