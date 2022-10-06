@@ -11,7 +11,7 @@ stages:
 
 linux-test-build:
   tags:
-    - ubuntu-18
+    - account-dev
   image: dev18-ci
   stage: build
   except:
