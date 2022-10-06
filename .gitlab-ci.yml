@@ -12,8 +12,8 @@ stages:
 linux-test-build:
   tags:
     - account-dev
-  pull_policy: if-not-present    
   image: dev18-ci
+    pull_policy: if-not-present
   stage: build
   except:
     - tags
