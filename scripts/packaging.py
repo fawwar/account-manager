@@ -77,7 +77,9 @@ def packaging():
 
         else:
             print('linux-x86_64')
+            print(rootPath)
             smbtmpPath = os.path.join(rootPath, 'smbtmp')
+            print(smbtmpPath)
             os.makedirs(smbtmpPath, mode=0o755, exist_ok=True)
             os.chdir(rootPath)
             if os.getenv('CI_COMMIT_TAG'):
