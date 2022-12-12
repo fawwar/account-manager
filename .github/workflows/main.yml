@@ -32,8 +32,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - name: Git LFS pull 
-        run : git lfs fetch --all 
+        with:
+          lfs: true
+      - name: Git LFS checkout 
+        run : git lfs checkout
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
