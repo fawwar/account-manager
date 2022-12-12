@@ -84,14 +84,17 @@ def createPackage():
 
 def setPackageXml(versionStr):
     print('setPackageXml')
-    if 'CI_COMMIT_TAG' in os.environ:
+    commitType = os.getenv('GITHUB_REF_TYPE')
+    if commitType == 'tag':
         run('git tag -d')
         run('git fetch --tags')
         status, output = subprocess.getstatusoutput('git for-each-ref --format="%(refname:short) | %(creatordate:short)" "refs/tags/"')
         result = output.split('\n')
         tagDict = dict(a.split(' | ') for a in result)
         print ('    tagDict ',tagDict)
-        releaseDate = tagDict[os.environ['CI_COMMIT_TAG']]
+        tagStr = os.getenv('GITHUB_REF_NAME')
+        print ('    tagStr ',tagStr)
+        releaseDate = tagDict[tagStr]
     else:
         now = datetime.now()
         Date = now.strftime('%Y-%m-%d')
@@ -114,8 +117,11 @@ def setPackageXml(versionStr):
 def setVersion():
     versionStr = '0.0.0'
     versionPath = rootPath.joinpath('VERSION.txt')
-    if 'CI_COMMIT_TAG' in os.environ:
-        versionStr = os.environ['CI_COMMIT_TAG']
+     # if 'CI_COMMIT_TAG' in os.environ:
+    commitType = os.getenv('GITHUB_REF_TYPE')
+    if commitType == 'tag':
+        #versionStr = os.environ['CI_COMMIT_TAG']
+        versionStr = os.getenv('GITHUB_REF_NAME')
         # need to modify VERSION.txt 
     elif os.path.exists(versionPath):
         versionStr = Path(versionPath).read_text().replace('\n', '')
@@ -130,8 +136,8 @@ def setVersion():
             x=filter(str.isdigit, versionInfo[i])
             versionInfo[i] = "".join(x)
     
-        if 'CI_JOB_ID' in os.environ:
-            versionInfo.append(os.environ['CI_JOB_ID'])
+        if 'GITHUB_RUN_ID' in os.environ:
+            versionInfo.append(os.environ['GITHUB_RUN_ID'])
             #setPackageXml(versionStr)
         else:
             versionInfo.append(datetime.now().strftime('%Y%m%d')[3:])
