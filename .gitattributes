@@ -1,7 +1,7 @@
-import/gorilla/http/lib/libgorilla_http.a filter=lfs diff=lfs merge=lfs -text
-externals/gorilla/http/lib/HttpFramework.lib filter=lfs diff=lfs merge=lfs -text
-import/cppnetlib/libcppnetlib-uri.a filter=lfs diff=lfs merge=lfs -text
-import/gorilla/http/lib/HttpFrameworkD.lib filter=lfs diff=lfs merge=lfs -text
 import/gorilla/http/lib/HttpFramework.lib filter=lfs diff=lfs merge=lfs -text
 externals/gorilla/http/lib/HttpFrameworkD.lib filter=lfs diff=lfs merge=lfs -text
+import/gorilla/http/lib/libgorilla_http.a filter=lfs diff=lfs merge=lfs -text
+import/gorilla/http/lib/HttpFrameworkD.lib filter=lfs diff=lfs merge=lfs -text
 externals/gorilla/http/lib/libgorilla_http.a filter=lfs diff=lfs merge=lfs -text
+import/cppnetlib/libcppnetlib-uri.a filter=lfs diff=lfs merge=lfs -text
+externals/gorilla/http/lib/HttpFramework.lib filter=lfs diff=lfs merge=lfs -text
